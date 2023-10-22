@@ -14,7 +14,11 @@ import clsx from 'clsx'
 import { apiFollowEvent, apiGetDetailEvents, apiJoinEvent } from '../../apis'
 import moment from 'moment'
 import avatarDefault from '../../assets/avatarDefault.png'
-import { getEventsNew, getEventsToday } from '../../store/event/asyncActions'
+import {
+	getEventsHot,
+	getEventsNew,
+	getEventsToday,
+} from '../../store/event/asyncActions'
 import { getFollowEvent } from '../../store/user/asyncActions'
 
 const DetailEvent = ({
@@ -98,6 +102,7 @@ const DetailEvent = ({
 											getFollowEvent({
 												limit: 10,
 												page: 1,
+												order: ['createdAt', 'DESC'],
 											}),
 										)
 
@@ -110,7 +115,10 @@ const DetailEvent = ({
 										},
 										{
 											text: 'Sự kiện theo dõi',
-											onPress: () => navigate('ListEventFollowCurrent'),
+											onPress: () =>
+												navigate('ProfileStack', {
+													screen: 'ListEventFollowCurrent',
+												}),
 										},
 									])
 								}
@@ -154,6 +162,7 @@ const DetailEvent = ({
 										getFollowEvent({
 											limit: 10,
 											page: 1,
+											order: ['createdAt', 'DESC'],
 										}),
 									)
 
@@ -227,11 +236,20 @@ const DetailEvent = ({
 											}),
 										)
 
+										dispatch(
+											getEventsHot({
+												limit: 5,
+												page: 1,
+												hot: true,
+											}),
+										)
+
 										if (userId !== 0)
 											dispatch(
-												getFollowEvent({
-													limit: 10,
+												getJoinEvent({
+													limit: 5,
 													page: 1,
+													order: ['createdAt', 'DESC'],
 												}),
 											)
 
@@ -284,11 +302,20 @@ const DetailEvent = ({
 										}),
 									)
 
+									dispatch(
+										getEventsHot({
+											limit: 5,
+											page: 1,
+											hot: true,
+										}),
+									)
+
 									if (userId !== 0)
 										dispatch(
-											getFollowEvent({
-												limit: 10,
+											getJoinEvent({
+												limit: 5,
 												page: 1,
+												order: ['createdAt', 'DESC'],
 											}),
 										)
 

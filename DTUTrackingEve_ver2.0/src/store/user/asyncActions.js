@@ -17,7 +17,18 @@ export const getFollowEvent = createAsyncThunk(
 	async (data, { rejectWithValue }) => {
 		const response = await apis.apiGetFollowEvent(data)
 
-		// if (!response.data.err) return rejectWithValue(response.data.mess)
+		if (!response.success) return rejectWithValue(response.mess)
+
+		return response
+	},
+)
+
+export const getJoinEvent = createAsyncThunk(
+	'user/get-event-joined',
+	async (data, { rejectWithValue }) => {
+		const response = await apis.apiGetJoinEvent(data)
+
+		if (!response.success) return rejectWithValue(response.mess)
 
 		return response
 	},

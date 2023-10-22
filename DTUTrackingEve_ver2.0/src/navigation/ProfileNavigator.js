@@ -2,6 +2,7 @@ import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import {
 	ListEventFollowCurrentScreen,
+	ListEventJoinedCurrentScreen,
 	ManageAccountScreen,
 	ManageViewScreen,
 	ProfileScreen,
@@ -28,10 +29,7 @@ const ProfileNavigator = () => {
 			/>
 			{/* <Stack.Screen name='ChangePassword' component={SettingScreen} /> */}
 			{/* <Stack.Screen name='ListEventJoined' component={ListEventJoinedScreen} />
-			<Stack.Screen
-				name='ListEventFollowed'
-				component={ListEventFollowedScreen}
-			/> */}
+
 			<Stack.Screen name='UpdateProfile' component={UpdateProfileScreen} />
 			{/* <Stack.Screen name='UpdatePassword' component={UpdatePasswordScreen} /> */}
 			<Stack.Screen name='ManageView' component={ManageViewScreen} />
@@ -40,6 +38,10 @@ const ProfileNavigator = () => {
 			<Stack.Screen
 				name='ListEventFollowCurrent'
 				component={ListEventFollowCurrentScreen}
+			/>
+			<Stack.Screen
+				name='ListEventJoinCurrent'
+				component={ListEventJoinedCurrentScreen}
 			/>
 		</Stack.Navigator>
 	)

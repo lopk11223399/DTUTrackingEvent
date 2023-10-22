@@ -23,7 +23,7 @@ import { useSelector } from 'react-redux'
 import avatarDefault from '../../assets/avatarDefault.png'
 import { apiGetFollowEvent, apiGetJoinEvent } from '../../apis'
 import moment from 'moment/moment'
-import { getFollowEvent } from '../../store/user/asyncActions'
+import { getFollowEvent, getJoinEvent } from '../../store/user/asyncActions'
 
 const AnimatedAvatar = Animated.createAnimatedComponent(Image)
 const AnimatedButtonUpdate = Animated.createAnimatedComponent(View)
@@ -39,12 +39,17 @@ const ProfileScreen = ({
 	Foundation,
 	dispatch,
 }) => {
-	const { current, followEvent, followEventCount, isLoggedIn } = useSelector(
-		state => state.user,
-	)
+	const {
+		current,
+		followEvent,
+		followEventCount,
+		isLoggedIn,
+		joinEvent,
+		joinEventCount,
+	} = useSelector(state => state.user)
 	const animatedValue = useRef(new Animated.Value(0)).current
 	// const [eventFollowed, setEventFollowed] = useState([])
-	const [eventJoined, setEventJoined] = useState([])
+	// const [eventJoined, setEventJoined] = useState([])
 
 	// const fetchEventFollowed = async () => {
 	// 	const response = await apiGetJoinEvent({
@@ -100,9 +105,18 @@ const ProfileScreen = ({
 			getFollowEvent({
 				limit: 5,
 				page: 1,
+				order: ['createdAt', 'DESC'],
 			}),
 		)
-	}, [])
+
+		dispatch(
+			getJoinEvent({
+				limit: 5,
+				page: 1,
+				order: ['createdAt', 'DESC'],
+			}),
+		)
+	}, [dispatch])
 
 	if (current === null) {
 		return (
@@ -296,7 +310,7 @@ const ProfileScreen = ({
 							</View>
 							<View className='w-[25%] items-center'>
 								<Text className='text-[22px] text-text-white--dark'>
-									{eventJoined?.length || 0}
+									{joinEventCount || 0}
 								</Text>
 								<Text className='capitalize text-[14px] text-text-gray--dark font-[500]'>
 									tham gia
@@ -344,8 +358,8 @@ const ProfileScreen = ({
 													})
 												}
 												className={clsx(
-													'pr-4 w-[243px]',
-													index === followEvent?.length - 1 && 'pr-0',
+													'mr-4 w-[243px]',
+													index === followEvent?.length - 1 && 'mr-0',
 												)}>
 												<View className='relative'>
 													<Image
@@ -377,46 +391,48 @@ const ProfileScreen = ({
 						<View className='my-4 min-h-[180px]'>
 							<View className='mb-2 flex-row justify-between'>
 								<Text className='text-[17px] font-[700] text-text-white--dark capitalize'>
-									{`Sự kiện đã tham gia (${eventJoined?.length})`}
+									{`Sự kiện đã tham gia (${joinEventCount})`}
 								</Text>
-								<Pressable
-								// onPress={() =>
-								// 	navigate('ListEvent', { chooseTabList: 'joined' })
-								// }
-								>
+								<Pressable onPress={() => navigate('ListEventJoinCurrent')}>
 									<Text className='capitalize text-[14px] font-[700] text-login--text--navigate--dark'>
 										xem tất cả
 									</Text>
 								</Pressable>
 							</View>
 
-							{eventJoined?.length > 0 ? (
+							{joinEvent?.length > 0 ? (
 								<FlatList
-									data={eventJoined}
+									data={joinEvent}
 									horizontal
 									showsHorizontalScrollIndicator={false}
 									renderItem={({ item, index }) => {
 										return (
 											<Pressable
+												onPress={() =>
+													navigate('DetailEvent', {
+														eventId: item.eventData.id,
+														userId: current.id,
+													})
+												}
 												className={clsx(
-													'pr-4 w-[243px]',
-													index === current?.eventJoined?.length - 1 && 'pr-0',
+													'mr-4 w-[243px]',
+													index === joinEvent?.length - 1 && 'mr-0',
 												)}>
 												<View className='relative'>
 													<Image
-														source={{ uri: item.image }}
+														source={{ uri: item.eventData.image }}
 														className='w-full h-[132px] object-contain rounded-[12px]'
 													/>
 													<StatusEvent
 														style={'absolute top-0'}
-														idStatus={item.statusEvent.idStatus}
+														idStatus={item.eventData.status}
 													/>
 												</View>
 												<View className='mt-1'>
 													<Text
 														numberOfLines={2}
 														className='text-[15px] font-bold text-text-white--dark'>
-														{item.nameEvent}
+														{item.eventData.title}
 													</Text>
 												</View>
 											</Pressable>

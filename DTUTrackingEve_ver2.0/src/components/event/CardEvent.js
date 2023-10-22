@@ -74,6 +74,7 @@ const CardEvent = ({
 											getFollowEvent({
 												limit: 10,
 												page: 1,
+												order: ['createdAt', 'DESC'],
 											}),
 										)
 
@@ -84,7 +85,10 @@ const CardEvent = ({
 										},
 										{
 											text: 'Sự kiện theo dõi',
-											onPress: () => navigate('ListEventFollowCurrent'),
+											onPress: () =>
+												navigate('ProfileStack', {
+													screen: 'ListEventFollowCurrent',
+												}),
 										},
 									])
 								}
@@ -127,6 +131,7 @@ const CardEvent = ({
 										getFollowEvent({
 											limit: 10,
 											page: 1,
+											order: ['createdAt', 'DESC'],
 										}),
 									)
 
@@ -137,7 +142,10 @@ const CardEvent = ({
 									},
 									{
 										text: 'Sự kiện theo dõi',
-										onPress: () => navigate('ListEventFollowCurrent'),
+										onPress: () =>
+											navigate('ProfileStack', {
+												screen: 'ListEventFollowCurrent',
+											}),
 									},
 								])
 							}
@@ -200,6 +208,7 @@ const CardEvent = ({
 												order: ['createdAt', 'DESC'],
 											}),
 										)
+
 										dispatch(
 											getEventsHot({
 												limit: 5,
@@ -207,6 +216,15 @@ const CardEvent = ({
 												hot: true,
 											}),
 										)
+
+										if (userId !== 0)
+											dispatch(
+												getJoinEvent({
+													limit: 5,
+													page: 1,
+													order: ['createdAt', 'DESC'],
+												}),
+											)
 
 										return Alert.alert('Thành Công', response.mess, [
 											{
@@ -259,6 +277,15 @@ const CardEvent = ({
 											hot: true,
 										}),
 									)
+
+									if (userId !== 0)
+										dispatch(
+											getJoinEvent({
+												limit: 5,
+												page: 1,
+												order: ['createdAt', 'DESC'],
+											}),
+										)
 
 									return Alert.alert('Thành Công', response.mess, [
 										{

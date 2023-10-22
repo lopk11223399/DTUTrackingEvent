@@ -1,29 +1,31 @@
-import {
-	View,
-	Text,
-	SafeAreaView,
-	Pressable,
-	StatusBar,
-	FlatList,
-} from 'react-native'
 import React, { useEffect, useLayoutEffect, useState } from 'react'
 import withBaseComponent from '../../hocs/withBaseComponent'
-import { CardEventFollowed, EmptyData, Search } from '../../components'
+import {
+	SafeAreaView,
+	View,
+	Pressable,
+	FlatList,
+	StatusBar,
+} from 'react-native'
+import { CardEventJoined, EmptyData, Search } from '../../components'
+import Modal from 'react-native-modal'
+import { renderStarFromNumber } from '../../utils/helper'
 import { useSelector } from 'react-redux'
-import { getFollowEvent } from '../../store/user/asyncActions'
+import { getJoinEvent } from '../../store/user/asyncActions'
 
-const ListEventFollowCurrentScreen = ({
+const ListEventJoinedCurrentScreen = ({
 	navigation: { setOptions, goBack },
 	Ionicons,
+	route,
 	dispatch,
 }) => {
-	const { current, followEvent } = useSelector(state => state.user)
+	const { current, joinEvent } = useSelector(state => state.user)
 	const [isSearch, setIsSearch] = useState(false)
 	const [valueSearch, setValueSearch] = useState(null)
 
 	useEffect(() => {
 		dispatch(
-			getFollowEvent({
+			getJoinEvent({
 				limit: 10,
 				page: 1,
 				order: ['createdAt', 'DESC'],
@@ -51,7 +53,7 @@ const ListEventFollowCurrentScreen = ({
 					<Ionicons name='search' size={24} color='white' />
 				</Pressable>
 			),
-			headerTitle: 'Danh Sách Sự Kiện Theo Dõi',
+			headerTitle: 'Danh Sách Sự Kiện Tham Gia',
 		})
 	}, [isSearch])
 
@@ -70,16 +72,16 @@ const ListEventFollowCurrentScreen = ({
 			)}
 
 			<View className='px-3 mt-2 flex-1'>
-				{followEvent?.length > 0 ? (
+				{joinEvent?.length > 0 ? (
 					<FlatList
 						showsVerticalScrollIndicator={false}
-						data={followEvent}
+						data={joinEvent}
 						renderItem={({ item, index }) => (
-							<CardEventFollowed
+							<CardEventJoined
 								item={item.eventData}
 								key={item.eventData.id}
 								userId={current.id}
-								borderHiden={index === followEvent?.length - 1 ? false : true}
+								borderHiden={index === joinEvent?.length - 1 ? false : true}
 							/>
 						)}
 						keyExtractor={(item, index) => index.toString()}
@@ -92,4 +94,4 @@ const ListEventFollowCurrentScreen = ({
 	)
 }
 
-export default withBaseComponent(ListEventFollowCurrentScreen)
+export default withBaseComponent(ListEventJoinedCurrentScreen)

@@ -2,65 +2,79 @@ import { View, Text, Image } from 'react-native'
 import React, { memo } from 'react'
 import { Pressable } from 'react-native'
 import withBaseComponent from '../../hocs/withBaseComponent'
-import { user } from '../../utils/contants'
 import StatusEvent from './StatusEvent'
 import clsx from 'clsx'
+import moment from 'moment'
 
 const CardEventJoined = ({
 	navigation: { navigate },
 	item,
+	userId,
 	handleFeedbackEventModal,
+	FontAwesome,
+	AntDesign,
+	borderHiden = true,
+	dispatch,
 }) => {
 	return (
-		<View className='p-2'>
-			<Pressable
-				onPress={() =>
-					navigate('DetailEvent', {
-						eventId: item.idEvent,
-						userId: user.id,
-					})
-				}
-				className='flex-row items-center flex-1 p-2 rounded-md border'>
+		<Pressable
+			onPress={() =>
+				navigate('DetailEvent', {
+					eventId: item?.id,
+					userId: userId,
+				})
+			}
+			className={clsx('bg-transparent relative mb-3')}>
+			<View className='relative'>
 				<Image
-					source={{ uri: item.image }}
-					className='h-[60px] w-[60px] object-cover rounded-full'
+					source={{ uri: item?.image }}
+					className='w-full h-[200px] rounded-md object-cover'
 				/>
+				<StatusEvent style={'absolute top-0'} idStatus={item?.status} />
+			</View>
 
-				<View className='ml-2 flex-1'>
-					<Text numberOfLines={1} className='text-[16px] font-semibold'>
-						{item.nameEvent}
-					</Text>
-					<StatusEvent
-						idStatus={item.statusEvent.idStatus}
-						textStatus={item.statusEvent.textStatus}
-						textStyle={'p-1 text-[12px]'}
-						style={'mt-2'}
+			<Text
+				numberOfLines={2}
+				className='text-[16px] text-text-white--dark font-bold mt-2 leading-6'>
+				{item?.title}
+			</Text>
+			<Text
+				numberOfLines={2}
+				className='text-[14px] text-text-gray--dark font-bold mt-1 leading-5'>
+				{item?.description}
+			</Text>
+			<View
+				className={clsx(
+					'mt-2 rounded-md flex-row items-center justify-between',
+
+					item?.status === 1 && 'bg-background--gray--dark',
+					item?.status === 2 && 'bg-background--red--dark',
+					item?.status === 3 && 'bg-background--green--dark',
+					item?.status === 4 && 'bg-background--gray--dark',
+					item?.status === 5 && 'bg-background--gray--dark',
+				)}>
+				<View className='ml-[12px] mr-[6px]'>
+					<AntDesign
+						name='clockcircleo'
+						size={12}
+						color={
+							(item?.status === 1 && '#586860') ||
+							(item?.status === 2 && '#89323e') ||
+							(item?.status === 3 && '#41d4a0') ||
+							(item?.status === 4 && '#586860') ||
+							(item?.status === 5 && '#586860')
+						}
 					/>
 				</View>
+				<Text className='text-text-white--dark font-bold py-3 flex-1'>
+					{`${moment(item?.startDate).format('DD.MM.YYYY')} - ${moment(
+						item?.finishDate,
+					).format('DD.MM.YYYY')}`}
+				</Text>
+			</View>
 
-				<View className='flex-row ml-1'>
-					{item.statusEvent.idStatus === 4 ? (
-						<Pressable
-							onPress={() => handleFeedbackEventModal(item.idEvent)}
-							className='bg-green-400 w-[80px] py-2 rounded-md'>
-							<Text className='text-center text-white capitalize font-semibold text-[14px]'>
-								đánh giá
-							</Text>
-						</Pressable>
-					) : (
-						<Pressable
-							className={clsx(
-								'bg-red-400 w-[80px] py-2 rounded-md',
-								item.statusEvent.idStatus === 5 && 'opacity-40',
-							)}>
-							<Text className='text-center text-white capitalize font-semibold text-[14px]'>
-								hủy
-							</Text>
-						</Pressable>
-					)}
-				</View>
-			</Pressable>
-		</View>
+			{borderHiden && <View className='border-b border-text-desc--dark my-2' />}
+		</Pressable>
 	)
 }
 

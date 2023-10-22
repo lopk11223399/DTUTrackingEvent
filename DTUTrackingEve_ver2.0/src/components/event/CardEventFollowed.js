@@ -19,35 +19,51 @@ const CardEventFollowed = ({
 	dispatch,
 }) => {
 	const handleFollowEvent = async () => {
-		const reponse = await apiFollowEvent(item.id)
+		return Alert.alert(
+			'Thông báo',
+			`Bạn muốn hủy theo dõi sự kiện ${item.title} phải không?`,
+			[
+				{
+					text: 'Hủy',
+					style: 'cancel',
+				},
+				{
+					text: 'Bỏ theo dõi',
+					onPress: async () => {
+						const reponse = await apiFollowEvent(item.id)
 
-		if (reponse.success) {
-			if (userId !== 0) {
-				dispatch(
-					getFollowEvent({
-						limit: 10,
-						page: 1,
-					}),
-				)
+						if (reponse.success) {
+							dispatch(
+								getEventsToday({
+									limit: 10,
+									page: 1,
+									date: moment().format('YYYY-MM-DD'),
+								}),
+							)
 
-				dispatch(
-					getEventsToday({
-						limit: 10,
-						page: 1,
-						date: moment().format('YYYY-MM-DD'),
-					}),
-				)
-				dispatch(
-					getEventsNew({
-						limit: 10,
-						page: 1,
-						order: ['createdAt', 'DESC'],
-					}),
-				)
-			}
+							dispatch(
+								getEventsNew({
+									limit: 10,
+									page: 1,
+									order: ['createdAt', 'DESC'],
+								}),
+							)
 
-			return Alert.alert('Thành Công', reponse.mess)
-		}
+							if (userId !== 0)
+								dispatch(
+									getFollowEvent({
+										limit: 10,
+										page: 1,
+										order: ['createdAt', 'DESC'],
+									}),
+								)
+
+							return Alert.alert('Thành Công', reponse.mess)
+						}
+					},
+				},
+			],
+		)
 	}
 
 	return (
