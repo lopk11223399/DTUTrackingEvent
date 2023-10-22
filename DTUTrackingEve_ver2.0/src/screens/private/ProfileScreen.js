@@ -95,16 +95,14 @@ const ProfileScreen = ({
 		// 		}),
 		// 	)
 		// }, 500)
-
 		// return () => clearInterval(fetchFollowEvent)
-
 		dispatch(
 			getFollowEvent({
 				limit: 5,
 				page: 1,
 			}),
 		)
-	}, [dispatch, isLoggedIn])
+	}, [])
 
 	if (current === null) {
 		return (

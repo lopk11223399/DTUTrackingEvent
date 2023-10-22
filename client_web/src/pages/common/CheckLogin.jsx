@@ -6,18 +6,17 @@ import withBaseComponent from '../../hocs/withBaseComponent'
 import { getCurrent } from '../../store/user/asyncActions'
 
 function CheckLogin({ dispatch }) {
-	const { isLoggedIn, current } = useSelector(state => state.user)
+	const { current } = useSelector(state => state.user)
 
 	useEffect(() => {
 		dispatch(getCurrent())
-	}, [dispatch])
+	}, [])
 
-	if (!isLoggedIn || !current)
-		return <Navigate to={`/${common.LOGIN}`} replace={true} />
-	else if (+current.roleId === 1)
+	if (+current?.roleId === 1) {
 		return <Navigate to={`/${pathAdmin.ADMIN}`} replace={true} />
-	else if (+current.roleId === 2)
+	} else if (+current?.roleId === 2) {
 		return <Navigate to={`/${pathCreator.CREATOR}`} replace={true} />
+	} else return <Navigate to={`/${common.LOGIN}`} replace={true} />
 }
 
 export default withBaseComponent(CheckLogin)

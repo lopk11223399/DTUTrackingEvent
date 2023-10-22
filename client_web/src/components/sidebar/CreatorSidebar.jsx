@@ -12,7 +12,7 @@ const { AiOutlineCaretDown, AiOutlineCaretRight } = icons
 const activedStyle = 'px-4 py-2 flex items-center gap-2 bg-blue-500'
 const notActivedStyle = 'px-4 py-2 flex items-center gap-2 hover:bg-blue-100'
 
-const CreatorSidebar = ({ dispatch }) => {
+const CreatorSidebar = ({ dispatch, navigate }) => {
 	const [actived, setActived] = useState([])
 
 	const handleShowTabs = tabID => {
@@ -75,10 +75,13 @@ const CreatorSidebar = ({ dispatch }) => {
 					</Fragment>
 				))}
 			</div>
-			<div>
-				<NavLink to={`/${common.LOGIN}`}>
-					<span>Thoát</span>
-				</NavLink>
+			<div
+				onClick={() => {
+					dispatch(logout())
+					navigate(`/${common.LOGIN}`)
+				}}
+				className={clsx(notActivedStyle, 'hover:cursor-pointer')}>
+				Thoát tài khoản
 			</div>
 		</div>
 	)

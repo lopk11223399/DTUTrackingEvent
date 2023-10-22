@@ -1,47 +1,68 @@
 import React, { useState } from 'react'
 import moment from 'moment'
 import { getBase64 } from '../../utils/helper'
+import { apiCreateEvent } from '../../apis'
 
 function CreateEvent() {
 	const [payload, setPayload] = useState({
-		title: 'abc',
+		title: '',
+		startDate: '',
+		finishDate: '',
+		location: '',
+		typeEvent: false,
+		description: '',
+		linkUrl: '',
+	})
+	const [time, setTime] = useState({
 		startDate: moment().format('YYYY-MM-DD'),
 		startTime: moment().format('hh:mm'),
 		finishDate: moment().format('YYYY-MM-DD'),
 		finishTime: moment().format('hh:mm'),
-		location: '30',
-		typeEvent: 'online',
-		description: 'abc',
 	})
 	const [preview, setPreview] = useState({
 		image: null,
+		imageWeb: null,
 	})
 
 	const handleSubmit = async () => {
 		const formData = new FormData()
 
-		for (let i of Object.entries(payload)) formData.append(i[0], i[1])
 		if (preview.image) formData.append('image', preview.image)
+
+		for (let i of Object.entries(payload)) {
+			if (i[1] === '') continue
+			formData.append(i[0], i[1])
+		}
+
+		const response = await apiCreateEvent(formData)
+		console.log(response)
 	}
+
 	return (
-		<div className='w-full h-full px-2'>
-			<h1 className='text-[36px] font-bold text-center'>Tạo sự kiện</h1>
-
-			<div>
-				<label htmlFor='image'>Ảnh</label>
-				<input
-					type='file'
-					id='image'
-					onChange={async file => {
-						const base64Image = await getBase64(file.target.files[0])
-						setPreview(prev => ({ ...prev, image: base64Image }))
-					}}
-				/>
-
-				{preview.image && (
-					<div className='mt-4'>
+		<div className='w-full h-full py-[16px] px-[20px]'>
+			<h1 className='text-[24px] font-[700] mb-2'>Tạo sự kiện</h1>
+			<div className='flex items-center'>
+				<div className='w-[50%]'>
+					<label htmlFor='image' className='text-[14px] font-[700]'>
+						Ảnh{' '}
+					</label>
+					<input
+						type='file'
+						id='image'
+						onChange={async file => {
+							const base64Image = await getBase64(file.target.files[0])
+							setPreview(prev => ({
+								...prev,
+								image: file.target.files[0],
+								imageWeb: base64Image,
+							}))
+						}}
+					/>
+				</div>
+				{preview.imageWeb && (
+					<div className='w-[50%]'>
 						<img
-							src={preview.image}
+							src={preview.imageWeb}
 							alt='thumbnail'
 							className='w-[200px] object-contain'
 						/>
@@ -49,11 +70,14 @@ function CreateEvent() {
 				)}
 			</div>
 
-			<div className='flex flex-col gap-2 '>
-				<label htmlFor='title'>Tên sự kiện</label>
+			<div className='flex flex-col gap-2 mt-1'>
+				<label htmlFor='title' className='text-[14px] font-[700] capitalize'>
+					Tên sự kiện
+				</label>
 				<input
 					type='text'
 					id='title'
+					className='px-2 py-1'
 					value={payload.title}
 					onChange={text =>
 						setPayload(prev => ({ ...prev, title: text.target.value }))
@@ -61,72 +85,174 @@ function CreateEvent() {
 				/>
 			</div>
 
-			<div className='flex flex-col gap-2 mt-1'>
-				<label htmlFor='startDate'>ngày bắt đầu</label>
-				<input
-					type='date'
-					id='startDate'
-					value={payload.startDate}
+			<div className='mt-1 flex w-full gap-4'>
+				<div className='flex flex-col gap-1 mt-1 w-[50%]'>
+					<label
+						htmlFor='startDate'
+						className='text-[14px] font-[700] capitalize'>
+						ngày bắt đầu
+					</label>
+					<input
+						type='date'
+						id='startDate'
+						className='px-2 py-1'
+						value={time.startDate}
+						onChange={text => {
+							setTime(prev => ({ ...prev, startDate: text.target.value }))
+							if (time.startDate && time.startTime)
+								setPayload(prev => ({
+									...prev,
+									startDate: `${time.startDate} ${time.startTime}`,
+								}))
+							else
+								setPayload(prev => ({
+									...prev,
+									startDate: `${time.startDate}`,
+								}))
+						}}
+					/>
+				</div>
+				<div className='flex flex-col gap-1 mt-1 w-[50%]'>
+					<label
+						htmlFor='startTime'
+						className='text-[14px] font-[700] capitalize'>
+						thời gian bắt đầu
+					</label>
+					<input
+						type='time'
+						id='startTime'
+						className='px-2 py-1'
+						value={time.startTime}
+						onChange={text => {
+							setTime(prev => ({ ...prev, startTime: text.target.value }))
+							if (time.startDate && time.startTime)
+								setPayload(prev => ({
+									...prev,
+									startDate: `${time.startDate} ${time.startTime}`,
+								}))
+							else
+								setPayload(prev => ({
+									...prev,
+									startDate: `${time.startTime}`,
+								}))
+						}}
+					/>
+				</div>
+			</div>
+
+			<div className='mt-1 flex w-full gap-4'>
+				<div className='flex flex-col gap-1 mt-1 w-[50%]'>
+					<label
+						htmlFor='finishDate'
+						className='text-[14px] font-[700] capitalize'>
+						ngày kết thúc
+					</label>
+					<input
+						type='date'
+						id='finishDate'
+						className='px-2 py-1'
+						value={time.finishDate}
+						onChange={text => {
+							setTime(prev => ({ ...prev, finishDate: text.target.value }))
+							if (time.finishDate && time.finishTime)
+								setPayload(prev => ({
+									...prev,
+									finishDate: `${time.finishDate} ${time.finishTime}`,
+								}))
+							else
+								setPayload(prev => ({
+									...prev,
+									finishDate: `${time.finishDate}`,
+								}))
+						}}
+					/>
+				</div>
+				<div className='flex flex-col gap-1 mt-1 w-[50%]'>
+					<label
+						htmlFor='finishTime'
+						className='text-[14px] font-[700] capitalize'>
+						thời kết thúc
+					</label>
+					<input
+						type='time'
+						id='finishTime'
+						className='px-2 py-1'
+						value={time.finishTime}
+						onChange={text => {
+							setTime(prev => ({ ...prev, finishTime: text.target.value }))
+							if (time.finishDate && time.finishTime)
+								setPayload(prev => ({
+									...prev,
+									finishDate: `${time.finishDate} ${time.finishTime}`,
+								}))
+							else
+								setPayload(prev => ({
+									...prev,
+									finishDate: `${time.finishTime}`,
+								}))
+						}}
+					/>
+				</div>
+			</div>
+
+			<div className='mt-1 flex w-full gap-4'>
+				<div className='flex flex-col gap-1 mt-1 w-[50%]'>
+					<label htmlFor='type' className='text-[14px] font-[700] capitalize'>
+						loại sự kiện
+					</label>
+
+					<select
+						id='type'
+						className='px-2 py-1'
+						value={payload.typeEvent}
+						onChange={text =>
+							setPayload(prev => ({
+								...prev,
+								typeEvent: text.target.value === 'false' ? false : true,
+							}))
+						}>
+						<option value='false'>Offline</option>
+						<option value='true'>Online</option>
+					</select>
+				</div>
+
+				<div className='flex flex-col gap-1 mt-1 w-[50%]'>
+					<label
+						htmlFor='location'
+						className='text-[14px] font-[700] capitalize'>
+						{!payload.typeEvent ? `địa điểm` : `link online`}
+					</label>
+					<input
+						type='text'
+						id='location'
+						className='px-2 py-1'
+						value={!payload.typeEvent ? payload.location : payload.linkUrl}
+						onChange={text => {
+							if (!payload.typeEvent)
+								setPayload(prev => ({ ...prev, location: text.target.value }))
+							else setPayload(prev => ({ ...prev, linkUrl: text.target.value }))
+						}}
+					/>
+				</div>
+			</div>
+
+			<div className='flex flex-col gap-1 mt-1'>
+				<label htmlFor='desc' className='text-[14px] font-[700] capitalize'>
+					mô tả
+				</label>
+				<textarea
+					type='text'
+					id='desc'
+					className='px-2 py-1'
+					value={payload.description}
 					onChange={text =>
-						setPayload(prev => ({ ...prev, startDate: text.target.value }))
+						setPayload(prev => ({ ...prev, description: text.target.value }))
 					}
 				/>
 			</div>
-
-			<div className='flex flex-col gap-2 mt-1'>
-				<label htmlFor='startTime'>thời bắt đầu</label>
-				<input
-					type='time'
-					id='startTime'
-					value={payload.startTime}
-					onChange={text =>
-						setPayload(prev => ({ ...prev, startTime: text.target.value }))
-					}
-				/>
-			</div>
-
-			<div className='flex flex-col gap-2 mt-1'>
-				<label htmlFor='finishDate'>ngày kết thúc</label>
-				<input
-					type='date'
-					id='finishDate'
-					value={payload.finishDate}
-					onChange={text =>
-						setPayload(prev => ({ ...prev, finishDate: text.target.value }))
-					}
-				/>
-			</div>
-
-			<div className='flex flex-col gap-2 mt-1'>
-				<label htmlFor='finishTime'>thời kết thúc</label>
-				<input
-					type='time'
-					id='finishTime'
-					value={payload.finishTime}
-					onChange={text =>
-						setPayload(prev => ({ ...prev, finishTime: text.target.value }))
-					}
-				/>
-			</div>
-
-			<div className='flex flex-col gap-2 mt-1'>
-				<label htmlFor='type'>loại sự kiện</label>
-				<input type='text' id='type' />
-			</div>
-
-			<div className='flex flex-col gap-2 mt-1'>
-				<label htmlFor='location'>địa điểm</label>
-				<input type='text' id='location' />
-			</div>
-
-			<div className='flex flex-col gap-2 mt-1'>
-				<label htmlFor='desc'>mô tả</label>
-				<textarea type='text' id='desc' />
-			</div>
-
 			<div
 				onClick={handleSubmit}
-				className='bg-sky-200 w-[100px] text-center py-2 mx-auto mt-2 cursor-pointer'>
+				className='w-[20%] text-center bg-[#519BD0] py-2 text-[16px] font-[700] capitalize text-white rounded-[10px] hover:cursor-pointer hover:opacity-80 mt-4 mx-auto'>
 				Tạo
 			</div>
 		</div>
