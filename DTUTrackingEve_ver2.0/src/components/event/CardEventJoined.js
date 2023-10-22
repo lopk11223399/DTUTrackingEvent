@@ -1,21 +1,82 @@
-import { View, Text, Image } from 'react-native'
+import { View, Text, Image, Alert } from 'react-native'
 import React, { memo } from 'react'
 import { Pressable } from 'react-native'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import StatusEvent from './StatusEvent'
 import clsx from 'clsx'
 import moment from 'moment'
+import Button from '../button/Button'
+import {
+	getEventsHot,
+	getEventsNew,
+	getEventsToday,
+} from '../../store/event/asyncActions'
+import { apiJoinEvent } from '../../apis'
+import { getJoinEvent } from '../../store/user/asyncActions'
 
 const CardEventJoined = ({
 	navigation: { navigate },
 	item,
 	userId,
 	handleFeedbackEventModal,
-	FontAwesome,
 	AntDesign,
 	borderHiden = true,
 	dispatch,
 }) => {
+	const handleCancelJoinEvent = async () => {
+		return Alert.alert(
+			'Thông báo',
+			`Bạn muốn hủy tham gia sự kiện ${item.title} phải không?`,
+			[
+				{
+					text: 'Hủy',
+					style: 'cancel',
+				},
+				{
+					text: 'Hủy tham gia',
+					onPress: async () => {
+						const response = await apiJoinEvent(item.id)
+
+						if (response.success === true) {
+							dispatch(
+								getEventsToday({
+									limit: 10,
+									page: 1,
+									date: moment().format('YYYY-MM-DD'),
+								}),
+							)
+							dispatch(
+								getEventsNew({
+									limit: 10,
+									page: 1,
+									order: ['createdAt', 'DESC'],
+								}),
+							)
+
+							dispatch(
+								getEventsHot({
+									limit: 5,
+									page: 1,
+									hot: true,
+								}),
+							)
+
+							if (userId !== 0)
+								dispatch(
+									getJoinEvent({
+										limit: 5,
+										page: 1,
+										order: ['createdAt', 'DESC'],
+									}),
+								)
+
+							return Alert.alert('Thành Công', response.mess)
+						}
+					},
+				},
+			],
+		)
+	}
 	return (
 		<Pressable
 			onPress={() =>
@@ -31,6 +92,15 @@ const CardEventJoined = ({
 					className='w-full h-[200px] rounded-md object-cover'
 				/>
 				<StatusEvent style={'absolute top-0'} idStatus={item?.status} />
+				<Button
+					handlePress={handleCancelJoinEvent}
+					style={clsx(
+						'absolute bg-color--green--dark bottom-[12px] right-[12px] w-[110px] h-[28px]',
+						item?.status !== 4 && 'bg-input--err--light',
+					)}
+					styleText={'text-color--text-button--dark'}
+					children={item?.status === 4 ? 'Đánh giá' : 'Hủy'}
+				/>
 			</View>
 
 			<Text

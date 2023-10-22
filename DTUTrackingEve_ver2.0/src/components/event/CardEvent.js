@@ -11,7 +11,7 @@ import {
 	getEventsNew,
 	getEventsToday,
 } from '../../store/event/asyncActions'
-import { getFollowEvent } from '../../store/user/asyncActions'
+import { getFollowEvent, getJoinEvent } from '../../store/user/asyncActions'
 
 const CardEvent = ({
 	item,

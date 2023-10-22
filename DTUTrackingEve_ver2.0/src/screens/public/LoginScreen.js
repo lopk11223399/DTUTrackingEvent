@@ -7,6 +7,7 @@ import {
 	Pressable,
 	Image,
 	Platform,
+	Alert,
 } from 'react-native'
 import React, { useState } from 'react'
 import withBaseComponent from '../../hocs/withBaseComponent'
@@ -81,6 +82,8 @@ const LoginScreen = ({
 					})
 
 				navigate('Home')
+			} else {
+				Alert.alert('Thông báo', response.mess)
 			}
 		}
 	}
