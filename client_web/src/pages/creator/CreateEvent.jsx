@@ -12,6 +12,8 @@ function CreateEvent() {
 		typeEvent: false,
 		description: '',
 		linkUrl: '',
+		addPoint: 0,
+		limitParticipant: 0,
 	})
 	const [time, setTime] = useState({
 		startDate: moment().format('YYYY-MM-DD'),
@@ -83,6 +85,45 @@ function CreateEvent() {
 						setPayload(prev => ({ ...prev, title: text.target.value }))
 					}
 				/>
+			</div>
+
+			<div className='mt-1 flex w-full gap-4'>
+				<div className='flex flex-col gap-1 mt-1 w-[50%]'>
+					<label htmlFor='point' className='text-[14px] font-[700] capitalize'>
+						Điểm thưởng
+					</label>
+					<input
+						type='number'
+						id='point'
+						className='px-2 py-1'
+						value={payload.addPoint}
+						onChange={text => {
+							setPayload(prev => ({
+								...prev,
+								addPoint: Number(text.target.value),
+							}))
+						}}
+					/>
+				</div>
+				<div className='flex flex-col gap-1 mt-1 w-[50%]'>
+					<label
+						htmlFor='limitParticipant'
+						className='text-[14px] font-[700] capitalize'>
+						số lượng người tham gia
+					</label>
+					<input
+						type='number'
+						id='limitParticipant'
+						className='px-2 py-1'
+						value={payload.limitParticipant}
+						onChange={text => {
+							setPayload(prev => ({
+								...prev,
+								limitParticipant: Number(text.target.value),
+							}))
+						}}
+					/>
+				</div>
 			</div>
 
 			<div className='mt-1 flex w-full gap-4'>

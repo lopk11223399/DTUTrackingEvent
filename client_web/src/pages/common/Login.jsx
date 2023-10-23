@@ -3,7 +3,7 @@ import { apiLogin } from '../../apis/user'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import { pathAdmin, pathCreator } from '../../utils/path'
 import { login } from '../../store/user/userSlice'
-import { useSelector } from 'react-redux'
+import Swal from 'sweetalert2'
 
 function Login({ navigate, dispatch }) {
 	const [error, setError] = useState({
@@ -43,7 +43,7 @@ function Login({ navigate, dispatch }) {
 				} else if (+response.user.roleId === 2) {
 					navigate(`/${pathCreator.CREATOR}`)
 				}
-			}
+			} else Swal.fire('Thông báo', response.mess, 'error')
 		}
 	}
 
