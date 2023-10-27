@@ -30,7 +30,11 @@ function ManageEvent() {
   useEffect(() => {
     const queries = Object.fromEntries([...params]);
     fetchData({ ...queries });
-  }, [params, statusEvent]);
+  }, [params]);
+  useEffect(() => {
+    const queries = Object.fromEntries([...params]);
+    fetchData({ ...queries });
+  }, [statusEvent]);
   //console.log(data);
   const handleUpdateStatus = async (eid, status) => {
     if (status === 1) {
@@ -129,7 +133,7 @@ function ManageEvent() {
                       <img
                         src={el.image}
                         alt="ảnh"
-                        className="w-[100px] h-full object-cover"
+                        className="w-[100px] h-full object-cover rounded-md"
                       />
                     </div>
                   </td>

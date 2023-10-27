@@ -96,18 +96,54 @@ const ManageUser = () => {
     <div className="w-full h-full py-2 px-[20px]">
       <h1 className="text-[24px] font-[700] mb-2">Quản lý Người dùng</h1>
       <div className="rounded-[8px] bg-[#fff] ">
-        <table className="">
+        <table className="w-full">
           <thead className=" text-[#4E73DF]   border-b border-[#4E73DF]">
             <tr className=" ">
               <td className="w-[5%] text-center font-bold py-2">#</td>
               <td className="w-[15%] text-center font-bold">Ảnh</td>
-              <td className="w-[30%] text-center font-bold">Tên sự kiện</td>
-              <td className="w-[10%] text-center font-bold">Loại</td>
-              <td className="w-[10%] text-center font-bold">Trạng thái</td>
-              <td className="w-[10%] text-center font-bold">Ngày tạo</td>
-              <td className="w-[20%] text-center font-bold">Duyệt sự kiện</td>
+              <td className="w-[30%] text-center font-bold">Họ & tên</td>
+              <td className="w-[10%] text-center font-bold">Ngày sinh</td>
+              <td className="w-[10%] text-center font-bold">Giới tính</td>
+              <td className="w-[10%] text-center font-bold">Vai trò</td>
+              <td className="w-[20%] text-center font-bold">Số point</td>
             </tr>
           </thead>
+          <tbody>
+            {data.length > 0 &&
+              data.map((el, index) => (
+                <tr
+                  key={el.id}
+                  className="hover:bg-[#4E73DF] hover:text-white hover:opacity-[0.85] duration-95 ease-in-out cursor-pointer"
+                >
+                  <td className="w-[5%] text-center">
+                    {(+params.get("page") > 1 ? +params.get("page") - 1 : 0) *
+                      +import.meta.env.VITE_REACT_APP_LIMIT +
+                      index +
+                      1}
+                  </td>
+                  <td className="w-[15%] text-center py-1">
+                    <div className="w-full h-[45px] flex justify-center rounded-md">
+                      <img
+                        src="https://vtv1.mediacdn.vn/zoom/640_400/2022/12/19/221218184732-messi-wc-trophy-16714338650611943125261-crop-1672061255342223645900.jpg"
+                        alt="ảnh"
+                        className="w-[100px] h-full object-cover rounded-md"
+                      />
+                    </div>
+                  </td>
+                  <td className="w-[10%] text-center">{el.name}</td>
+                  <td className="w-[15%] text-center">{el.birthDate}</td>
+                  <td className="text-center w-[10%]">
+                    {el.gender === 1 ? "Nam" : "Nữ"}
+                  </td>
+                  <td className="w-[15%] text-center ">
+                    {el.roleID === 2 ? "Người tạo sự kiện" : "Người dùng"}
+                  </td>
+                  <td className="w-[15%] text-center">
+                    {el.studentData.point}
+                  </td>
+                </tr>
+              ))}
+          </tbody>
         </table>
       </div>
       <div className="w-full mt-1">
