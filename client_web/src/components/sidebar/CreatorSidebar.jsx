@@ -7,7 +7,7 @@ import { common } from "../../utils/path";
 import { logout } from "../../store/user/userSlice";
 import withBaseComponent from "../../hocs/withBaseComponent";
 
-const { AiOutlineCaretDown, AiOutlineCaretRight } = icons;
+const { AiOutlineCaretDown, AiOutlineCaretRight, AiOutlineDown } = icons;
 
 const activedStyle = "px-4 py-2 flex items-center gap-2 bg-blue-500";
 const notActivedStyle = "px-4 py-2 flex items-center gap-2 hover:bg-blue-100";
@@ -22,7 +22,7 @@ const CreatorSidebar = ({ dispatch, navigate }) => {
   };
 
   return (
-    <div className=" bg-white h-full py-4">
+    <div className=" bg-[#4E73DF] text-white h-full py-4">
       <div>
         {creatorSidebar.map((el) => (
           <Fragment key={el.id}>

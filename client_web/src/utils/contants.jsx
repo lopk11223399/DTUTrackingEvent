@@ -59,6 +59,13 @@ export const creatorSidebar = [
     path: `/${pathCreator.CREATOR}/${pathCreator.CREATE_EVENT}`,
     icon: <MdGroups size={20} />,
   },
+  {
+    id: 3,
+    type: "SINGLE",
+    text: "List Event",
+    path: `/${pathCreator.CREATOR}/${pathCreator.LIST_EVENT}`,
+    icon: <MdGroups size={20} />,
+  },
 ];
 export const status = [
   {

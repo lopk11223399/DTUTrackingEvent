@@ -10,6 +10,7 @@ export const pathCreator = {
   // Member
   CREATOR: "creator",
   CREATE_EVENT: "create-event",
+  LIST_EVENT: "list-event",
 };
 
 export const common = {
