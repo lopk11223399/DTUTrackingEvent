@@ -1,25 +1,25 @@
-import { memo, Fragment, useState } from 'react'
-import { creatorSidebar } from '../../utils/contants'
-import { NavLink, Link } from 'react-router-dom'
-import clsx from 'clsx'
-import icons from '../../utils/icons'
-import { common } from '../../utils/path'
-import { logout } from '../../store/user/userSlice'
-import withBaseComponent from '../../hocs/withBaseComponent'
+import { memo, Fragment, useState } from "react";
+import { creatorSidebar } from "../../utils/contants";
+import { NavLink, Link } from "react-router-dom";
+import clsx from "clsx";
+import icons from "../../utils/icons";
+import { common } from "../../utils/path";
+import { logout } from "../../store/user/userSlice";
+import withBaseComponent from "../../hocs/withBaseComponent";
 
-const { AiOutlineCaretDown, AiOutlineCaretRight } = icons
+const { AiOutlineCaretDown, AiOutlineCaretRight } = icons;
 
 const activedStyle = 'px-4 py-2 flex items-center gap-2 bg-[#86A789]'
 const notActivedStyle = 'px-4 py-2 flex items-center gap-2 hover:bg-[#B2C8BA]'
 
 const CreatorSidebar = ({ dispatch, navigate }) => {
-	const [actived, setActived] = useState([])
+  const [actived, setActived] = useState([]);
 
-	const handleShowTabs = tabID => {
-		if (actived.some(el => el === tabID))
-			setActived(prev => prev.filter(el => el !== tabID))
-		else setActived(prev => [...prev, tabID])
-	}
+  const handleShowTabs = (tabID) => {
+    if (actived.some((el) => el === tabID))
+      setActived((prev) => prev.filter((el) => el !== tabID));
+    else setActived((prev) => [...prev, tabID]);
+  };
 
 	return (
 		<div className=' bg-white h-full py-4'>
@@ -87,4 +87,4 @@ const CreatorSidebar = ({ dispatch, navigate }) => {
 	)
 }
 
-export default withBaseComponent(memo(CreatorSidebar))
+export default withBaseComponent(memo(CreatorSidebar));

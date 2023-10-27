@@ -6,15 +6,17 @@ import withBaseComponent from '../hocs/withBaseComponent'
 import CalenderNavigator from './CalenderNavigator'
 import ProfileNavigator from './ProfileNavigator'
 import NotificationNavigator from './NotificationNavigator'
+import { useSelector } from 'react-redux'
 
 const BottomTabNavigator = ({ Entypo, Ionicons, AntDesign, FontAwesome5 }) => {
+	const { theme } = useSelector(state => state.app)
 	const Tab = createBottomTabNavigator()
 
 	return (
 		<Tab.Navigator
 			screenOptions={{
 				tabBarStyle: {
-					backgroundColor: '#161722',
+					backgroundColor: theme === 'light' ? '#f5f6fb' : '#0c0f1d',
 				},
 				tabBarLabelStyle: {
 					fontSize: 12,
@@ -22,7 +24,7 @@ const BottomTabNavigator = ({ Entypo, Ionicons, AntDesign, FontAwesome5 }) => {
 					textTransform: 'capitalize',
 				},
 				tabBarActiveTintColor: '#62a2f8',
-				tabBarInactiveTintColor: '#737377',
+				tabBarInactiveTintColor: theme === 'light' ? '#8592a3' : '#cecfd1',
 				headerShown: false,
 			}}>
 			<Tab.Screen
@@ -34,7 +36,11 @@ const BottomTabNavigator = ({ Entypo, Ionicons, AntDesign, FontAwesome5 }) => {
 						focused ? (
 							<Entypo name='home' size={24} color='#62a2f8' />
 						) : (
-							<Entypo name='home' size={24} color='#737377' />
+							<Entypo
+								name='home'
+								size={24}
+								color={theme === 'light' ? '#8592a3' : '#cecfd1'}
+							/>
 						),
 					headerShown: false,
 				}}
@@ -48,7 +54,11 @@ const BottomTabNavigator = ({ Entypo, Ionicons, AntDesign, FontAwesome5 }) => {
 						focused ? (
 							<Ionicons name='ios-notifications' size={24} color='#62a2f8' />
 						) : (
-							<Ionicons name='ios-notifications' size={24} color='#737377' />
+							<Ionicons
+								name='ios-notifications'
+								size={24}
+								color={theme === 'light' ? '#8592a3' : '#cecfd1'}
+							/>
 						),
 					headerShown: false,
 				}}
@@ -61,7 +71,11 @@ const BottomTabNavigator = ({ Entypo, Ionicons, AntDesign, FontAwesome5 }) => {
 						focused ? (
 							<AntDesign name='qrcode' size={24} color='#62a2f8' />
 						) : (
-							<AntDesign name='qrcode' size={24} color='#737377' />
+							<AntDesign
+								name='qrcode'
+								size={24}
+								color={theme === 'light' ? '#8592a3' : '#cecfd1'}
+							/>
 						),
 					headerShown: false,
 					tabBarStyle: { display: 'none' },
@@ -76,7 +90,11 @@ const BottomTabNavigator = ({ Entypo, Ionicons, AntDesign, FontAwesome5 }) => {
 						focused ? (
 							<Entypo name='calendar' size={24} color='#62a2f8' />
 						) : (
-							<Entypo name='calendar' size={24} color='#737377' />
+							<Entypo
+								name='calendar'
+								size={24}
+								color={theme === 'light' ? '#8592a3' : '#cecfd1'}
+							/>
 						),
 					headerShown: false,
 				}}
@@ -90,7 +108,11 @@ const BottomTabNavigator = ({ Entypo, Ionicons, AntDesign, FontAwesome5 }) => {
 						focused ? (
 							<FontAwesome5 name='user-cog' size={24} color='#62a2f8' />
 						) : (
-							<FontAwesome5 name='user-cog' size={24} color='#737377' />
+							<FontAwesome5
+								name='user-cog'
+								size={24}
+								color={theme === 'light' ? '#8592a3' : '#cecfd1'}
+							/>
 						),
 					headerShown: false,
 				}}

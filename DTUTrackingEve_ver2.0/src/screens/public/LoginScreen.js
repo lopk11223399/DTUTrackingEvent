@@ -28,7 +28,7 @@ const LoginScreen = ({
 	dispatch,
 	route,
 }) => {
-	const { current } = useSelector(state => state.user)
+	const { theme } = useSelector(state => state.app)
 	const [error, setError] = useState({
 		nameError: null,
 		passwordError: null,
@@ -89,15 +89,29 @@ const LoginScreen = ({
 	}
 
 	return (
-		<SafeAreaView className='flex-1 bg-background--primary--dark'>
-			<StatusBar barStyle={'light-content'} />
+		<SafeAreaView
+			className={clsx(
+				'flex-1',
+				theme === 'light' && 'bg-backgroundColor_main_light',
+				(theme === 'dark' || theme === 'dark-default') &&
+					'bg-backgroundColor_main_dark',
+			)}>
+			<StatusBar
+				barStyle={theme === 'light' ? 'dark-content' : 'light-content'}
+			/>
 
 			<KeyboardAwareScrollView>
 				<View className='w-full h-full items-center p-4'>
 					<Logo />
 
-					<View className='mt-[24px]'>
-						<Text className='capitalize text-[24px] font-[600] text-login--title--dark'>
+					<View className='mt-[12px]'>
+						<Text
+							className={clsx(
+								'capitalize text-[24px] font-[600] ',
+								theme === 'light' && 'text-textColor_main_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'text-textColor_main_dark',
+							)}>
 							đăng nhập tài khoản
 						</Text>
 					</View>
@@ -105,8 +119,15 @@ const LoginScreen = ({
 					<View className='w-full mt-[32px]'>
 						<View
 							className={clsx(
-								'bg-login--bg--button--inp--dark w-full px-3 rounded-md flex-row items-center border border-text-gray--dark',
-								error?.nameError && 'border-input--err--dark',
+								'w-full px-3 rounded-md flex-row items-center border',
+								theme === 'light' &&
+									'bg-inpBgColor_light border-inpBorder_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'bg-inpBgColor_dark border-inpBorder_dark',
+								error?.nameError && theme === 'light' && 'border-inpErr_light',
+								error?.nameError &&
+									(theme === 'dark' || theme === 'dark-default') &&
+									'border-inpErr_dark',
 							)}>
 							<TextInput
 								value={payload.name}
@@ -118,8 +139,13 @@ const LoginScreen = ({
 									setPayload(prev => ({ ...prev, name: text }))
 								}}
 								placeholder='Tên Người Dùng'
-								className='text-[16px] py-[12px] flex-1 text-input--text--dark'
-								placeholderTextColor={'#4e535c'}
+								className={clsx(
+									'text-[16px] py-[12px] flex-1',
+									theme === 'light' && 'text-inpText_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-inpText_dark',
+								)}
+								placeholderTextColor={theme === 'light' ? '#c1c2c7' : '#575c66'}
 							/>
 							{payload.name && payload.name !== '' && (
 								<Pressable
@@ -127,13 +153,19 @@ const LoginScreen = ({
 									<Ionicons
 										name='close-circle-outline'
 										size={24}
-										color='#d6d6db'
+										color={theme === 'light' ? '#c1c2c7' : '#575c66'}
 									/>
 								</Pressable>
 							)}
 						</View>
 						{error?.nameError && (
-							<Text className='mt-[4px] font-[400] text-[12px] text-input--err--dark'>
+							<Text
+								className={clsx(
+									'mt-[4px] font-[400] text-[12px]',
+									theme === 'light' && 'text-inpErr_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-inpErr_dark',
+								)}>
 								{error?.nameError}
 							</Text>
 						)}
@@ -143,7 +175,16 @@ const LoginScreen = ({
 						<View
 							className={clsx(
 								'bg-login--bg--button--inp--dark w-full px-3 rounded-md flex-row items-center border border-text-gray--dark',
-								error?.passwordError && 'border-input--err--dark',
+								theme === 'light' &&
+									'bg-inpBgColor_light border-inpBorder_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'bg-inpBgColor_dark border-inpBorder_dark',
+								error?.passwordError &&
+									theme === 'light' &&
+									'border-inpErr_light',
+								error?.passwordError &&
+									(theme === 'dark' || theme === 'dark-default') &&
+									'border-inpErr_dark',
 							)}>
 							<TextInput
 								secureTextEntry={passwordHiden}
@@ -156,8 +197,13 @@ const LoginScreen = ({
 									setPayload(prev => ({ ...prev, password: text }))
 								}}
 								placeholder='Mật khẩu'
-								className='text-[16px] py-[12px] flex-1 text-input--text--dark'
-								placeholderTextColor={'#4e535c'}
+								className={clsx(
+									'text-[16px] py-[12px] flex-1',
+									theme === 'light' && 'text-inpText_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-inpText_dark',
+								)}
+								placeholderTextColor={theme === 'light' ? '#c1c2c7' : '#575c66'}
 							/>
 							{payload.password && payload.password !== '' && (
 								<Pressable
@@ -167,7 +213,7 @@ const LoginScreen = ({
 									<Ionicons
 										name='close-circle-outline'
 										size={24}
-										color='#d6d6db'
+										color={theme === 'light' ? '#c1c2c7' : '#575c66'}
 									/>
 								</Pressable>
 							)}
@@ -176,35 +222,54 @@ const LoginScreen = ({
 								className='ml-2'
 								onPress={() => setPasswordHiden(!passwordHiden)}>
 								{!passwordHiden ? (
-									<Entypo name='eye-with-line' size={24} color='#d6d6db' />
+									<Entypo
+										name='eye-with-line'
+										size={24}
+										color={theme === 'light' ? '#c1c2c7' : '#575c66'}
+									/>
 								) : (
-									<Entypo name='eye' size={24} color='#d6d6db' />
+									<Entypo
+										name='eye'
+										size={24}
+										color={theme === 'light' ? '#c1c2c7' : '#575c66'}
+									/>
 								)}
 							</Pressable>
 						</View>
 						{error?.passwordError && (
-							<Text className='mt-[4px] font-[400] text-[12px] text-input--err--dark'>
+							<Text
+								className={clsx(
+									'mt-[4px] font-[400] text-[12px]',
+									theme === 'light' && 'text-inpErr_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-inpErr_dark',
+								)}>
 								{error?.passwordError}
 							</Text>
 						)}
 					</View>
 
 					<Button
-						style='w-full h-[44px] mt-[39px] bg-bg-input-active--dark rounded-[8px]'
-						styleText='text-[16px] text-text-white--dark'
+						style={clsx(
+							'w-full h-[44px] mt-[39px] rounded-[8px]',
+							theme === 'light' && 'bg-tColor_bg_light',
+							(theme === 'dark' || theme === 'dark-default') &&
+								'bg-tColor_bg_dark',
+						)}
+						styleText='text-[16px] text-tColor_text'
 						children='đăng nhập'
 						handlePress={handleSubmit}
 					/>
 
 					<View className='flex-row justify-between w-full mt-[20px]'>
 						<Pressable onPress={() => setModalVisible(true)}>
-							<Text className='text-login--text--navigate--dark capitalize text-[16px]'>
+							<Text className='text-tColor_text capitalize text-[16px]'>
 								gặp khó khăn
 							</Text>
 						</Pressable>
 
 						<Pressable onPress={() => navigate('Register')}>
-							<Text className='text-login--text--navigate--dark capitalize text-[16px]'>
+							<Text className='text-tColor_text capitalize text-[16px]'>
 								đăng ký ngay
 							</Text>
 						</Pressable>
@@ -218,7 +283,11 @@ const LoginScreen = ({
 					Platform.OS === 'ios' ? 'top-[10%] left-[5%]' : 'top-[5%] left-[5%]',
 				)}>
 				<Pressable onPress={() => goBack()}>
-					<Ionicons name='md-chevron-back' size={50} color='white' />
+					<Ionicons
+						name='md-chevron-back'
+						size={50}
+						color={theme === 'light' ? '#000000d9' : '#ffffffd9'}
+					/>
 				</Pressable>
 			</View>
 
@@ -229,12 +298,19 @@ const LoginScreen = ({
 				animationOut={'fadeOutDown'}>
 				<View
 					className={clsx(
-						`w-[320px] h-[465px] px-5 mx-auto items-center bg-background--secondary--dark rounded-md`,
+						`w-[320px] h-[465px] px-5 mx-auto items-center rounded-md`,
+						theme === 'light' && 'bg-backgroundColor_main_light',
+						(theme === 'dark' || theme === 'dark-default') &&
+							'bg-backgroundColor_main_dark',
 					)}>
 					<Pressable
 						onPress={() => setModalVisible(false)}
 						className='self-end pt-4'>
-						<Ionicons name='close' size={24} color='#737377' />
+						<Ionicons
+							name='close'
+							size={24}
+							color={theme === 'light' ? '#000000d9' : '#ffffffd9'}
+						/>
 					</Pressable>
 
 					<Image
@@ -242,7 +318,13 @@ const LoginScreen = ({
 						className='w-[240px] h-[240px] object-cover'
 					/>
 
-					<Text className='capitalize text-text-gray--dark mb-[32px] font-[500] text-[14px] tracking-[0.1px]'>
+					<Text
+						className={clsx(
+							'capitalize mb-[32px] font-[500] text-[14px] tracking-[0.1px]',
+							theme === 'light' && 'text-textColor_secondary_light',
+							(theme === 'dark' || theme === 'dark-default') &&
+								'text-textColor_secondary_dark',
+						)}>
 						gặp khó khăn
 					</Text>
 
@@ -252,14 +334,24 @@ const LoginScreen = ({
 							navigate('ForgotPassword')
 						}}
 						children='quên mật khẩu'
-						style='bg-bg-input-active--dark w-full h-[44px]'
-						styleText='text-input--text--dark text-[16px] font-[600]'
+						style={clsx(
+							'w-full h-[44px]',
+							theme === 'light' && 'bg-tColor_bg_light',
+							(theme === 'dark' || theme === 'dark-default') &&
+								'bg-tColor_bg_dark',
+						)}
+						styleText={clsx('text-[16px] font-[600] text-tColor_text')}
 					/>
 
 					<Button
 						children='vấn đề thường gặp'
-						style='bg-bg-input-active--dark w-full h-[44px] mt-[15px]'
-						styleText='text-input--text--dark text-[16px] font-[600]'
+						style={clsx(
+							'w-full h-[44px] mt-[15px]',
+							theme === 'light' && 'bg-tColor_bg_light',
+							(theme === 'dark' || theme === 'dark-default') &&
+								'bg-tColor_bg_dark',
+						)}
+						styleText={clsx('text-tColor_text text-[16px] font-[600]')}
 					/>
 				</View>
 			</Modal>

@@ -12,6 +12,7 @@ import {
 	PURGE,
 	REGISTER,
 } from 'redux-persist'
+import appSlice from './app/appSlice'
 
 const persistConfig = {
 	key: 'app/user',
@@ -25,6 +26,7 @@ const userConfig = {
 
 export const store = configureStore({
 	reducer: {
+		app: appSlice,
 		event: eventSlice,
 		user: persistReducer(userConfig, userSlice),
 	},

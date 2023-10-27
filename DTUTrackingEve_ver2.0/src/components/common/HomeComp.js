@@ -49,7 +49,7 @@ const HomeComp = ({ navigation: { navigate }, layout, dispatch }) => {
 						</Pressable>
 					</View>
 					<SliderBox
-						images={hotEvents?.map(el => el?.eventData.image)}
+						images={hotEvents?.map(el => el?.image)}
 						ImageComponentStyle={{
 							marginRight: 24,
 							width: layout.width - 24,
@@ -63,7 +63,7 @@ const HomeComp = ({ navigation: { navigate }, layout, dispatch }) => {
 						onCurrentImagePressed={index => {
 							const eventTarget = hotEvents?.find((el, id) => index === id)
 							navigate('DetailEvent', {
-								eventId: eventTarget?.eventData.id,
+								eventId: eventTarget?.id,
 							})
 						}}
 					/>

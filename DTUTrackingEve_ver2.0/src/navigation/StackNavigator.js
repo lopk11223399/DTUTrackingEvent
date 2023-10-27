@@ -8,27 +8,26 @@ import {
 	RegisterScreen,
 } from '../screens'
 import BottomTabNavigator from './BottomTabNavigator'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { darkView, lightView, settingView } from '../utils/contants'
+import { changeTheme } from '../store/app/appSlice'
 
 const StackNavigator = () => {
 	const Stack = createNativeStackNavigator()
 	const dispatch = useDispatch()
 
-	// useEffect(() => {
-	// 	const getView = async () => {
-	// 		try {
-	// 			const response =
-	// 				(await AsyncStorage.getItem('ViewApp')) || settingView[0].value
-	// 			if (response === settingView[0].value) dispatch(addTheme(darkView))
-	// 			else if (response === settingView[1].value)
-	// 				dispatch(addTheme(lightView))
-	// 			else if (response === settingView[2].value) dispatch(addTheme(darkView))
-	// 		} catch (error) {}
-	// 	}
-	// 	getView()
-	// }, [])
+	useEffect(() => {
+		const getView = async () => {
+			try {
+				const response = await AsyncStorage.getItem('ViewApp')
+				if (response) dispatch(changeTheme({ theme: response }))
+				else dispatch(changeTheme({ theme: 'dark-default' }))
+			} catch (error) {}
+		}
+
+		getView()
+	}, [])
+
 	return (
 		<NavigationContainer>
 			<Stack.Navigator>

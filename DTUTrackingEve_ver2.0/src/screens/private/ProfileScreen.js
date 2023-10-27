@@ -47,6 +47,7 @@ const ProfileScreen = ({
 		joinEvent,
 		joinEventCount,
 	} = useSelector(state => state.user)
+	const { theme } = useSelector(state => state.app)
 	const animatedValue = useRef(new Animated.Value(0)).current
 	// const [eventFollowed, setEventFollowed] = useState([])
 	// const [eventJoined, setEventJoined] = useState([])
@@ -120,15 +121,34 @@ const ProfileScreen = ({
 
 	if (current === null) {
 		return (
-			<SafeAreaView className='bg-background--primary--dark flex-1'>
+			<SafeAreaView
+				className={clsx(
+					'flex-1',
+					theme === 'light' && 'bg-backgroundColor_main_light',
+					(theme === 'dark' || theme === 'dark-default') &&
+						'bg-backgroundColor_main_dark',
+				)}>
+				<StatusBar
+					barStyle={theme === 'light' ? 'dark-content' : 'light-content'}
+				/>
 				<View className='w-full flex-row px-4 items-center py-2'>
 					<View className='flex-1 items-center'>
-						<Text className='text-[22px] font-[700] text-text-white--dark capitalize ml-4'>
+						<Text
+							className={clsx(
+								'text-[22px] font-[700] text-text-white--dark capitalize ml-4',
+								theme === 'light' && 'text-textColor_main_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'text-textColor_main_dark',
+							)}>
 							của tôi
 						</Text>
 					</View>
 					<Pressable onPress={() => navigate('Setting')}>
-						<Ionicons name='settings-outline' size={24} color='#ffffff' />
+						<Ionicons
+							name='settings-outline'
+							size={24}
+							color={theme === 'light' ? '#000000d9' : '#ffffffd9'}
+						/>
 					</Pressable>
 				</View>
 				<View className='flex-1 justify-center'>
@@ -139,9 +159,14 @@ const ProfileScreen = ({
 	}
 
 	return (
-		<View className='flex-1 bg-background--primary--dark none'>
-			<StatusBar barStyle={'light-content'} />
-			<View className={clsx(Platform.OS === 'ios' ? 'h-[60px]' : 'h-[20px]')} />
+		<View
+			className={clsx(
+				'flex-1',
+				theme === 'light' && 'bg-backgroundColor_main_light',
+				(theme === 'dark' || theme === 'dark-default') &&
+					'bg-backgroundColor_main_dark',
+			)}>
+			<View className={clsx(Platform.OS === 'ios' ? 'h-[50px]' : 'h-[20px]')} />
 			<View className='absolute w-full h-[300px]'>
 				<View>
 					<Image
@@ -152,7 +177,10 @@ const ProfileScreen = ({
 					/>
 				</View>
 			</View>
-			<SafeAreaView className='h-[40px]'>
+			<SafeAreaView className='h-[40px] justify-center'>
+				<StatusBar
+					barStyle={theme === 'light' ? 'dark-content' : 'light-content'}
+				/>
 				<View className='w-full px-4 justify-between flex-row'>
 					<AnimatedAvatarHeader
 						style={[avatarHeaderAnimation]}
@@ -165,16 +193,16 @@ const ProfileScreen = ({
 							}
 							className='w-[30px] h-[30px] rounded-full'
 						/>
-						<Text className='ml-2 font-[500] text-text-gray--dark'>
+						<Text className={clsx('ml-2 font-[500] text-textColor_main_light')}>
 							{current.name}
 						</Text>
 					</AnimatedAvatarHeader>
 					<View className='flex-row items-center'>
 						<Pressable onPress={() => navigate('ChangeBackgroundScreen')}>
-							<Ionicons name='color-wand-outline' size={24} color='#ffffff' />
+							<Ionicons name='color-wand-outline' size={24} color='black' />
 						</Pressable>
 						<Pressable onPress={() => navigate('Setting')} className='pl-5 '>
-							<Ionicons name='settings-outline' size={24} color='#ffffff' />
+							<Ionicons name='settings-outline' size={24} color='black' />
 						</Pressable>
 					</View>
 				</View>
@@ -188,7 +216,10 @@ const ProfileScreen = ({
 				<View className='h-[56px]' />
 				<View
 					className={clsx(
-						`h-full bg-background--primary--dark rounded-t-[16px]`,
+						`h-full rounded-t-[16px]`,
+						theme === 'light' && 'bg-backgroundColor_main_light',
+						(theme === 'dark' || theme === 'dark-default') &&
+							'bg-backgroundColor_main_dark',
 					)}>
 					<View className='px-3'>
 						<AnimatedAvatar
@@ -226,7 +257,13 @@ const ProfileScreen = ({
 						</AnimatedButtonUpdate>
 						<View className='mt-2'>
 							<View className='flex-row items-center mt-1'>
-								<Text className='text-text-white--dark text-[22px] font-[700]'>
+								<Text
+									className={clsx(
+										'text-text-white--dark text-[22px] font-[700]',
+										theme === 'light' && 'text-textColor_secondary_light',
+										(theme === 'dark' || theme === 'dark-default') &&
+											'text-textColor_secondary_dark',
+									)}>
 									{current?.name}
 								</Text>
 								<View
@@ -301,43 +338,102 @@ const ProfileScreen = ({
 						</View>
 						<View className='flex-row mt-4 justify-around'>
 							<View className='w-[25%] items-center'>
-								<Text className='text-[22px] text-text-white--dark'>
+								<Text
+									className={clsx(
+										'text-[22px] text-text-white--dark',
+										theme === 'light' && 'text-textColor_main_light',
+										(theme === 'dark' || theme === 'dark-default') &&
+											'text-textColor_main_dark',
+									)}>
 									{followEventCount || 0}
 								</Text>
-								<Text className='capitalize text-[14px] text-text-gray--dark font-[500]'>
+								<Text
+									className={clsx(
+										'capitalize text-[14px] text-text-gray--dark font-[500]',
+										theme === 'light' && 'text-textColor_secondary_light',
+										(theme === 'dark' || theme === 'dark-default') &&
+											'text-textColor_secondary_dark',
+									)}>
 									theo dõi
 								</Text>
 							</View>
 							<View className='w-[25%] items-center'>
-								<Text className='text-[22px] text-text-white--dark'>
+								<Text
+									className={clsx(
+										'text-[22px] text-text-white--dark',
+										theme === 'light' && 'text-textColor_main_light',
+										(theme === 'dark' || theme === 'dark-default') &&
+											'text-textColor_main_dark',
+									)}>
 									{joinEventCount || 0}
 								</Text>
-								<Text className='capitalize text-[14px] text-text-gray--dark font-[500]'>
+								<Text
+									className={clsx(
+										'capitalize text-[14px] text-text-gray--dark font-[500]',
+										theme === 'light' && 'text-textColor_secondary_light',
+										(theme === 'dark' || theme === 'dark-default') &&
+											'text-textColor_secondary_dark',
+									)}>
 									tham gia
 								</Text>
 							</View>
 							<View className='w-[25%] items-center'>
-								<Text className='text-[22px] text-text-white--dark'>0</Text>
-								<Text className='capitalize text-[14px] text-text-gray--dark font-[500]'>
+								<Text
+									className={clsx(
+										'text-[22px] text-text-white--dark',
+										theme === 'light' && 'text-textColor_main_light',
+										(theme === 'dark' || theme === 'dark-default') &&
+											'text-textColor_main_dark',
+									)}>
+									0
+								</Text>
+								<Text
+									className={clsx(
+										'capitalize text-[14px] text-text-gray--dark font-[500]',
+										theme === 'light' && 'text-textColor_secondary_light',
+										(theme === 'dark' || theme === 'dark-default') &&
+											'text-textColor_secondary_dark',
+									)}>
 									đánh giá
 								</Text>
 							</View>
 							<View className='w-[25%] items-center'>
-								<Text className='text-[22px] text-text-white--dark'>
+								<Text
+									className={clsx(
+										'text-[22px] text-text-white--dark',
+										theme === 'light' && 'text-textColor_main_light',
+										(theme === 'dark' || theme === 'dark-default') &&
+											'text-textColor_main_dark',
+									)}>
 									{current?.studentData?.point || 0}
 								</Text>
-								<Text className='capitalize text-[14px] text-text-gray--dark font-[500]'>
+								<Text
+									className={clsx(
+										'capitalize text-[14px] text-text-gray--dark font-[500]',
+										theme === 'light' && 'text-textColor_secondary_light',
+										(theme === 'dark' || theme === 'dark-default') &&
+											'text-textColor_secondary_dark',
+									)}>
 									điểm
 								</Text>
 							</View>
 						</View>
 						<View className='mt-4 min-h-[180px]'>
 							<View className='mb-2 flex-row justify-between'>
-								<Text className='text-[17px] font-[700] text-text-white--dark capitalize'>
+								<Text
+									className={clsx(
+										'text-[17px] font-[700] capitalize',
+										theme === 'light' && 'text-textColor_main_light',
+										(theme === 'dark' || theme === 'dark-default') &&
+											'text-textColor_main_dark',
+									)}>
 									{`Sự kiện đã theo dõi (${followEventCount})`}
 								</Text>
 								<Pressable onPress={() => navigate('ListEventFollowCurrent')}>
-									<Text className='capitalize text-[14px] font-[700] text-login--text--navigate--dark'>
+									<Text
+										className={clsx(
+											'capitalize text-[14px] font-[700] text-tColor_text',
+										)}>
 										xem tất cả
 									</Text>
 								</Pressable>
@@ -374,7 +470,12 @@ const ProfileScreen = ({
 												<View className='mt-1'>
 													<Text
 														numberOfLines={2}
-														className='text-[15px] font-bold text-text-white--dark'>
+														className={clsx(
+															'text-[15px] font-bold text-text-white--dark',
+															theme === 'light' && 'text-textColor_main_light',
+															(theme === 'dark' || theme === 'dark-default') &&
+																'text-textColor_main_dark',
+														)}>
 														{item.eventData.title}
 													</Text>
 												</View>
@@ -390,11 +491,17 @@ const ProfileScreen = ({
 						</View>
 						<View className='my-4 min-h-[180px]'>
 							<View className='mb-2 flex-row justify-between'>
-								<Text className='text-[17px] font-[700] text-text-white--dark capitalize'>
+								<Text
+									className={clsx(
+										'text-[17px] font-[700] capitalize',
+										theme === 'light' && 'text-textColor_main_light',
+										(theme === 'dark' || theme === 'dark-default') &&
+											'text-textColor_main_dark',
+									)}>
 									{`Sự kiện đã tham gia (${joinEventCount})`}
 								</Text>
 								<Pressable onPress={() => navigate('ListEventJoinCurrent')}>
-									<Text className='capitalize text-[14px] font-[700] text-login--text--navigate--dark'>
+									<Text className='capitalize text-[14px] font-[700] text-tColor_text'>
 										xem tất cả
 									</Text>
 								</Pressable>
@@ -431,7 +538,12 @@ const ProfileScreen = ({
 												<View className='mt-1'>
 													<Text
 														numberOfLines={2}
-														className='text-[15px] font-bold text-text-white--dark'>
+														className={clsx(
+															'text-[15px] font-bold text-text-white--dark',
+															theme === 'light' && 'text-textColor_main_light',
+															(theme === 'dark' || theme === 'dark-default') &&
+																'text-textColor_main_dark',
+														)}>
 														{item.eventData.title}
 													</Text>
 												</View>

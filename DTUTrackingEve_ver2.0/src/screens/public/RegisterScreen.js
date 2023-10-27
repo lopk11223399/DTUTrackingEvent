@@ -14,12 +14,10 @@ import Button from '../../components/button/Button'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import clsx from 'clsx'
 import { apiRegister } from '../../apis'
+import { useSelector } from 'react-redux'
 
-const RegisterScreen = ({
-	navigation: { navigate, goBack },
-	Ionicons,
-	Entypo,
-}) => {
+const RegisterScreen = ({ navigation: { navigate }, Ionicons, Entypo }) => {
+	const { theme } = useSelector(state => state.app)
 	const [error, setError] = useState({
 		nameErr: null,
 		emailErr: null,
@@ -91,6 +89,7 @@ const RegisterScreen = ({
 					email: '',
 					password: '',
 				})
+				setPasswordAgain('')
 				Alert.alert('Thành Công', reponse.mess, [
 					{
 						text: 'Hủy',
@@ -108,15 +107,29 @@ const RegisterScreen = ({
 	}
 
 	return (
-		<SafeAreaView className='flex-1 bg-background--primary--dark relative'>
-			<StatusBar barStyle={'light-content'} />
+		<SafeAreaView
+			className={clsx(
+				'flex-1 bg-background--primary--dark',
+				theme === 'light' && 'bg-backgroundColor_main_light',
+				(theme === 'dark' || theme === 'dark-default') &&
+					'bg-backgroundColor_main_dark',
+			)}>
+			<StatusBar
+				barStyle={theme === 'light' ? 'dark-content' : 'light-content'}
+			/>
 
 			<KeyboardAwareScrollView>
 				<View className='w-full h-full p-4 items-center'>
 					<Logo />
 
-					<View className='mt-[24px]'>
-						<Text className='capitalize text-[24px] font-[600] text-login--title--dark'>
+					<View className='mt-[12px]'>
+						<Text
+							className={clsx(
+								'capitalize text-[24px] font-[600]',
+								theme === 'light' && 'text-textColor_main_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'text-textColor_main_dark',
+							)}>
 							đăng ký
 						</Text>
 					</View>
@@ -124,8 +137,15 @@ const RegisterScreen = ({
 					<View className='w-full mt-[32px]'>
 						<View
 							className={clsx(
-								'bg-login--bg--button--inp--dark w-full px-3 rounded-md flex-row items-center border border-text-gray--dark',
-								error?.nameErr && 'border-input--err--dark',
+								'w-full px-3 rounded-md flex-row items-center border',
+								theme === 'light' &&
+									'bg-inpBgColor_light border-inpBorder_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'bg-inpBgColor_dark border-inpBorder_dark',
+								error?.nameErr && theme === 'light' && 'border-inpErr_light',
+								error?.nameErr &&
+									(theme === 'dark' || theme === 'dark-default') &&
+									'border-inpErr_dark',
 							)}>
 							<TextInput
 								value={payload.name}
@@ -143,8 +163,13 @@ const RegisterScreen = ({
 									setPayload(prev => ({ ...prev, name: text }))
 								}}
 								placeholder='Tên người dùng'
-								className='text-[16px] py-[12px] flex-1 text-input--text--dark'
-								placeholderTextColor={'#4e535c'}
+								className={clsx(
+									'text-[16px] py-[12px] flex-1',
+									theme === 'light' && 'text-inpText_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-inpText_dark',
+								)}
+								placeholderTextColor={theme === 'light' ? '#c1c2c7' : '#575c66'}
 							/>
 							{payload.name !== '' && (
 								<Pressable
@@ -152,13 +177,19 @@ const RegisterScreen = ({
 									<Ionicons
 										name='close-circle-outline'
 										size={24}
-										color='#d6d6db'
+										color={theme === 'light' ? '#c1c2c7' : '#575c66'}
 									/>
 								</Pressable>
 							)}
 						</View>
 						{error?.nameErr && (
-							<Text className='mt-[4px] font-[400] text-[12px] text-input--err--dark'>
+							<Text
+								className={clsx(
+									'mt-[4px] font-[400] text-[12px]',
+									theme === 'light' && 'text-inpErr_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-inpErr_dark',
+								)}>
 								{error?.nameErr}
 							</Text>
 						)}
@@ -167,8 +198,17 @@ const RegisterScreen = ({
 					<View className='w-full mt-[19px]'>
 						<View
 							className={clsx(
-								'bg-login--bg--button--inp--dark w-full px-3 rounded-md flex-row items-center border border-text-gray--dark',
-								error?.usernameErr && 'border-input--err--dark',
+								'w-full px-3 rounded-md flex-row items-center border',
+								theme === 'light' &&
+									'bg-inpBgColor_light border-inpBorder_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'bg-inpBgColor_dark border-inpBorder_dark',
+								error?.usernameErr &&
+									theme === 'light' &&
+									'border-inpErr_light',
+								error?.usernameErr &&
+									(theme === 'dark' || theme === 'dark-default') &&
+									'border-inpErr_dark',
 							)}>
 							<TextInput
 								value={payload.username}
@@ -186,8 +226,13 @@ const RegisterScreen = ({
 									setPayload(prev => ({ ...prev, username: text }))
 								}}
 								placeholder='Tài khoản người dùng'
-								className='text-[16px] py-[12px] flex-1 text-input--text--dark'
-								placeholderTextColor={'#4e535c'}
+								className={clsx(
+									'text-[16px] py-[12px] flex-1',
+									theme === 'light' && 'text-inpText_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-inpText_dark',
+								)}
+								placeholderTextColor={theme === 'light' ? '#c1c2c7' : '#575c66'}
 							/>
 							{payload.username !== '' && (
 								<Pressable
@@ -197,13 +242,19 @@ const RegisterScreen = ({
 									<Ionicons
 										name='close-circle-outline'
 										size={24}
-										color='#d6d6db'
+										color={theme === 'light' ? '#c1c2c7' : '#575c66'}
 									/>
 								</Pressable>
 							)}
 						</View>
 						{error?.usernameErr && (
-							<Text className='mt-[4px] font-[400] text-[12px] text-input--err--dark'>
+							<Text
+								className={clsx(
+									'mt-[4px] font-[400] text-[12px]',
+									theme === 'light' && 'text-inpErr_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-inpErr_dark',
+								)}>
 								{error?.usernameErr}
 							</Text>
 						)}
@@ -212,8 +263,15 @@ const RegisterScreen = ({
 					<View className='w-full mt-[19px]'>
 						<View
 							className={clsx(
-								'bg-login--bg--button--inp--dark w-full px-3 rounded-md flex-row items-center border border-text-gray--dark',
-								error?.emailErr && 'border-input--err--dark',
+								'w-full px-3 rounded-md flex-row items-center border',
+								theme === 'light' &&
+									'bg-inpBgColor_light border-inpBorder_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'bg-inpBgColor_dark border-inpBorder_dark',
+								error?.emailErr && theme === 'light' && 'border-inpErr_light',
+								error?.emailErr &&
+									(theme === 'dark' || theme === 'dark-default') &&
+									'border-inpErr_dark',
 							)}>
 							<TextInput
 								value={payload.email}
@@ -239,8 +297,13 @@ const RegisterScreen = ({
 									setPayload(prev => ({ ...prev, email: text }))
 								}}
 								placeholder='Email'
-								className='text-[16px] py-[12px] flex-1 text-input--text--dark'
-								placeholderTextColor={'#4e535c'}
+								className={clsx(
+									'text-[16px] py-[12px] flex-1',
+									theme === 'light' && 'text-inpText_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-inpText_dark',
+								)}
+								placeholderTextColor={theme === 'light' ? '#c1c2c7' : '#575c66'}
 							/>
 							{payload.email !== '' && (
 								<Pressable
@@ -248,13 +311,19 @@ const RegisterScreen = ({
 									<Ionicons
 										name='close-circle-outline'
 										size={24}
-										color='#d6d6db'
+										color={theme === 'light' ? '#c1c2c7' : '#575c66'}
 									/>
 								</Pressable>
 							)}
 						</View>
 						{error?.emailErr && (
-							<Text className='mt-[4px] font-[400] text-[12px] text-input--err--dark'>
+							<Text
+								className={clsx(
+									'mt-[4px] font-[400] text-[12px]',
+									theme === 'light' && 'text-inpErr_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-inpErr_dark',
+								)}>
 								{error?.emailErr}
 							</Text>
 						)}
@@ -263,8 +332,17 @@ const RegisterScreen = ({
 					<View className='w-full mt-[19px]'>
 						<View
 							className={clsx(
-								'bg-login--bg--button--inp--dark w-full px-3 rounded-md flex-row items-center border border-text-gray--dark',
-								error?.passwordErr && 'border-input--err--dark',
+								'w-full px-3 rounded-md flex-row items-center border',
+								theme === 'light' &&
+									'bg-inpBgColor_light border-inpBorder_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'bg-inpBgColor_dark border-inpBorder_dark',
+								error?.passwordErr &&
+									theme === 'light' &&
+									'border-inpErr_light',
+								error?.passwordErr &&
+									(theme === 'dark' || theme === 'dark-default') &&
+									'border-inpErr_dark',
 							)}>
 							<TextInput
 								secureTextEntry={passwordHiden}
@@ -283,8 +361,13 @@ const RegisterScreen = ({
 									setPayload(prev => ({ ...prev, password: text }))
 								}}
 								placeholder='Vui lòng nhập mật khẩu'
-								className='text-[16px] py-[12px] flex-1 text-input--text--dark'
-								placeholderTextColor={'#4e535c'}
+								className={clsx(
+									'text-[16px] py-[12px] flex-1',
+									theme === 'light' && 'text-inpText_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-inpText_dark',
+								)}
+								placeholderTextColor={theme === 'light' ? '#c1c2c7' : '#575c66'}
 							/>
 							{payload.password !== '' && (
 								<Pressable
@@ -294,7 +377,7 @@ const RegisterScreen = ({
 									<Ionicons
 										name='close-circle-outline'
 										size={24}
-										color='#d6d6db'
+										color={theme === 'light' ? '#c1c2c7' : '#575c66'}
 									/>
 								</Pressable>
 							)}
@@ -303,14 +386,28 @@ const RegisterScreen = ({
 								className='ml-2'
 								onPress={() => setPasswordHiden(!passwordHiden)}>
 								{!passwordHiden ? (
-									<Entypo name='eye-with-line' size={24} color='#d6d6db' />
+									<Entypo
+										name='eye-with-line'
+										size={24}
+										color={theme === 'light' ? '#c1c2c7' : '#575c66'}
+									/>
 								) : (
-									<Entypo name='eye' size={24} color='#d6d6db' />
+									<Entypo
+										name='eye'
+										size={24}
+										color={theme === 'light' ? '#c1c2c7' : '#575c66'}
+									/>
 								)}
 							</Pressable>
 						</View>
 						{error?.passwordErr && (
-							<Text className='mt-[4px] font-[400] text-[12px] text-input--err--dark'>
+							<Text
+								className={clsx(
+									'mt-[4px] font-[400] text-[12px]',
+									theme === 'light' && 'text-inpErr_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-inpErr_dark',
+								)}>
 								{error?.passwordErr}
 							</Text>
 						)}
@@ -319,8 +416,17 @@ const RegisterScreen = ({
 					<View className='w-full mt-[19px]'>
 						<View
 							className={clsx(
-								'bg-login--bg--button--inp--dark w-full px-3 rounded-md flex-row items-center border border-text-gray--dark',
-								error?.passwordAgainErr && 'border-input--err--dark',
+								'w-full px-3 rounded-md flex-row items-center border',
+								theme === 'light' &&
+									'bg-inpBgColor_light border-inpBorder_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'bg-inpBgColor_dark border-inpBorder_dark',
+								error?.passwordAgainErr &&
+									theme === 'light' &&
+									'border-inpErr_light',
+								error?.passwordAgainErr &&
+									(theme === 'dark' || theme === 'dark-default') &&
+									'border-inpErr_dark',
 							)}>
 							<TextInput
 								secureTextEntry={passwordHiden}
@@ -339,8 +445,13 @@ const RegisterScreen = ({
 										}))
 								}}
 								placeholder='Vui lòng nhập lại mật khẩu'
-								className='text-[16px] py-[12px] flex-1 text-input--text--dark'
-								placeholderTextColor={'#4e535c'}
+								className={clsx(
+									'text-[16px] py-[12px] flex-1',
+									theme === 'light' && 'text-inpText_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-inpText_dark',
+								)}
+								placeholderTextColor={theme === 'light' ? '#c1c2c7' : '#575c66'}
 							/>
 
 							{passwordAgain !== '' && (
@@ -348,7 +459,7 @@ const RegisterScreen = ({
 									<Ionicons
 										name='close-circle-outline'
 										size={24}
-										color='#d6d6db'
+										color={theme === 'light' ? '#c1c2c7' : '#575c66'}
 									/>
 								</Pressable>
 							)}
@@ -357,14 +468,28 @@ const RegisterScreen = ({
 								className='ml-2'
 								onPress={() => setPasswordHiden(!passwordHiden)}>
 								{!passwordHiden ? (
-									<Entypo name='eye-with-line' size={24} color='#d6d6db' />
+									<Entypo
+										name='eye-with-line'
+										size={24}
+										color={theme === 'light' ? '#c1c2c7' : '#575c66'}
+									/>
 								) : (
-									<Entypo name='eye' size={24} color='#d6d6db' />
+									<Entypo
+										name='eye'
+										size={24}
+										color={theme === 'light' ? '#c1c2c7' : '#575c66'}
+									/>
 								)}
 							</Pressable>
 						</View>
 						{error?.passwordAgainErr && (
-							<Text className='mt-[4px] font-[400] text-[12px] text-input--err--dark'>
+							<Text
+								className={clsx(
+									'mt-[4px] font-[400] text-[12px]',
+									theme === 'light' && 'text-inpErr_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-inpErr_dark',
+								)}>
 								{error?.passwordAgainErr}
 							</Text>
 						)}
@@ -372,33 +497,34 @@ const RegisterScreen = ({
 
 					<Button
 						handlePress={handSubmit}
-						style='w-full h-[44px] mt-[39px] bg-bg-input-active--dark rounded-[8px]'
-						styleText='text-[16px] text-text-white--dark'
+						style={clsx(
+							'w-full h-[44px] mt-[39px] bg-bg-input-active--dark rounded-[8px]',
+							theme === 'light' && 'bg-tColor_bg_light',
+							(theme === 'dark' || theme === 'dark-default') &&
+								'bg-tColor_bg_dark',
+						)}
+						styleText='text-[16px] text-tColor_text'
 						children='đăng ký'
 					/>
 
 					<View className='w-full justify-center items-center flex-row mt-[20px]'>
-						<Text className='text-text-white--dark capitalize text-[16px] font-[400]'>
+						<Text
+							className={clsx(
+								'capitalize text-[16px] font-[400]',
+								theme === 'light' && 'text-textColor_main_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'text-textColor_main_dark',
+							)}>
 							đã có tài khoản?
 						</Text>
 						<Pressable onPress={() => navigate('Login')}>
-							<Text className='text-login--text--navigate--dark capitalize text-[16px]'>
+							<Text className={clsx('capitalize text-[16px] text-tColor_text')}>
 								đăng nhập
 							</Text>
 						</Pressable>
 					</View>
 				</View>
 			</KeyboardAwareScrollView>
-
-			{/* <View
-				className={clsx(
-					'absolute',
-					Platform.OS === 'ios' ? 'top-[10%] left-[5%]' : 'top-[5%] left-[5%]',
-				)}>
-				<Pressable onPress={() => goBack()}>
-					<Ionicons name='md-chevron-back' size={50} color='white' />
-				</Pressable>
-			</View> */}
 		</SafeAreaView>
 	)
 }

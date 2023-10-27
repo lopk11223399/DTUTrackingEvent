@@ -78,6 +78,61 @@ module.exports = {
 				'icon--search': '#63717f',
 				'text-search': '#b5bac1',
 				'placeholder--search': '#677789',
+
+				// Ver 2
+				// background
+				backgroundColor_main_dark: '#0c0f1d',
+				backgroundColor_secondary_dark: '#1b1d2a',
+				backgroundColor_main_light: '#f5f6fb',
+				backgroundColor_secondary_light: '#fff',
+				// status green
+				statusColor_panel_green: '#33d7a0',
+				statusColor_bg_green: '#33d7a014',
+				statusColor_icon_green: '#33d7a0',
+				// status red
+				statusColor_panel_red_light: '#ff8296',
+				statusColor_bg_red_light: '#ff829614',
+				statusColor_icon_red_light: '#ff8296',
+				statusColor_panel_red_dark: '#b43e4b',
+				statusColor_bg_red_dark: '#b43e4b14',
+				statusColor_icon_red_dark: '#b43e4b',
+				// status gray
+				statusColor_panel_gray_light: '#8592a3',
+				statusColor_bg_gray_light: '#f5f6fb',
+				statusColor_icon_gray_light: '#8592a3',
+				statusColor_panel_gray_dark: '#76777f',
+				statusColor_bg_gray_dark: '#0c0f1d',
+				statusColor_icon_gray_dark: '#76777f',
+				// line tab
+				lineTabColor: '#657ef8',
+				// text
+				textColor_main_dark: '#ffffffd9',
+				textColor_secondary_dark: '#ffffff73',
+				textColor_main_light: '#000000d9',
+				textColor_secondary_light: '#00000073',
+				// yellow
+				yellow_star: '#ffcf39',
+				// bottom tab
+				btColor_icon_light: '#8592a3',
+				btColor_icon_dark: '#cecfd1',
+				btColor_icon_active: '#657ef8',
+				// tab option
+				tColor_bg_dark: '#363f7e',
+				tColor_bg_light: '#e1e7ff',
+				tColor_bg_active: '#657ef8',
+				tColor_text: '#657ef8',
+				tColor_text_active: '#fff',
+				// input
+				inpBgColor_light: '#f9fafc',
+				inpPlaceholder_light: '#c1c2c7',
+				inpBorder_light: '#e4e5eb',
+				inpErr_light: '#ff4d4d',
+				inpText_light: '#222224',
+				inpBgColor_dark: '#202124',
+				inpPlaceholder_dark: '#575c66',
+				inpBorder_dark: '#2d2e33',
+				inpErr_dark: '#ce3e3e',
+				inpText_dark: '#f2f6fa',
 			},
 			backgroundColor: {
 				overlay: 'rgba(0,0,0,0.7)',
