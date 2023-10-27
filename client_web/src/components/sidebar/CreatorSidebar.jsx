@@ -9,8 +9,8 @@ import withBaseComponent from '../../hocs/withBaseComponent'
 
 const { AiOutlineCaretDown, AiOutlineCaretRight } = icons
 
-const activedStyle = 'px-4 py-2 flex items-center gap-2 bg-blue-500'
-const notActivedStyle = 'px-4 py-2 flex items-center gap-2 hover:bg-blue-100'
+const activedStyle = 'px-4 py-2 flex items-center gap-2 bg-[#86A789]'
+const notActivedStyle = 'px-4 py-2 flex items-center gap-2 hover:bg-[#B2C8BA]'
 
 const CreatorSidebar = ({ dispatch, navigate }) => {
 	const [actived, setActived] = useState([])
@@ -26,7 +26,7 @@ const CreatorSidebar = ({ dispatch, navigate }) => {
 			<div>
 				{creatorSidebar.map(el => (
 					<Fragment key={el.id}>
-						{el.type === 'SINGLE' && (
+						{el.type === 'SINGLE' &&   (
 							<NavLink
 								className={({ isActive }) =>
 									clsx(isActive && activedStyle, !isActive && notActivedStyle)
@@ -40,7 +40,7 @@ const CreatorSidebar = ({ dispatch, navigate }) => {
 							<div className='flex flex-col'>
 								<div
 									onClick={() => handleShowTabs(el.id)}
-									className='flex items-center justify-between gap-2 px-4 py-2 hover:bg-blue-100 cursor-pointer'>
+									className='flex items-center justify-between gap-2 px-4 py-2 hover:bg-[#B2C8BA] cursor-pointer'>
 									<div className='flex items-center gap-2'>
 										<span>{el.icon}</span>
 										<span>{el.text}</span>
