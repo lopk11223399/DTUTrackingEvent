@@ -20,6 +20,7 @@ import {
 	getEventsToday,
 } from '../../store/event/asyncActions'
 import { getFollowEvent, getJoinEvent } from '../../store/user/asyncActions'
+import { useSelector } from 'react-redux'
 
 const DetailEvent = ({
 	route,
@@ -32,6 +33,7 @@ const DetailEvent = ({
 	MaterialIcons,
 }) => {
 	const { eventId, userId } = route.params
+	const { theme } = useSelector(state => state.app)
 	const [data, setData] = useState({})
 	const [update, setUpdate] = useState(false)
 	const animatedValue = useRef(new Animated.Value(0)).current
@@ -360,8 +362,16 @@ const DetailEvent = ({
 	//door-closed
 
 	return (
-		<View className='flex-1 bg-background--primary--dark'>
-			<StatusBar barStyle={'light-content'} />
+		<View
+			className={clsx(
+				'flex-1',
+				theme === 'light' && 'bg-backgroundColor_main_light',
+				(theme === 'dark' || theme === 'dark-default') &&
+					'bg-backgroundColor_main_dark',
+			)}>
+			<StatusBar
+				barStyle={theme === 'light' ? 'dark-content' : 'light-content'}
+			/>
 			<View style={[{ zIndex: 10 }]} scr className={clsx('absolute w-full')}>
 				<SafeAreaView className='w-full h-[80px] justify-center'>
 					<View className='px-4'>
@@ -370,7 +380,11 @@ const DetailEvent = ({
 								if (route.params.caption) return navigate('Home')
 								return goBack()
 							}}>
-							<Ionicons name='md-chevron-back' size={24} color='white' />
+							<Ionicons
+								name='md-chevron-back'
+								size={24}
+								color={theme === 'light' ? '#000000d9' : '#ffffffd9'}
+							/>
 						</Pressable>
 					</View>
 				</SafeAreaView>
@@ -405,13 +419,25 @@ const DetailEvent = ({
 						className={clsx('w-full h-full object-cover')}
 					/>
 				</View>
-				<View className='p-2 bg-background--primary--dark'>
-					<Text className='text-[22px] font-bold text-text-white--dark text-justify capitalize'>
+				<View
+					className={clsx(
+						'p-2',
+						theme === 'light' && 'bg-backgroundColor_main_light',
+						(theme === 'dark' || theme === 'dark-default') &&
+							'bg-backgroundColor_main_dark',
+					)}>
+					<Text
+						className={clsx(
+							'text-[22px] font-bold text-justify capitalize',
+							theme === 'light' && 'text-textColor_main_light',
+							(theme === 'dark' || theme === 'dark-default') &&
+								'text-textColor_main_dark',
+						)}>
 						{data?.title}
 					</Text>
 
 					<View className='mt-3'>
-						<Text className='text-[22px] text-[#ce7469] font-bold capitalize'>
+						<Text className='text-[22px] text-tColor_text font-bold capitalize'>
 							người tổ chức
 						</Text>
 						<View className='mt-1 flex-row items-center'>
@@ -428,12 +454,22 @@ const DetailEvent = ({
 							<View className='flex-1 ml-2'>
 								<Text
 									numberOfLines={1}
-									className='text-[16px] font-bold text-[#ffffffd9] mb-[2px]'>
+									className={clsx(
+										'text-[16px] font-bold mb-[2px]',
+										theme === 'light' && 'text-textColor_main_light',
+										(theme === 'dark' || theme === 'dark-default') &&
+											'text-textColor_main_dark',
+									)}>
 									{data?.author?.name}
 								</Text>
 								<Text
 									numberOfLines={1}
-									className='text-[12px] mt-[2px] text-[#ffffff73]'>
+									className={clsx(
+										'text-[12px] mt-[2px]',
+										theme === 'light' && 'text-textColor_secondary_light',
+										(theme === 'dark' || theme === 'dark-default') &&
+											'text-textColor_secondary_dark',
+									)}>
 									{data?.author?.email}
 								</Text>
 							</View>
@@ -441,47 +477,69 @@ const DetailEvent = ({
 					</View>
 
 					<View className='mt-3'>
-						<Text className='text-[22px] text-[#ce7469] font-bold capitalize'>
+						<Text className='text-[22px] text-tColor_text font-bold capitalize'>
 							thời gian sự kiện
 						</Text>
-						<Text className='text-[14px] mt-1 text-[#ffffffd9]'>{`${moment(
-							data?.startDate,
-						).format('hh:mm DD/MM/YYYY')} - ${moment(data?.finishDate).format(
+						<Text
+							className={clsx(
+								'text-[14px] mt-1',
+								theme === 'light' && 'text-textColor_main_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'text-textColor_main_dark',
+							)}>{`${moment(data?.startDate).format(
 							'hh:mm DD/MM/YYYY',
-						)}`}</Text>
+						)} - ${moment(data?.finishDate).format('hh:mm DD/MM/YYYY')}`}</Text>
 					</View>
 
 					<View className='mt-3'>
-						<Text className='text-[22px] text-[#ce7469] font-bold capitalize'>
+						<Text className='text-[22px] text-tColor_text font-bold capitalize'>
 							địa điểm tổ chức
 						</Text>
-						<Text className='text-[14px] mt-1 text-[#ffffffd9]'>
+						<Text
+							className={clsx(
+								'text-[14px] mt-1',
+								theme === 'light' && 'text-textColor_main_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'text-textColor_main_dark',
+							)}>
 							{data?.location}
 						</Text>
 					</View>
 
 					<View className='mt-3'>
-						<Text className='text-[22px] text-[#ce7469] font-bold capitalize'>
+						<Text className='text-[22px] text-tColor_text font-bold capitalize'>
 							Mô tả
 						</Text>
-						<Text className='text-[14px] mt-1 text-[#ffffffd9] text-justify'>
+						<Text
+							className={clsx(
+								'text-[14px] mt-1  text-justify',
+								theme === 'light' && 'text-textColor_main_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'text-textColor_main_dark',
+							)}>
 							{data?.description}
 						</Text>
 					</View>
 
 					<View className='mt-3'>
-						<Text className='text-[22px] text-[#ce7469] font-bold capitalize'>
+						<Text className='text-[22px] text-tColor_text font-bold capitalize'>
 							Room
 						</Text>
 					</View>
 				</View>
 			</Animated.ScrollView>
 
-			<View className='h-[80px] w-full border-t border-text-white--dark'>
+			<View
+				className={clsx(
+					'h-[80px] w-full border-t',
+					theme === 'light' && 'border-inpBorder_light',
+					(theme === 'dark' || theme === 'dark-default') &&
+						'border-inpBorder_dark',
+				)}>
 				<View className='flex-row px-3 py-2 justify-around'>
 					<Pressable className='items-center w-[33%]'>
-						<Entypo name='chat' size={30} color='#e8e6e3' />
-						<Text className='text-text-white--dark text-[12px] font-[500] mt-1'>
+						<Entypo name='chat' size={30} color='#657ef8' />
+						<Text className='text-tColor_text text-[12px] font-[500] mt-1'>
 							{data?.commentEvent?.length}
 						</Text>
 					</Pressable>
@@ -551,8 +609,8 @@ const DetailEvent = ({
 							</>
 						) : (
 							<>
-								<FontAwesome name='star-o' size={30} color='#e8e6e3' />
-								<Text className='text-text-white--dark text-[12px] font-[500] mt-1 capitalize'>
+								<FontAwesome name='star-o' size={30} color='#ffcf39' />
+								<Text className='text-yellow_star text-[12px] font-[500] mt-1 capitalize'>
 									theo dõi
 								</Text>
 							</>

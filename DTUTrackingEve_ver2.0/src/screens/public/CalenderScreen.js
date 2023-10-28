@@ -59,7 +59,34 @@ LocaleConfig.locales['fr'] = {
 
 LocaleConfig.defaultLocale = 'fr'
 
-const CalenderScreen = ({ navigation: { setOptions }, layout }) => {
+const themeLight = {
+	calendarBackground: '#f5f6fb',
+	textSectionTitleColor: '#00000073',
+	selectedDayBackgroundColor: '#657ef8',
+	selectedDayTextColor: '#fff',
+	todayTextColor: '#657ef8',
+	dayTextColor: '#000000d9',
+	textDisabledColor: '#00000073',
+	monthTextColor: '#657ef8',
+	arrowColor: '#657ef8',
+	textMonthFontWeight: 'bold',
+}
+
+const themeDark = {
+	calendarBackground: '#0c0f1d',
+	textSectionTitleColor: '#ffffff73',
+	selectedDayBackgroundColor: '#657ef8',
+	selectedDayTextColor: '#fff',
+	todayTextColor: '#62a2f8',
+	dayTextColor: '#ffffffd9',
+	textDisabledColor: '#ffffff73',
+	monthTextColor: '#62a2f8',
+	arrowColor: '#657ef8',
+	textMonthFontWeight: 'bold',
+}
+
+const CalenderScreen = ({ navigation: { setOptions, navigate }, layout }) => {
+	const { theme } = useSelector(state => state.app)
 	const { current } = useSelector(state => state.user)
 	const [selected, setSelected] = useState(moment().format('YYYY-MM-DD'))
 	const [eventDay, setEventDay] = useState([])
@@ -92,15 +119,15 @@ const CalenderScreen = ({ navigation: { setOptions }, layout }) => {
 	useLayoutEffect(() => {
 		setOptions({
 			headerStyle: {
-				backgroundColor: '#161722',
+				backgroundColor: theme === 'light' ? '#f5f6fb' : '#0c0f1d',
 			},
-			headerTitle: () => (
-				<Text className='text-[18px] text-text-white--dark font-[700] capitalize'>
-					lịch sự kiện
-				</Text>
-			),
+			headerTitleStyle: {
+				color: theme === 'light' ? '#000000d9' : '#ffffffd9',
+			},
+			headerTitleAlign: 'center',
+			headerTitle: 'Lịch Sự Kiện',
 		})
-	}, [])
+	}, [theme])
 
 	const renderLoader = () => {
 		return isLoading ? (
@@ -115,8 +142,16 @@ const CalenderScreen = ({ navigation: { setOptions }, layout }) => {
 	}
 
 	return (
-		<SafeAreaView className='h-full bg-background--primary--dark'>
-			<StatusBar barStyle={'light-content'} />
+		<SafeAreaView
+			className={clsx(
+				'h-full',
+				theme === 'light' && 'bg-backgroundColor_main_light',
+				(theme === 'dark' || theme === 'dark-default') &&
+					'bg-backgroundColor_main_dark',
+			)}>
+			<StatusBar
+				barStyle={theme === 'light' ? 'dark-content' : 'light-content'}
+			/>
 			<View className={`h-[${layout.heigth - 50 / 100}]`}>
 				<Calendar
 					onDayPress={day => {
@@ -129,18 +164,7 @@ const CalenderScreen = ({ navigation: { setOptions }, layout }) => {
 							selectedDotColor: 'black',
 						},
 					}}
-					theme={{
-						calendarBackground: '#161722',
-						textSectionTitleColor: '#e8e6e3',
-						selectedDayBackgroundColor: '#657ef8',
-						selectedDayTextColor: '#fafeff',
-						todayTextColor: '#62a2f8',
-						dayTextColor: '#e8e6e3',
-						textDisabledColor: '#737377',
-						monthTextColor: '#62a2f8',
-						arrowColor: '#657ef8',
-						textMonthFontWeight: 'bold',
-					}}
+					theme={theme === 'light' ? themeLight : themeDark}
 				/>
 			</View>
 

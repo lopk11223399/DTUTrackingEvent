@@ -17,9 +17,7 @@ const NotificationTab = ({
 			<Text
 				className={clsx(
 					'text-[14px] font-[500] capitalize text-center',
-					chooseNotification === type
-						? 'text-active--tab--bottom--light'
-						: 'text-text-gray--dark',
+					chooseNotification === type ? 'text-tColor_text' : 'text-gray-500',
 				)}>
 				{name}
 			</Text>

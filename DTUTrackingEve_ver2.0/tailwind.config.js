@@ -98,10 +98,10 @@ module.exports = {
 				statusColor_icon_red_dark: '#b43e4b',
 				// status gray
 				statusColor_panel_gray_light: '#8592a3',
-				statusColor_bg_gray_light: '#f5f6fb',
+				statusColor_bg_gray_light: '#fff',
 				statusColor_icon_gray_light: '#8592a3',
 				statusColor_panel_gray_dark: '#76777f',
-				statusColor_bg_gray_dark: '#0c0f1d',
+				statusColor_bg_gray_dark: '#1b1d2a',
 				statusColor_icon_gray_dark: '#76777f',
 				// line tab
 				lineTabColor: '#657ef8',
