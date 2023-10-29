@@ -1,5 +1,5 @@
-import { View, Text, SafeAreaView, StatusBar, Platform } from 'react-native'
-import React, { useEffect, useState, useLayoutEffect, memo } from 'react'
+import { Text, SafeAreaView, StatusBar, Platform } from 'react-native'
+import React, { useState, memo } from 'react'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import {
 	SceneMap,
@@ -9,8 +9,10 @@ import {
 } from 'react-native-tab-view'
 import { HomeComp, NewComp, FollowComp } from '../../components'
 import clsx from 'clsx'
+import { useSelector } from 'react-redux'
 
 const HomeScreen = ({ layout }) => {
+	const { theme } = useSelector(state => state.app)
 	const [index, setIndex] = useState(0)
 	const [routes] = useState([
 		// { key: 'follow', title: 'Theo dõi' },
@@ -25,8 +27,16 @@ const HomeScreen = ({ layout }) => {
 	})
 
 	return (
-		<SafeAreaView className={clsx('flex-1 bg-background--primary--dark')}>
-			<StatusBar barStyle={'light-content'} />
+		<SafeAreaView
+			className={clsx(
+				'flex-1',
+				theme === 'light' && 'bg-backgroundColor_main_light',
+				(theme === 'dark' || theme === 'dark-default') &&
+					'bg-backgroundColor_main_dark',
+			)}>
+			<StatusBar
+				barStyle={theme === 'light' ? 'dark-content' : 'light-content'}
+			/>
 
 			<TabView
 				navigationState={{ index, routes }}
@@ -36,7 +46,11 @@ const HomeScreen = ({ layout }) => {
 				renderTabBar={props => (
 					<TabBar
 						className={clsx(
-							'relative border-b bg-background--primary--dark border-text-gray--dark',
+							'border-b',
+							theme === 'light' &&
+								'bg-backgroundColor_main_light border-inpBorder_light',
+							(theme === 'dark' || theme === 'dark-default') &&
+								'bg-backgroundColor_main_dark border-inpBorder_dark',
 						)}
 						{...props}
 						renderIndicator={indicatorProps => {
@@ -44,7 +58,7 @@ const HomeScreen = ({ layout }) => {
 								<TabBarIndicator
 									{...indicatorProps}
 									className={clsx(
-										'w-8 absolute bottom-[6px] bg-icon--color--dark',
+										'w-8 absolute bottom-[6px] bg-tColor_bg_active',
 										// 'left-[47px]',
 										Platform.OS === 'ios' ? 'left-[77px]' : 'left-[82px]',
 									)}
@@ -57,7 +71,7 @@ const HomeScreen = ({ layout }) => {
 									return (
 										<Text
 											className={clsx(
-												'text-[16px] font-[700] capitalize text-text-white--dark',
+												'text-[16px] font-[700] capitalize text-tColor_text',
 											)}>
 											{route.title}
 										</Text>
@@ -66,7 +80,10 @@ const HomeScreen = ({ layout }) => {
 								return (
 									<Text
 										className={clsx(
-											'text-[16px] font-[700] capitalize text-text-gray--dark',
+											'text-[16px] font-[700] capitalize',
+											theme === 'light' && 'text-textColor_secondary_light',
+											(theme === 'dark' || theme === 'dark-default') &&
+												'text-textColor_secondary_dark',
 										)}>
 										{route.title}
 									</Text>

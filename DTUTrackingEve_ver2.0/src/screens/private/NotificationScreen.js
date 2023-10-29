@@ -1,4 +1,10 @@
-import { View, SafeAreaView, ScrollView, Animated } from 'react-native'
+import {
+	View,
+	SafeAreaView,
+	ScrollView,
+	Animated,
+	StatusBar,
+} from 'react-native'
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react'
 import { NotificationCard, RequiresLoginComp } from '../../components'
 import withBaseComponent from '../../hocs/withBaseComponent'
@@ -11,11 +17,13 @@ import iconFollowActive from '../../assets/FollowActive.png'
 import iconFollowNotActive from '../../assets/FollowNotActive.png'
 import NotificationTab from '../../components/notification/NotificationTab'
 import { useSelector } from 'react-redux'
+import clsx from 'clsx'
 
 const AnimatedTabNotification = Animated.createAnimatedComponent(View)
 
 const NotificationScreen = ({ navigation: { setOptions } }) => {
 	const { current } = useSelector(state => state.user)
+	const { theme } = useSelector(state => state.app)
 	const [notificationData, setNotificationData] = useState(null)
 	const [chooseNotification, setChooseNotification] = useState('system')
 	const animatedValue = useRef(new Animated.Value(0)).current
@@ -36,28 +44,52 @@ const NotificationScreen = ({ navigation: { setOptions } }) => {
 		setOptions({
 			headerShown: true,
 			headerStyle: {
-				backgroundColor: '#161722',
+				backgroundColor: theme === 'light' ? '#f5f6fb' : '#0c0f1d',
 			},
 			headerTitleAlign: 'center',
 			headerTitleStyle: {
-				color: '#e8e6e3',
+				color: theme === 'light' ? '#000000d9' : '#ffffffd9',
 			},
 			headerTitle: 'Thông Báo',
 		})
-	}, [])
+	}, [theme])
 
 	if (current === null) {
 		return (
-			<SafeAreaView className='bg-background--primary--dark flex-1 justify-center'>
+			<SafeAreaView
+				className={clsx(
+					'bg-background--primary--dark flex-1 justify-center',
+					theme === 'light' && 'bg-backgroundColor_main_light',
+					(theme === 'dark' || theme === 'dark-default') &&
+						'bg-backgroundColor_main_dark',
+				)}>
+				<StatusBar
+					barStyle={theme === 'light' ? 'dark-content' : 'light-content'}
+				/>
 				<RequiresLoginComp />
 			</SafeAreaView>
 		)
 	}
 
 	return (
-		<SafeAreaView className='flex-1 bg-background--primary--dark border-t border-text-white--dark'>
+		<SafeAreaView
+			className={clsx(
+				'flex-1 bg-background--primary--dark border-t ',
+				theme === 'light' &&
+					'bg-backgroundColor_main_light border-inpBorder_light',
+				(theme === 'dark' || theme === 'dark-default') &&
+					'bg-backgroundColor_main_dark border-inpBorder_dark',
+			)}>
+			<StatusBar
+				barStyle={theme === 'light' ? 'dark-content' : 'light-content'}
+			/>
 			<AnimatedTabNotification
-				className='flex-row w-full items-center border-b border-background--secondary--dark pb-2'
+				className={clsx(
+					'flex-row w-full items-center border-b pb-2',
+					theme === 'light' && 'border-inpBorder_light',
+					(theme === 'dark' || theme === 'dark-default') &&
+						'border-inpBorder_dark',
+				)}
 				style={[{ height: tabNotificationAnimation }]}>
 				<NotificationTab
 					chooseNotification={chooseNotification}

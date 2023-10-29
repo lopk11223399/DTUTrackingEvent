@@ -23,6 +23,7 @@ const ListEventScreen = ({
 	route,
 }) => {
 	const { current } = useSelector(state => state.user)
+	const { theme } = useSelector(state => state.app)
 	const [tabList, setTabList] = useState(route.params.chooseTabList || 'none')
 	const [isModalVisible, setModalVisible] = useState(false)
 	const [isSearch, setIsSearch] = useState(false)
@@ -30,53 +31,7 @@ const ListEventScreen = ({
 	const [data, setData] = useState([])
 	const [currentPage, setCurrentPage] = useState(1)
 	const [isLoading, setIsLoading] = useState(false)
-
-	useLayoutEffect(() => {
-		setOptions({
-			headerStyle: {
-				backgroundColor: '#161722',
-			},
-			headerTitleAlign: 'center',
-			headerTitleStyle: {
-				color: '#e8e6e3',
-			},
-			headerShown: true,
-			headerLeft: () => (
-				<Pressable onPress={() => goBack()}>
-					<Ionicons name='md-chevron-back' size={24} color='white' />
-				</Pressable>
-			),
-			headerRight: () => (
-				<Pressable onPress={() => setIsSearch(!isSearch)}>
-					<Ionicons name='search' size={24} color='white' />
-				</Pressable>
-			),
-			headerTitle: 'Danh Sách Sự Kiện',
-		})
-	}, [isSearch])
-
-	const fetchEvent = async () => {
-		setIsLoading(true)
-		let response
-		if (tabList === 'today') {
-			response = await apiGetEvents({
-				limit: 10,
-				page: currentPage,
-				date: moment().format('YYYY-MM-DD'),
-			})
-		} else if (tabList === 'hot') {
-			response = await apiGetEvents({
-				limit: 10,
-				page: currentPage,
-				hot: '',
-			})
-		}
-
-		if (response?.data?.success === true) {
-			setData(response.data.response)
-			setIsLoading(false)
-		}
-	}
+	const [count, setCount] = useState(0)
 
 	const renderLoader = () => {
 		return isLoading ? (
@@ -87,20 +42,88 @@ const ListEventScreen = ({
 	}
 
 	const loadMoreItem = () => {
-		setCurrentPage(currentPage + 1)
+		if (count >= 10 * currentPage) {
+			setCurrentPage(currentPage + 1)
+		}
 	}
 
 	useEffect(() => {
-		fetchEvent()
-	}, [currentPage])
+		const fetchEvent = async () => {
+			setIsLoading(true)
+			let response
+			if (tabList === 'today') {
+				response = await apiGetEvents({
+					limit: 10,
+					page: currentPage,
+					// date: moment().format('YYYY-MM-DD'),
+				})
+			} else if (tabList === 'hot') {
+				response = await apiGetEvents({
+					limit: 10,
+					page: currentPage,
+					hot: true,
+				})
+			}
 
-	useEffect(() => {
+			if (response?.success === true) {
+				setData([...data, ...response.response])
+				setCount(response?.count)
+				setIsLoading(false)
+			}
+		}
+
 		fetchEvent()
-	}, [tabList])
+	}, [tabList, currentPage])
+
+	useLayoutEffect(() => {
+		setOptions({
+			headerStyle: {
+				backgroundColor: theme === 'light' ? '#f5f6fb' : '#0c0f1d',
+			},
+			headerTitleAlign: 'center',
+			headerTitleStyle: {
+				color: theme === 'light' ? '#000000d9' : '#ffffffd9',
+			},
+			headerShown: true,
+			headerLeft: () => (
+				<Pressable onPress={() => goBack()}>
+					<Ionicons
+						name='md-chevron-back'
+						size={24}
+						color={theme === 'light' ? '#000000d9' : '#ffffffd9'}
+					/>
+				</Pressable>
+			),
+			headerRight: () => (
+				<Pressable onPress={() => setIsSearch(!isSearch)}>
+					<Ionicons
+						name='search'
+						size={24}
+						color={theme === 'light' ? '#000000d9' : '#ffffffd9'}
+					/>
+				</Pressable>
+			),
+			headerTitle: 'Danh Sách Sự Kiện',
+		})
+	}, [isSearch, theme])
+
+	// console.log('do dai data:', data.length)
+	// console.log('Tong data:', count)
+	// console.log('Tong data hien tai', 10 * currentPage)
+	// console.log('Trang hien tại', currentPage)
+	// console.log('------------------------------')
 
 	return (
-		<SafeAreaView className='flex-1 bg-background--primary--dark'>
-			<StatusBar barStyle={'light-content'} />
+		<SafeAreaView
+			className={clsx(
+				'flex-1 bg-background--primary--dark',
+				theme === 'light' && 'bg-backgroundColor_main_light',
+				(theme === 'dark' || theme === 'dark-default') &&
+					'bg-backgroundColor_main_dark',
+			)}>
+			<StatusBar
+				barStyle={theme === 'light' ? 'dark-content' : 'light-content'}
+			/>
 
 			<View className='px-3 flex-row mt-1'>
 				<FlatList
@@ -110,21 +133,27 @@ const ListEventScreen = ({
 					renderItem={({ item, index }) => {
 						return (
 							<Pressable
-								onPress={() => setTabList(item.value)}
+								onPress={() => {
+									setTabList(item.value)
+									setCurrentPage(0)
+									setData([])
+								}}
 								key={item.id}
 								className={clsx(
 									'justify-center px-2 py-1 rounded-[4px]',
 									tabListEvent.length - 1 === index ? '' : 'mr-3',
 									tabList === item.value
-										? 'bg-bg-input-active--dark'
-										: 'bg-text-desc--dark',
+										? 'bg-tColor_bg_active'
+										: theme == 'light'
+										? 'bg-tColor_bg_light'
+										: 'bg-tColor_bg_dark',
 								)}>
 								<Text
 									className={clsx(
 										'text-[14px] font-bold',
 										tabList === item.value
-											? 'text-text-main--dark'
-											: 'text-text-white--dark',
+											? 'text-tColor_text_active'
+											: 'text-tColor_text',
 									)}>
 									{item.text}
 								</Text>
@@ -133,7 +162,11 @@ const ListEventScreen = ({
 					}}
 				/>
 				<Pressable onPress={() => setModalVisible(true)} className='pl-1'>
-					<Ionicons name='md-reorder-three-outline' size={30} color='white' />
+					<Ionicons
+						name='md-reorder-three-outline'
+						size={30}
+						color={theme === 'light' ? '#000000d9' : '#ffffffd9'}
+					/>
 				</Pressable>
 			</View>
 
@@ -160,9 +193,9 @@ const ListEventScreen = ({
 						/>
 					)}
 					keyExtractor={(item, index) => index.toString()}
-					// ListFooterComponent={renderLoader}
-					// onEndReached={loadMoreItem}
-					// onEndReachedThreshold={0}
+					ListFooterComponent={renderLoader}
+					onEndReached={loadMoreItem}
+					onEndReachedThreshold={0}
 				/>
 			</View>
 
@@ -171,9 +204,21 @@ const ListEventScreen = ({
 				onBackdropPress={() => setModalVisible(false)}
 				animationIn={'fadeInUp'}
 				animationOut={'fadeOutDown'}>
-				<View className='w-full h-[300px] bg-background--secondary--dark p-3 rounded-md'>
+				<View
+					className={clsx(
+						'w-full h-[300px] p-3 rounded-md',
+						theme === 'light' && 'bg-backgroundColor_secondary_light',
+						(theme === 'dark' || theme === 'dark-default') &&
+							'bg-backgroundColor_secondary_dark',
+					)}>
 					<View className='flex-row w-full items-center'>
-						<Text className='text-[16px] flex-1 text-center ml-[24px] text-text-gray--dark font-bold'>
+						<Text
+							className={clsx(
+								'text-[16px] flex-1 text-center ml-[24px] text-text-gray--dark font-bold',
+								theme === 'light' && 'text-textColor_secondary_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'text-textColor_secondary_dark',
+							)}>
 							Chọn
 						</Text>
 						<Pressable
@@ -192,18 +237,20 @@ const ListEventScreen = ({
 									}}
 									key={el.id}
 									className={clsx(
-										'justify-center px-2 py-1 rounded-[4px] my-1',
+										'justify-center px-2 py-2 rounded-[4px] my-1',
 										tabListEvent.length - 1 === index ? '' : 'mr-3',
 										tabList === el.value
-											? 'bg-bg-input-active--dark'
-											: 'bg-text-desc--dark',
+											? 'bg-tColor_bg_active'
+											: theme === 'light'
+											? 'bg-tColor_bg_light'
+											: 'bg-tColor_bg_dark',
 									)}>
 									<Text
 										className={clsx(
 											'text-[14px] font-bold',
 											tabList === el.value
-												? 'text-text-main--dark'
-												: 'text-text-white--dark',
+												? 'text-tColor_text_active'
+												: 'text-tColor_text',
 										)}>
 										{el.text}
 									</Text>
