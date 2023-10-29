@@ -4,6 +4,7 @@ export const pathAdmin = {
   MANAGE_USERS: "manage-users",
   MANAGE_EVENT: "manage-event",
   CALENDAR: "calendar",
+  USERDETAIL: "userdetail",
 };
 
 export const pathCreator = {
@@ -16,4 +17,5 @@ export const pathCreator = {
 export const common = {
   LOGIN: "login",
   DASHBOARD: "dashboard",
+  EVENTDETAIL: "eventdetail/:id",
 };
