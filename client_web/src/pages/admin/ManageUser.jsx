@@ -1,15 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { Pagination } from "../../components";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import moment from "moment";
 import { apiUser } from "../../apis";
+import { pathAdmin } from "../../utils/path";
 
 const ManageUser = () => {
   const [data, setData] = useState([]);
   const [count, setCount] = useState(0);
   const [params] = useSearchParams();
   const [statusEvent, setStatusEvent] = useState(false);
+  const navigate = useNavigate();
+  const handleUserClick = (user) => {
+    navigate(
+      `/${pathAdmin.ADMIN}/${pathAdmin.USERDETAIL}/${user.studentData.studentCode}`,
+      {
+        state: { user },
+      }
+    );
+  };
   const fetchData = async (queries) => {
     const response = await apiUser({
       limit: 10,
@@ -23,7 +33,7 @@ const ManageUser = () => {
     }
   };
   console.log(data);
-  console.log(count);
+  //console.log(count);
   useEffect(() => {
     const queries = Object.fromEntries([...params]);
     fetchData({ ...queries });
@@ -110,9 +120,10 @@ const ManageUser = () => {
           </thead>
           <tbody>
             {data.length > 0 &&
-              data.map((el, index) => (
+              data.map((user, index) => (
                 <tr
-                  key={el.id}
+                  onClick={() => handleUserClick(user)}
+                  key={user.id}
                   className="hover:bg-[#4E73DF] hover:text-white hover:opacity-[0.85] duration-95 ease-in-out cursor-pointer"
                 >
                   <td className="w-[5%] text-center">
@@ -130,16 +141,16 @@ const ManageUser = () => {
                       />
                     </div>
                   </td>
-                  <td className="w-[10%] text-center">{el.name}</td>
-                  <td className="w-[15%] text-center">{el.birthDate}</td>
+                  <td className="w-[10%] text-center">{user.name}</td>
+                  <td className="w-[15%] text-center">{user.birthDate}</td>
                   <td className="text-center w-[10%]">
-                    {el.gender === 1 ? "Nam" : "Nữ"}
+                    {user.gender === 1 ? "Nam" : "Nữ"}
                   </td>
                   <td className="w-[15%] text-center ">
-                    {el.roleID === 2 ? "Người tạo sự kiện" : "Người dùng"}
+                    {user.roleID === 2 ? "Người tạo sự kiện" : "Người dùng"}
                   </td>
                   <td className="w-[15%] text-center">
-                    {el.studentData.point}
+                    {user.studentData.point}
                   </td>
                 </tr>
               ))}
