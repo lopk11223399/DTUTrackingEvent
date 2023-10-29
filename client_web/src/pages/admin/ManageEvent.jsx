@@ -3,9 +3,10 @@ import { apiGetEvents, apiUpdateStatus } from "../../apis/event";
 import moment from "moment/moment";
 import "moment/locale/vi";
 import { Pagination } from "../../components";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { status } from "../../utils/contants";
 import Swal from "sweetalert2";
+import { pathAdmin } from "../../utils/path";
 
 moment.locale("vi");
 
@@ -14,6 +15,12 @@ function ManageEvent() {
   const [count, setCount] = useState(0);
   const [params] = useSearchParams();
   const [statusEvent, setStatusEvent] = useState(false);
+  const navigate = useNavigate();
+  const handleUserClick = (event) => {
+    navigate(`/${pathAdmin.ADMIN}/eventdetail/${event.id}`, {
+      state: { event },
+    });
+  };
   const fetchData = async (queries) => {
     const response = await apiGetEvents({
       limit: 10,
@@ -35,7 +42,7 @@ function ManageEvent() {
     const queries = Object.fromEntries([...params]);
     fetchData({ ...queries });
   }, [statusEvent]);
-  //console.log(data);
+  console.log(data);
   const handleUpdateStatus = async (eid, status) => {
     if (status === 1) {
       Swal.fire({
@@ -117,9 +124,10 @@ function ManageEvent() {
           </thead>
           <tbody>
             {data.length > 0 &&
-              data.map((el, index) => (
+              data.map((event, index) => (
                 <tr
-                  key={el.id}
+                  onClick={() => handleUserClick(event)}
+                  key={event.id}
                   className="hover:bg-[#4E73DF] hover:text-white hover:opacity-[0.85] duration-95 ease-in-out cursor-pointer"
                 >
                   <td className="w-[5%] text-center">
@@ -131,34 +139,38 @@ function ManageEvent() {
                   <td className="w-[15%] text-center py-1">
                     <div className="w-full h-[45px] flex justify-center">
                       <img
-                        src={el.image}
+                        src={event.image}
                         alt="ảnh"
                         className="w-[100px] h-full object-cover rounded-md"
                       />
                     </div>
                   </td>
                   <td className="w-[30%]">
-                    <p className="line-clamp-2">{el.title}</p>
+                    <p className="line-clamp-2">{event.title}</p>
                   </td>
                   <td className="w-[10%] text-center">
-                    {!el.typeEvent ? "Offline" : "Online"}
+                    {!event.typeEvent ? "Offline" : "Online"}
                   </td>
                   <td className="text-center w-[10%]">
-                    {status.find((e) => e.id === el.status)?.text}
+                    {status.find((e) => e.id === event.status)?.text}
                   </td>
                   <td className="w-[10%] text-center">
-                    {moment(el.createdAt).fromNow()}
+                    {moment(event.createdAt).fromNow()}
                   </td>
                   <td className="w-[20%] text-center">
                     <div className="flex items-center justify-center gap-1 text-white">
                       <div
-                        onClick={() => handleUpdateStatus(el.id, el.status)}
+                        onClick={() =>
+                          handleUpdateStatus(event.id, event.status)
+                        }
                         className="px-2 w-[58px] bg-green-400 rounded-md cursor-pointer"
                       >
                         Duyệt
                       </div>
                       <div
-                        onClick={() => handleCancelStatus(el.id, el.status)}
+                        onClick={() =>
+                          handleCancelStatus(event.id, event.status)
+                        }
                         className="px-2 w-[58px] bg-red-500 rounded-md cursor-pointer"
                       >
                         Huỷ
