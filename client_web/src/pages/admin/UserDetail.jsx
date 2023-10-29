@@ -4,7 +4,8 @@ import { useLocation } from "react-router";
 const UserDetail = () => {
   const location = useLocation();
   const { user } = location.state || {};
-  console.log("datacheck>>>", user);
+  //console.log("datacheck>>>", user);
+
   return (
     <div>
       <h1 className="text-[24px] font-[700] m-4">Chi Tiết Người dùng</h1>
