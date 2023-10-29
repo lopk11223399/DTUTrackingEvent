@@ -11,6 +11,7 @@ import {
 	REGISTER,
 } from 'redux-persist'
 import userSlice from './user/userSlice'
+import appSlice from './app/appSlice'
 
 const commonConfig = {
 	key: 'app/user',
@@ -24,6 +25,7 @@ const userConfig = {
 
 export const store = configureStore({
 	reducer: {
+		app: appSlice,
 		user: persistReducer(userConfig, userSlice),
 	},
 	middleware: getDefaultMiddleware =>

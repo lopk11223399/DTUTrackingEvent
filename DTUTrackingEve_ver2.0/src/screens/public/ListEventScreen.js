@@ -24,6 +24,9 @@ const ListEventScreen = ({
 }) => {
 	const { current } = useSelector(state => state.user)
 	const { theme } = useSelector(state => state.app)
+	const { countTodayEvents, countHotEvents, countNewEvent } = useSelector(
+		state => state.event,
+	)
 	const [tabList, setTabList] = useState(route.params.chooseTabList || 'none')
 	const [isModalVisible, setModalVisible] = useState(false)
 	const [isSearch, setIsSearch] = useState(false)
@@ -31,7 +34,6 @@ const ListEventScreen = ({
 	const [data, setData] = useState([])
 	const [currentPage, setCurrentPage] = useState(1)
 	const [isLoading, setIsLoading] = useState(false)
-	const [count, setCount] = useState(0)
 
 	const renderLoader = () => {
 		return isLoading ? (
@@ -42,9 +44,12 @@ const ListEventScreen = ({
 	}
 
 	const loadMoreItem = () => {
-		if (count >= 10 * currentPage) {
+		if (tabList === 'today' && countTodayEvents >= 10 * currentPage)
 			setCurrentPage(currentPage + 1)
-		}
+		else if (tabList === 'hot' && countHotEvents >= 10 * currentPage)
+			setCurrentPage(currentPage + 1)
+		else if (tabList === 'new' && countNewEvent >= 10 * currentPage)
+			setCurrentPage(currentPage + 1)
 	}
 
 	useEffect(() => {
@@ -55,7 +60,7 @@ const ListEventScreen = ({
 				response = await apiGetEvents({
 					limit: 10,
 					page: currentPage,
-					// date: moment().format('YYYY-MM-DD'),
+					date: moment().format('YYYY-MM-DD'),
 				})
 			} else if (tabList === 'hot') {
 				response = await apiGetEvents({
@@ -63,11 +68,16 @@ const ListEventScreen = ({
 					page: currentPage,
 					hot: true,
 				})
+			} else if (tabList === 'new') {
+				response = await apiGetEvents({
+					limit: 10,
+					page: currentPage,
+					order: ['createdAt', 'DESC'],
+				})
 			}
 
 			if (response?.success === true) {
 				setData([...data, ...response.response])
-				setCount(response?.count)
 				setIsLoading(false)
 			}
 		}
@@ -135,7 +145,20 @@ const ListEventScreen = ({
 							<Pressable
 								onPress={() => {
 									setTabList(item.value)
-									setCurrentPage(0)
+									if (tabList === 'today') {
+										if (countTodayEvents >= 10 * currentPage) setCurrentPage(1)
+										else setCurrentPage(0)
+									}
+
+									if (tabList === 'hot') {
+										if (countHotEvents >= 10 * currentPage) setCurrentPage(1)
+										else setCurrentPage(0)
+									}
+
+									if (tabList === 'new') {
+										if (countNewEvent >= 10 * currentPage) setCurrentPage(1)
+										else setCurrentPage(0)
+									}
 									setData([])
 								}}
 								key={item.id}
@@ -234,6 +257,22 @@ const ListEventScreen = ({
 									onPress={() => {
 										setModalVisible(false)
 										setTabList(el.value)
+										if (tabList === 'today') {
+											if (countTodayEvents >= 10 * currentPage)
+												setCurrentPage(1)
+											else setCurrentPage(0)
+										}
+
+										if (tabList === 'hot') {
+											if (countHotEvents >= 10 * currentPage) setCurrentPage(1)
+											else setCurrentPage(0)
+										}
+
+										if (tabList === 'new') {
+											if (countNewEvent >= 10 * currentPage) setCurrentPage(1)
+											else setCurrentPage(0)
+										}
+										setData([])
 									}}
 									key={el.id}
 									className={clsx(
