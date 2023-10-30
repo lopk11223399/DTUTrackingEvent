@@ -92,8 +92,9 @@ const CalenderScreen = ({ navigation: { setOptions, navigate }, layout }) => {
 	const [eventDay, setEventDay] = useState([])
 	const [currentPage, setCurrentPage] = useState(1)
 	const [isLoading, setIsLoading] = useState(false)
+	const [count, setCount] = useState(0)
 
-	const fetchEventDay = async type => {
+	const fetchEventDay = async () => {
 		setIsLoading(true)
 
 		const response = await apiGetEvents({
@@ -102,19 +103,32 @@ const CalenderScreen = ({ navigation: { setOptions, navigate }, layout }) => {
 			date: selected,
 		})
 
-		if (response.success === true && type === 'date')
-			setEventDay(response.response)
-		if (response.success === true && type === 'page')
-			setEventDay([...eventDay, response.response])
+		if (response.success === true) {
+			setCount(response.count)
+			setEventDay([...eventDay, ...response.response])
+		}
 	}
 
-	// useEffect(() => {
-	// 	fetchEventDay('page')
-	// }, [currentPage])
+	useEffect(() => {
+		const fetchFirst = async () => {
+			const response = await apiGetEvents({
+				limit: 5,
+				page: 1,
+				date: selected,
+			})
+
+			if (response.success === true) {
+				setCount(response.count)
+				setEventDay(response.response)
+			}
+		}
+
+		fetchFirst()
+	}, [])
 
 	useEffect(() => {
-		fetchEventDay('date')
-	}, [selected])
+		fetchEventDay()
+	}, [selected, currentPage])
 
 	useLayoutEffect(() => {
 		setOptions({
@@ -155,6 +169,7 @@ const CalenderScreen = ({ navigation: { setOptions, navigate }, layout }) => {
 			<View className={`h-[${layout.heigth - 50 / 100}]`}>
 				<Calendar
 					onDayPress={day => {
+						setEventDay([])
 						setSelected(day.dateString)
 					}}
 					markedDates={{

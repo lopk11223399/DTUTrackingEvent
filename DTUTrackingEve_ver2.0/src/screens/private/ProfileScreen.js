@@ -70,7 +70,7 @@ const ProfileScreen = ({
 
 	const avatarAnimation = {
 		opacity: animatedValue.interpolate({
-			inputRange: [0, 30],
+			inputRange: [0, 100],
 			outputRange: [1, 0],
 			extrapolate: 'clamp',
 		}),
@@ -168,14 +168,17 @@ const ProfileScreen = ({
 			)}>
 			<View className={clsx(Platform.OS === 'ios' ? 'h-[50px]' : 'h-[20px]')} />
 			<View className='absolute w-full h-[300px]'>
-				<View>
+				<Animated.View
+					style={{
+						...avatarAnimation,
+					}}>
 					<Image
 						source={{
 							uri: 'https://hoyolab-upload.hoyolab.com/upload/2022/07/22/86187a81ca71277f9c657c21469b733b_5465989353755595706.png',
 						}}
 						className='w-full h-full object-cover'
 					/>
-				</View>
+				</Animated.View>
 			</View>
 			<SafeAreaView className='h-[40px] justify-center'>
 				<StatusBar
@@ -207,12 +210,11 @@ const ProfileScreen = ({
 					</View>
 				</View>
 			</SafeAreaView>
-			<ScrollView
-				onScroll={e => {
-					const offsetY = e.nativeEvent.contentOffset.y
-					animatedValue.setValue(offsetY)
-				}}
-				scrollEventThrottle={16}>
+			<Animated.ScrollView
+				onScroll={Animated.event(
+					[{ nativeEvent: { contentOffset: { y: animatedValue } } }],
+					{ useNativeDriver: false }, // Set useNativeDriver to false
+				)}>
 				<View className='h-[56px]' />
 				<View
 					className={clsx(
@@ -559,7 +561,7 @@ const ProfileScreen = ({
 						</View>
 					</View>
 				</View>
-			</ScrollView>
+			</Animated.ScrollView>
 		</View>
 	)
 }

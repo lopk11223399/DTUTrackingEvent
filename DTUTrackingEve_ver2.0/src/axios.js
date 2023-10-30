@@ -5,9 +5,9 @@ const instance = axios.create({
 	// nhà
 	// baseURL: 'http://192.168.1.123:3000/api/v1',
 	// cf
-	baseURL: 'http://192.168.1.100:3000/api/v1',
+	// baseURL: 'http://192.168.1.100:3000/api/v1',
 	// truong
-	// baseURL: 'http://172.22.106.189:3000/api/v1',
+	baseURL: 'http://172.25.159.14:3000/api/v1',
 })
 
 // Add a request interceptor

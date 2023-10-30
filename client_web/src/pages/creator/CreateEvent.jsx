@@ -102,14 +102,7 @@ function CreateEvent({ dispatch }) {
 		])
 	}
 
-	const handleModal = () => {
-		dispatch(
-			showModal({
-				isShowModal: true,
-				modalChildren: <DetailRoom />,
-			}),
-		)
-	}
+	const handleModal = () => {}
 
 	return (
 		<div className='w-full h-full py-[16px] px-[20px]'>

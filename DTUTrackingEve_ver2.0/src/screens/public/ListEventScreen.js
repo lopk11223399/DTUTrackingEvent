@@ -43,13 +43,13 @@ const ListEventScreen = ({
 		) : null
 	}
 
-	const loadMoreItem = () => {
+	const loadMoreItem = async () => {
 		if (tabList === 'today' && countTodayEvents >= 10 * currentPage)
-			setCurrentPage(currentPage + 1)
+			await setCurrentPage(currentPage + 1)
 		else if (tabList === 'hot' && countHotEvents >= 10 * currentPage)
-			setCurrentPage(currentPage + 1)
+			await setCurrentPage(currentPage + 1)
 		else if (tabList === 'new' && countNewEvent >= 10 * currentPage)
-			setCurrentPage(currentPage + 1)
+			await setCurrentPage(currentPage + 1)
 	}
 
 	useEffect(() => {
@@ -77,8 +77,8 @@ const ListEventScreen = ({
 			}
 
 			if (response?.success === true) {
-				setData([...data, ...response.response])
-				setIsLoading(false)
+				await setData([...data, ...response.response])
+				await setIsLoading(false)
 			}
 		}
 
@@ -117,11 +117,11 @@ const ListEventScreen = ({
 		})
 	}, [isSearch, theme])
 
-	// console.log('do dai data:', data.length)
-	// console.log('Tong data:', count)
-	// console.log('Tong data hien tai', 10 * currentPage)
-	// console.log('Trang hien tại', currentPage)
-	// console.log('------------------------------')
+	console.log('Số lượng dữ liệu hiện có: ', data.length)
+	console.log('Tổng dữ liệu trên database: ', countNewEvent)
+	console.log('Dữ liệu hiện cần phải có: ', 10 * currentPage)
+	console.log('Page hiện tại: ', currentPage)
+	console.log('------------------------------')
 
 	return (
 		<SafeAreaView
