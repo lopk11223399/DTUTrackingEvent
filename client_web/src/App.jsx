@@ -11,10 +11,14 @@ import {
 } from './pages/admin'
 import CheckLogin from './pages/common/CheckLogin'
 import { CreateEvent, CreatorLayout } from './pages/creator'
+import { useSelector } from 'react-redux'
+import { Modal } from './components'
 
 function App() {
+	const { isShowModal, modalChildren } = useSelector(state => state.app)
 	return (
-		<div className='font-main h-screen relative'>
+		<div className='font-main relative'>
+			{isShowModal && <Modal>{modalChildren}</Modal>}
 			<Routes>
 				<Route path={'/'} element={<CheckLogin />} />
 				<Route path={common.LOGIN} element={<Login />} />

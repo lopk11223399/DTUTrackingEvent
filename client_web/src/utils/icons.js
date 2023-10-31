@@ -29,6 +29,7 @@ import {
 	AiOutlineCaretRight,
 	AiFillCloseCircle,
 	AiOutlineUpload,
+	AiOutlineCloseCircle,
 } from 'react-icons/ai'
 import { IoIosArrowForward } from 'react-icons/io'
 import {
@@ -76,6 +77,7 @@ const icons = {
 	AiFillCloseCircle,
 	ImBin,
 	AiOutlineUpload,
+	AiOutlineCloseCircle,
 }
 
 export default icons
