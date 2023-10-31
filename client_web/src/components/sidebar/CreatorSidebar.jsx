@@ -6,14 +6,17 @@ import icons from '../../utils/icons'
 import { common } from '../../utils/path'
 import { logout } from '../../store/user/userSlice'
 import withBaseComponent from '../../hocs/withBaseComponent'
+import avatarDefault from '../../assets/img/avatarDefault.jpg'
+import { useSelector } from 'react-redux'
 
-const { AiOutlineCaretDown, AiOutlineCaretRight, AiOutlineDown } = icons
+const { AiOutlineCaretDown, AiOutlineCaretRight, TbDoorExit } = icons
 
 const activedStyle = 'px-4 py-2 flex items-center gap-2 bg-white text-[#408A7E]'
 const notActivedStyle =
 	'px-4 py-2 flex items-center gap-2 hover:bg-white hover:text-[#408A7E]'
 
 const CreatorSidebar = ({ dispatch, navigate }) => {
+	const { current } = useSelector(state => state.user)
 	const [actived, setActived] = useState([])
 
 	const handleShowTabs = tabID => {
@@ -24,7 +27,23 @@ const CreatorSidebar = ({ dispatch, navigate }) => {
 
 	return (
 		<div className=' bg-[#408A7E] text-white h-full py-4 rounded-tr-md rounded-br-md'>
+			<div className='px-4 py-2 flex items-center gap-[12px] border-b mb-2 cursor-pointer'>
+				<div>
+					<img
+						src={avatarDefault}
+						alt='avatar'
+						className='w-[60px] h-[60px] rounded-full'
+					/>
+				</div>
+				<div className='flex-1'>
+					<p className='text-[20px] font-[700] text-white line-clamp-1'>
+						{current.name}
+					</p>
+					<p className='text-[14px] font-[400] text-[#5B5C5C]'>role</p>
+				</div>
+			</div>
 			<div>
+				<p className='text-[20px] font-[700] text-white px-4 mb-2'>Danh mục</p>
 				{creatorSidebar.map(el => (
 					<Fragment key={el.id}>
 						{el.type === 'SINGLE' && (
@@ -81,8 +100,11 @@ const CreatorSidebar = ({ dispatch, navigate }) => {
 					dispatch(logout())
 					navigate(`/${common.LOGIN}`)
 				}}
-				className={clsx(notActivedStyle, 'hover:cursor-pointer')}>
-				Thoát tài khoản
+				className={clsx(notActivedStyle, 'hover:cursor-pointer border-t mt-2')}>
+				<span>
+					<TbDoorExit size={20} />
+				</span>
+				<span>Thoát tài khoản</span>
 			</div>
 		</div>
 	)

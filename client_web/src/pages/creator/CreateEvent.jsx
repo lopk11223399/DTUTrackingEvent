@@ -2,15 +2,15 @@ import React, { useRef, useState } from 'react'
 import moment from 'moment'
 import { getBase64 } from '../../utils/helper'
 import { apiCreateEvent } from '../../apis'
-import { BsCheckLg } from 'react-icons/bs'
 import icons from '../../utils/icons'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import { showModal } from '../../store/app/appSlice'
-import { DetailRoom, Pagination } from '../../components'
+import { DetailRoom } from '../../components'
 import clsx from 'clsx'
 import NoImage from '../../assets/img/NoImage.jpg'
+import { v4 as uuidv4 } from 'uuid'
 
-const { AiOutlineUpload, AiOutlineDown } = icons
+const { AiOutlineDown } = icons
 
 function CreateEvent({ dispatch }) {
 	const [error, setError] = useState({
@@ -115,11 +115,12 @@ function CreateEvent({ dispatch }) {
 			error.imageErr === null &&
 			error.limitParticipantErr === null
 		) {
+			// console.log(payload)
 			for (let i of Object.entries(payload)) {
-				if (i[0] == 'startDate' && i[1].length === 0)
-					formData.append(i[0], `${moment().format('YYYY-MM-DD hh:mm')}`)
-				if (i[0] === 'finishDate' && i[1].length === 0)
-					formData.append(i[0], `${moment().format('YYYY-MM-DD hh:mm')}`)
+				// if (i[0] == 'startDate' && i[1].length === 0)
+				// 	formData.append(i[0], `${moment().format('YYYY-MM-DD hh:mm')}`)
+				// if (i[0] === 'finishDate' && i[1].length === 0)
+				// 	formData.append(i[0], `${moment().format('YYYY-MM-DD hh:mm')}`)
 				if (i[1] === '') continue
 				if (i[1] === null) continue
 				formData.append(i[0], i[1])
@@ -136,15 +137,28 @@ function CreateEvent({ dispatch }) {
 		}
 	}
 
-	const handleCreateRoom = () => {
-		setRoom([
-			...room,
-			{
-				topic: 'topic' + Math.floor(Math.random() * 10),
-				timeRoom: time.startTime || moment().format('hh:mm'),
-				numberRoom: '0',
-			},
-		])
+	// console.log(payload)
+
+	const handleCreateRoom = typeEvent => {
+		console.log(typeEvent)
+		if (typeEvent === true)
+			setRoom([
+				...room,
+				{
+					topic: 'topic' + Math.floor(Math.random() * 10),
+					timeRoom: time.startTime || moment().format('hh:mm'),
+					linkRoomUrl: '',
+				},
+			])
+		else if (typeEvent === false)
+			setRoom([
+				...room,
+				{
+					topic: 'topic ' + Math.floor(Math.random() * 10),
+					timeRoom: time.startTime || moment().format('hh:mm'),
+					numberRoom: '',
+				},
+			])
 	}
 
 	const handleDeleteRoom = rid => {
@@ -159,7 +173,13 @@ function CreateEvent({ dispatch }) {
 			showModal({
 				isShowModal: true,
 				modalChildren: (
-					<DetailRoom data={data[0]} room={room} setRoom={setRoom} rid={rid} />
+					<DetailRoom
+						data={data[0]}
+						room={room}
+						setRoom={setRoom}
+						rid={rid}
+						typeEvent={payload.typeEvent}
+					/>
 				),
 			}),
 		)
@@ -260,6 +280,7 @@ function CreateEvent({ dispatch }) {
 									)}>
 									<p
 										onClick={() => {
+											if (payload.typeEvent === false) setRoom([])
 											setShowCategoryEvent(false)
 											setPayload(prev => ({
 												...prev,
@@ -271,6 +292,7 @@ function CreateEvent({ dispatch }) {
 									</p>
 									<p
 										onClick={() => {
+											if (payload.typeEvent === true) setRoom([])
 											setShowCategoryEvent(false)
 											setPayload(prev => ({
 												...prev,
@@ -336,6 +358,7 @@ function CreateEvent({ dispatch }) {
 										location: text.target.value,
 										linkUrl: '',
 									}))
+
 									setError(prev => ({
 										...prev,
 										locationErr: null,
@@ -474,15 +497,15 @@ function CreateEvent({ dispatch }) {
 											...prev,
 											startDate: text.target.value,
 										}))
-										if (time.startDate && time.startTime)
+										if (text.target.value && time.startTime)
 											setPayload(prev => ({
 												...prev,
-												startDate: `${time.startDate} ${time.startTime}`,
+												startDate: `${text.target.value} ${time.startTime}`,
 											}))
 										else
 											setPayload(prev => ({
 												...prev,
-												startDate: `${time.startDate}`,
+												startDate: `${text.target.value}`,
 											}))
 									}}
 								/>
@@ -517,15 +540,15 @@ function CreateEvent({ dispatch }) {
 											...prev,
 											startTime: text.target.value,
 										}))
-										if (time.startDate && time.startTime)
+										if (time.startDate && text.target.value)
 											setPayload(prev => ({
 												...prev,
-												startDate: `${time.startDate} ${time.startTime}`,
+												startDate: `${time.startDate} ${text.target.value}`,
 											}))
 										else
 											setPayload(prev => ({
 												...prev,
-												startDate: `${time.startTime}`,
+												startDate: `${text.target.value}`,
 											}))
 									}}
 								/>
@@ -562,15 +585,15 @@ function CreateEvent({ dispatch }) {
 											...prev,
 											finishDate: text.target.value,
 										}))
-										if (time.finishDate && time.finishTime)
+										if (text.target.value && time.finishTime)
 											setPayload(prev => ({
 												...prev,
-												finishDate: `${time.finishDate} ${time.finishTime}`,
+												finishDate: `${text.target.value} ${time.finishTime}`,
 											}))
 										else
 											setPayload(prev => ({
 												...prev,
-												finishDate: `${time.finishDate}`,
+												finishDate: `${text.target.value}`,
 											}))
 									}}
 								/>
@@ -607,15 +630,15 @@ function CreateEvent({ dispatch }) {
 											...prev,
 											finishTime: text.target.value,
 										}))
-										if (time.finishDate && time.finishTime)
+										if (time.finishDate && text.target.value)
 											setPayload(prev => ({
 												...prev,
-												finishDate: `${time.finishDate} ${time.finishTime}`,
+												finishDate: `${time.finishDate} ${text.target.value}`,
 											}))
 										else
 											setPayload(prev => ({
 												...prev,
-												finishDate: `${time.finishTime}`,
+												finishDate: `${text.target.value}`,
 											}))
 									}}
 								/>
@@ -726,7 +749,9 @@ function CreateEvent({ dispatch }) {
 							Room
 						</label>
 						<div
-							onClick={handleCreateRoom}
+							onClick={() => {
+								handleCreateRoom(payload.typeEvent)
+							}}
 							className='text-[#408A7E] text-[14px] font-[400] px-[25px] py-[7px] border border-[#408A7E] rounded-[8px] cursor-pointer hover:bg-[#408A7E] hover:text-white'>
 							Thêm room
 						</div>
@@ -766,10 +791,12 @@ function CreateEvent({ dispatch }) {
 									</div>
 									<div className='flex gap-2 items-center'>
 										<p className='text-[#B3B3B3] text-[14px] font-[600]'>
-											Số phòng:
+											{payload.typeEvent === true ? 'Link room' : 'Số phòng'}
 										</p>
 										<p className='text-[#408A7E] text-[14px] font-[400] flex-1  line-clamp-1'>
-											{el.numberRoom}
+											{payload.typeEvent === true
+												? el.linkRoomUrl
+												: el.numberRoom}
 										</p>
 									</div>
 									<div className='flex gap-2 items-center justify-center'>

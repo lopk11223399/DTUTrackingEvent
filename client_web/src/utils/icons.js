@@ -30,15 +30,16 @@ import {
 	AiFillCloseCircle,
 	AiOutlineUpload,
 	AiOutlineCloseCircle,
+	AiOutlineUnorderedList,
 } from 'react-icons/ai'
-import { IoIosArrowForward } from 'react-icons/io'
+import { IoIosArrowForward, IoMdCreate } from 'react-icons/io'
 import {
 	BiDotsHorizontalRounded,
 	BiEdit,
 	BiTrash,
 	BiCustomize,
 } from 'react-icons/bi'
-import { TbBrandProducthunt } from 'react-icons/tb'
+import { TbBrandProducthunt, TbDoorExit } from 'react-icons/tb'
 import { ImBin } from 'react-icons/im'
 
 const icons = {
@@ -78,6 +79,9 @@ const icons = {
 	ImBin,
 	AiOutlineUpload,
 	AiOutlineCloseCircle,
+	IoMdCreate,
+	AiOutlineUnorderedList,
+	TbDoorExit
 }
 
 export default icons
