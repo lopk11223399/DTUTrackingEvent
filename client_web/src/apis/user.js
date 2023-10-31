@@ -18,3 +18,10 @@ export const apiUser = (params) =>
     method: "get",
     params,
   });
+export const apiUpdateRoleId = (params, data) =>
+  axios({
+    url: "/update-role/",
+    method: "put",
+    data,
+    params,
+  });

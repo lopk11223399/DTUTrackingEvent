@@ -8,7 +8,9 @@ const UserDetail = () => {
 
   return (
     <div>
-      <h1 className="text-[24px] font-[700] m-4">Chi Tiết Người dùng</h1>
+      <h1 className=" uppercase font-[500] text-zinc-500 text-3xl m-4">
+        Chi Tiết Người dùng
+      </h1>
       <div className="flex ml-4 mr-4">
         <div className="basis-[35%]">
           <div className="bg-[#fff] shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-xl mr-4  h-[500px]">

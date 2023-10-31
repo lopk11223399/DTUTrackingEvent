@@ -8,6 +8,7 @@ import {
   Calendar,
   UserDetail,
   EventDetail,
+  Chart,
 } from "./pages/admin";
 import CheckLogin from "./pages/common/CheckLogin";
 import { CreateEvent, CreatorLayout } from "./pages/creator";
@@ -21,6 +22,7 @@ function App() {
         <Route path={pathAdmin.CALENDAR} element={<Calendar />} />
         <Route path={pathAdmin.MANAGE_EVENT} element={<ManageEvent />} />
         <Route path={pathAdmin.MANAGE_USERS} element={<ManageUser />} />
+        <Route path={common.DASHBOARD} element={<Chart />} />
         <Route path={`${pathAdmin.USERDETAIL}/:id`} element={<UserDetail />} />
         <Route path={`${common.EVENTDETAIL}`} element={<EventDetail />} />
       </Route>
