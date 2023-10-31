@@ -19,7 +19,7 @@ const EventDetail = () => {
   //   };
   return (
     <div>
-      <h1 className="my-2 mx-5 uppercase text-zinc-500 text-3xl">
+      <h1 className="my-2 mx-5 font-[500]  uppercase text-zinc-500 text-3xl">
         Chi tiết sự kiện
       </h1>
       <div className="pl-5 pr-5 max-h-[100vh] overflow-x-auto">
