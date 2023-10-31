@@ -3,10 +3,15 @@ import { apiGetEvents, apiUpdateStatus } from "../../apis/event";
 import moment from "moment/moment";
 import "moment/locale/vi";
 import { Pagination } from "../../components";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { status } from "../../utils/contants";
 import Swal from "sweetalert2";
 import { pathAdmin } from "../../utils/path";
+import { FaSearch } from "react-icons/fa";
 
 moment.locale("vi");
 
@@ -15,19 +20,39 @@ function ManageEvent() {
   const [count, setCount] = useState(0);
   const [params] = useSearchParams();
   const [statusEvent, setStatusEvent] = useState(false);
+  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
   const handleUserClick = (event) => {
     navigate(`/${pathAdmin.ADMIN}/eventdetail/${event.id}`, {
       state: { event },
     });
   };
+  const handleSearchChange = (e) => {
+    setSearchText(e.target.value);
+  };
+  useEffect(() => {
+    if (searchText.length > 0) {
+      navigate({
+        pathname: "",
+        search: createSearchParams({ title: searchText }).toString(),
+      });
+    } else {
+      navigate({
+        pathname: "",
+      });
+    }
+  }, [searchText]);
   const fetchData = async (queries) => {
+    //console.log(queries);
     const response = await apiGetEvents({
       limit: 10,
       page: queries.page,
       order: ["createdAt", "DESC"],
+      ...queries,
     });
     if (response.success) {
+      //console.log(response.count);
+      console.log(response.response);
       setData(response.response);
       setCount(response.count);
       setStatusEvent(false);
@@ -36,13 +61,15 @@ function ManageEvent() {
 
   useEffect(() => {
     const queries = Object.fromEntries([...params]);
+
     fetchData({ ...queries });
   }, [params]);
+
   useEffect(() => {
     const queries = Object.fromEntries([...params]);
     fetchData({ ...queries });
   }, [statusEvent]);
-  console.log(data);
+  //console.log(data);
   const handleUpdateStatus = async (eid, status) => {
     if (status === 1) {
       Swal.fire({
@@ -106,9 +133,31 @@ function ManageEvent() {
       });
     }
   };
+
   return (
     <div className="w-full h-full py-2 px-[20px]">
-      <h1 className="text-[24px] font-[700] mb-2">Quản lý sự kiện</h1>
+      <h1 className=" uppercase text-zinc-500 font-[500] text-3xl mb-2">
+        Quản lý sự kiện
+      </h1>
+      <div className="flex mb-2 justify-end">
+        <div className="flex ">
+          <input
+            type="text"
+            className=" bg-[#F8F9FC] h-[40px] outline-none pl-[13px] w-[350px] rounded-[5px] placeholder:text-[14px] leading-[20px] font-normal"
+            placeholder="Tìm sự kiện..."
+            id="search-event"
+            autoComplete="off"
+            value={searchText}
+            onChange={handleSearchChange}
+          />
+          <label
+            htmlFor="search-event"
+            className="bg-[#4E73DF] h-[40px] px-[14px] flex items-center justify-center cursor-pointer rounded-tr-[5px] rounded-br-[5px]"
+          >
+            <FaSearch color="white" />
+          </label>
+        </div>
+      </div>
       <div className="rounded-[8px] bg-[#fff] ">
         <table className="">
           <thead className=" text-[#4E73DF]   border-b border-[#4E73DF]">
@@ -157,7 +206,10 @@ function ManageEvent() {
                   <td className="w-[10%] text-center">
                     {moment(event.createdAt).fromNow()}
                   </td>
-                  <td className="w-[20%] text-center">
+                  <td
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-[20%] text-center"
+                  >
                     <div className="flex items-center justify-center gap-1 text-white">
                       <div
                         onClick={() =>
@@ -168,9 +220,9 @@ function ManageEvent() {
                         Duyệt
                       </div>
                       <div
-                        onClick={() =>
-                          handleCancelStatus(event.id, event.status)
-                        }
+                        onClick={() => {
+                          handleCancelStatus(event.id, event.status);
+                        }}
                         className="px-2 w-[58px] bg-red-500 rounded-md cursor-pointer"
                       >
                         Huỷ
