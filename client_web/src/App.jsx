@@ -13,6 +13,7 @@ import CheckLogin from "./pages/common/CheckLogin";
 import { CreateEvent, CreatorLayout } from "./pages/creator";
 import { useSelector } from "react-redux";
 import { Modal } from "./components";
+import { Chart } from "chart.js";
 
 function App() {
   const { isShowModal, modalChildren } = useSelector((state) => state.app);
@@ -24,6 +25,7 @@ function App() {
         <Route path={common.LOGIN} element={<Login />} />
         <Route path={pathAdmin.ADMIN} element={<AdminLayout />}>
           <Route path={pathAdmin.CALENDAR} element={<Calendar />} />
+          <Route path={common.DASHBOARD} element={<Chart />} />
           <Route path={pathAdmin.MANAGE_EVENT} element={<ManageEvent />} />
           <Route path={pathAdmin.MANAGE_USERS} element={<ManageUser />} />
           <Route
