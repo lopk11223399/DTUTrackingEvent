@@ -113,11 +113,11 @@ export const tabListEvent = [
 		text: 'Sự Kiện Mới',
 		value: 'new',
 	},
-	{
-		id: 4,
-		text: 'None',
-		value: 'None',
-	},
+	// {
+	// 	id: 4,
+	// 	text: 'None',
+	// 	value: 'None',
+	// },
 ]
 
 export const event = [

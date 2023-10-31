@@ -28,7 +28,7 @@ const CreatorLayout = ({ navigate }) => {
 					<CreatorSidebar />
 				</div>
 				<div className='w-[327px]'></div>
-				<div className='flex-auto'>
+				<div className='flex-1'>
 					<Outlet />
 				</div>
 			</div>

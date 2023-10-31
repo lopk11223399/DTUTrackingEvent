@@ -469,7 +469,7 @@ const CardEvent = ({
 				</View>
 			)}
 
-			<Text>{item?.id}</Text>
+			{/* <Text>{item?.id}</Text> */}
 		</Pressable>
 	)
 }

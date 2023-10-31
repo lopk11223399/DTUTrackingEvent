@@ -8,7 +8,7 @@ export const getEventsToday = createAsyncThunk(
 
 		// if (!response.data.err) return rejectWithValue(response.data.mess)
 
-		return response.response
+		return response
 	},
 )
 
@@ -19,7 +19,7 @@ export const getEventsNew = createAsyncThunk(
 
 		// if (!response.data.err) return rejectWithValue(response.data.mess)
 
-		return response.response
+		return response
 	},
 )
 
@@ -30,6 +30,6 @@ export const getEventsHot = createAsyncThunk(
 
 		// if (!response.data.err) return rejectWithValue(response.data.mess)
 
-		return response.response
+		return response
 	},
 )

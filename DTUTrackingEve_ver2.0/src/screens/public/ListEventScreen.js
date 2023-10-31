@@ -24,6 +24,9 @@ const ListEventScreen = ({
 }) => {
 	const { current } = useSelector(state => state.user)
 	const { theme } = useSelector(state => state.app)
+	const { countTodayEvents, countHotEvents, countNewEvent } = useSelector(
+		state => state.event,
+	)
 	const [tabList, setTabList] = useState(route.params.chooseTabList || 'none')
 	const [isModalVisible, setModalVisible] = useState(false)
 	const [isSearch, setIsSearch] = useState(false)
@@ -31,7 +34,6 @@ const ListEventScreen = ({
 	const [data, setData] = useState([])
 	const [currentPage, setCurrentPage] = useState(1)
 	const [isLoading, setIsLoading] = useState(false)
-	const [count, setCount] = useState(0)
 
 	const renderLoader = () => {
 		return isLoading ? (
@@ -41,39 +43,78 @@ const ListEventScreen = ({
 		) : null
 	}
 
-	const loadMoreItem = () => {
-		if (count >= 10 * currentPage) {
-			setCurrentPage(currentPage + 1)
-		}
+	// () => fetchUsers(users.length, FETCH_USERS_COUNT, page)
+
+	const loadMoreItem = async () => {
+		if (tabList === 'today' && countTodayEvents >= 10 * currentPage)
+			await setCurrentPage(currentPage + 1)
+		else if (tabList === 'hot' && countHotEvents >= 10 * currentPage)
+			await setCurrentPage(currentPage + 1)
+		else if (tabList === 'new' && countNewEvent >= 10 * currentPage)
+			await setCurrentPage(currentPage + 1)
 	}
 
-	useEffect(() => {
-		const fetchEvent = async () => {
-			setIsLoading(true)
-			let response
-			if (tabList === 'today') {
-				response = await apiGetEvents({
-					limit: 10,
-					page: currentPage,
-					// date: moment().format('YYYY-MM-DD'),
-				})
-			} else if (tabList === 'hot') {
-				response = await apiGetEvents({
-					limit: 10,
-					page: currentPage,
-					hot: true,
-				})
-			}
+	// useEffect(() => {
+	// 	const fetchEvent = async () => {
+	// 		setIsLoading(true)
+	// 		let response
+	// 		if (tabList === 'today') {
+	// 			response = await apiGetEvents({
+	// 				limit: 10,
+	// 				page: currentPage,
+	// 				date: moment().format('YYYY-MM-DD'),
+	// 			})
+	// 		} else if (tabList === 'hot') {
+	// 			response = await apiGetEvents({
+	// 				limit: 10,
+	// 				page: currentPage,
+	// 				hot: true,
+	// 			})
+	// 		} else if (tabList === 'new') {
+	// 			response = await apiGetEvents({
+	// 				limit: 10,
+	// 				page: currentPage,
+	// 				order: ['createdAt', 'DESC'],
+	// 			})
+	// 		}
 
-			if (response?.success === true) {
-				setData([...data, ...response.response])
-				setCount(response?.count)
-				setIsLoading(false)
-			}
+	// 		if (response?.success === true) {
+	// 			await setData([...data, ...response.response])
+	// 			await setIsLoading(false)
+	// 		}
+	// 	}
+
+	// 	fetchEvent()
+	// }, [tabList, currentPage])
+
+	const fetchEvent = async () => {
+		setIsLoading(true)
+		let response
+		if (tabList === 'today') {
+			response = await apiGetEvents({
+				limit: 10,
+				page: currentPage,
+				date: moment().format('YYYY-MM-DD'),
+			})
+		} else if (tabList === 'hot') {
+			response = await apiGetEvents({
+				limit: 10,
+				page: currentPage,
+				hot: true,
+			})
+		} else if (tabList === 'new') {
+			response = await apiGetEvents({
+				limit: 10,
+				page: currentPage,
+				order: ['createdAt', 'DESC'],
+			})
 		}
 
-		fetchEvent()
-	}, [tabList, currentPage])
+		if (response?.success === true) {
+			await setData([...data, ...response.response])
+			await setIsLoading(false)
+		}
+	}
 
 	useLayoutEffect(() => {
 		setOptions({
@@ -107,11 +148,11 @@ const ListEventScreen = ({
 		})
 	}, [isSearch, theme])
 
-	// console.log('do dai data:', data.length)
-	// console.log('Tong data:', count)
-	// console.log('Tong data hien tai', 10 * currentPage)
-	// console.log('Trang hien tại', currentPage)
-	// console.log('------------------------------')
+	console.log('Số lượng dữ liệu hiện có: ', data.length)
+	console.log('Tổng dữ liệu trên database: ', countNewEvent)
+	console.log('Dữ liệu hiện cần phải có: ', 10 * currentPage)
+	console.log('Page hiện tại: ', currentPage)
+	console.log('------------------------------')
 
 	return (
 		<SafeAreaView
@@ -135,7 +176,20 @@ const ListEventScreen = ({
 							<Pressable
 								onPress={() => {
 									setTabList(item.value)
-									setCurrentPage(0)
+									if (tabList === 'today') {
+										if (countTodayEvents >= 10 * currentPage) setCurrentPage(1)
+										else setCurrentPage(0)
+									}
+
+									if (tabList === 'hot') {
+										if (countHotEvents >= 10 * currentPage) setCurrentPage(1)
+										else setCurrentPage(0)
+									}
+
+									if (tabList === 'new') {
+										if (countNewEvent >= 10 * currentPage) setCurrentPage(1)
+										else setCurrentPage(0)
+									}
 									setData([])
 								}}
 								key={item.id}
@@ -197,6 +251,23 @@ const ListEventScreen = ({
 					onEndReached={loadMoreItem}
 					onEndReachedThreshold={0}
 				/>
+
+				{/* <FlatList
+					showsVerticalScrollIndicator={false}
+					data={data}
+					renderItem={({ item, index }) => (
+						<CardEvent
+							item={item}
+							key={index}
+							userId={current?.id || 0}
+							borderHiden={index === data.length - 1 ? false : true}
+						/>
+					)}
+					keyExtractor={(item, index) => index.toString()}
+					ListFooterComponent={renderLoader}
+					onEndReached={() => fetchEvent(users.length, FETCH_USERS_COUNT, page)}
+					onEndReachedThreshold={0}
+				/> */}
 			</View>
 
 			<Modal
@@ -234,6 +305,22 @@ const ListEventScreen = ({
 									onPress={() => {
 										setModalVisible(false)
 										setTabList(el.value)
+										if (tabList === 'today') {
+											if (countTodayEvents >= 10 * currentPage)
+												setCurrentPage(1)
+											else setCurrentPage(0)
+										}
+
+										if (tabList === 'hot') {
+											if (countHotEvents >= 10 * currentPage) setCurrentPage(1)
+											else setCurrentPage(0)
+										}
+
+										if (tabList === 'new') {
+											if (countNewEvent >= 10 * currentPage) setCurrentPage(1)
+											else setCurrentPage(0)
+										}
+										setData([])
 									}}
 									key={el.id}
 									className={clsx(

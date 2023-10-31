@@ -37,7 +37,11 @@ const DetailEvent = ({
 	const [data, setData] = useState({})
 	const [update, setUpdate] = useState(false)
 	const animatedValue = useRef(new Animated.Value(0)).current
-
+	const opacityyyy = animatedValue.interpolate({
+		inputRange: [0, 100],
+		outputRange: [0, 1],
+		extrapolate: 'clamp',
+	})
 	const fetchDetailEvent = async eid => {
 		const response = await apiGetDetailEvents(eid)
 
@@ -375,6 +379,21 @@ const DetailEvent = ({
 			<View style={[{ zIndex: 10 }]} scr className={clsx('absolute w-full')}>
 				<SafeAreaView className='w-full h-[80px] justify-center'>
 					<View className='px-4'>
+						<Animated.View
+							className={clsx(
+								'h-[80px]',
+								theme === 'light' && 'bg-backgroundColor_main_light',
+								(theme === 'dark' || theme === 'dark-default') &&
+									'bg-backgroundColor_main_dark',
+							)}
+							style={{
+								position: 'absolute',
+								top: -50,
+								left: 0,
+								right: 0,
+								bottom: 0,
+								opacity: opacityyyy,
+							}}></Animated.View>
 						<Pressable
 							onPress={() => {
 								if (route.params.caption) return navigate('Home')
