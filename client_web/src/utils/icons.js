@@ -13,6 +13,7 @@ import {
 	BsCartPlus,
 	BsFillCartCheckFill,
 	BsFillCartPlusFill,
+	BsChatRightTextFill,
 } from 'react-icons/bs'
 import { FaUserCircle, FaTty } from 'react-icons/fa'
 import {
@@ -93,6 +94,7 @@ const icons = {
 	BiSolidPencil,
 	AiOutlineRollback,
 	TfiImport,
+	BsChatRightTextFill,
 }
 
 export default icons

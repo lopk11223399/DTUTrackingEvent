@@ -24,6 +24,7 @@ function CreateEvent({ dispatch }) {
 		addPointErr: null,
 		imageErr: null,
 		limitParticipantErr: null,
+		roomErr: null,
 	})
 	const [time, setTime] = useState({
 		startDate: moment().format('YYYY-MM-DD'),
@@ -158,6 +159,11 @@ function CreateEvent({ dispatch }) {
 					numberRoom: '',
 				},
 			])
+		else
+			setError(prev => ({
+				...prev,
+				roomErr: 'Vui lòng chọn loại sự kiện trước!',
+			}))
 	}
 
 	const handleDeleteRoom = rid => {
@@ -249,6 +255,7 @@ function CreateEvent({ dispatch }) {
 										...prev,
 										typeEventErr: null,
 										locationErr: null,
+										roomErr: null,
 									}))
 								}}
 								className={clsx(
@@ -813,6 +820,13 @@ function CreateEvent({ dispatch }) {
 								</div>
 							))}
 					</div>
+					{error?.roomErr !== null && (
+						<div className='flex items-center w-full'>
+							<small className='text-red-400 text-[12px]'>
+								{error?.roomErr}
+							</small>
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

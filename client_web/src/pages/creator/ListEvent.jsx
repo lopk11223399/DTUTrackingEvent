@@ -23,6 +23,30 @@ function ListEvent({ navigate, location }) {
 	const [choose, setChoose] = useState([])
 	const [checkCheckboxALl, setCheckCheckboxALl] = useState(false)
 	const [search, setSearch] = useState('')
+	const [statusChoose, setStatusChoose] = useState({
+		status1: {
+			id: 1,
+			check: false,
+		},
+		status2: {
+			id: 2,
+			check: false,
+		},
+		status3: {
+			id: 3,
+			check: false,
+		},
+		status4: {
+			id: 4,
+			check: false,
+		},
+		status5: {
+			id: 5,
+			check: false,
+		},
+	})
+	const [tool, setTool] = useState(false)
+	const [getChoose, setGetChoose] = useState(false)
 
 	const fetchData = async queries => {
 		const response = await apiGetEventOfAuthor({
@@ -82,105 +106,216 @@ function ListEvent({ navigate, location }) {
 		})
 	}
 
+	const handleStatusChoose = sid => {
+		if (sid === 1) {
+			const check = !statusChoose.status1.check
+			setStatusChoose(prev => ({ ...prev, status1: { id: 1, check } }))
+		} else if (sid === 2) {
+			const check = !statusChoose.status2.check
+			setStatusChoose(prev => ({ ...prev, status2: { id: 2, check } }))
+		} else if (sid === 3) {
+			const check = !statusChoose.status3.check
+			setStatusChoose(prev => ({ ...prev, status3: { id: 3, check } }))
+		} else if (sid === 4) {
+			const check = !statusChoose.status4.check
+			setStatusChoose(prev => ({ ...prev, status4: { id: 4, check } }))
+		} else if (sid === 5) {
+			const check = !statusChoose.status5.check
+			setStatusChoose(prev => ({ ...prev, status5: { id: 5, check } }))
+		}
+	}
+
+	useEffect(() => {
+		window.onclick = event => {
+			if (!(event.target.id === 'filter')) setTool(false)
+		}
+	}, [])
+
 	return (
-		<div className='px-[12px]'>
-			<div className='flex gap-[17px] py-[15px] justify-end'>
-				<div className='w-[292px] py-[6px] px-[12px] flex items-center gap-3 rounded-[4px] border border-[#408A7E]'>
-					<span>
-						<AiOutlineSearch size={16} color='#868686' />
-					</span>
+		<div className='px-[12px] pt-[70px]'>
+			<div className='z-10 flex justify-between items-center bg-white fixed top-0 right-0 left-[327px] px-[12px] shadow-table'>
+				<h1 className='text-[24px] font-[700] text-[#408A7E]'>
+					Danh sách sự kiện của tôi
+				</h1>
+				<div className='flex gap-[17px] py-[15px]'>
+					<div className='w-[292px] px-[12px] py-[6px] flex items-center gap-3 rounded-[4px] border border-[#408A7E]'>
+						<span>
+							<AiOutlineSearch size={16} color='#868686' />
+						</span>
+						<input
+							value={search}
+							onChange={text => setSearch(text.target.value)}
+							placeholder='Tìm kiếm'
+							type='text'
+							className='bg-transparent flex-1 outline-none text-[14px] font-[400] text-[#408A7E] placeholder:text-[#868686]'
+						/>
+						{search.length > 0 && (
+							<span className='cursor-pointer' onClick={() => setSearch('')}>
+								<AiOutlineCloseCircle size={16} color='#868686' />
+							</span>
+						)}
+					</div>
+					<div
+						onClick={() =>
+							navigate(`/${pathCreator.CREATOR}/${pathCreator.CREATE_EVENT}`)
+						}
+						className='flex items-center py-[6px] px-[12px] cursor-pointer gap-[9px] w-[178px] bg-[#408A7E] rounded-[4px]'>
+						<span>
+							<IoIosAdd size={24} color='#FFFFFF' />
+						</span>
+						<p className='text-white text-[14px] font-[400] flex-1'>
+							Tạo sự kiện mới
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div className='flex items-center justify-between gap-2'>
+				<div className='flex items-center gap-[11px] h-[70px] py-[20px] px-[31px]'>
 					<input
-						value={search}
-						onChange={text => setSearch(text.target.value)}
-						placeholder='Tìm kiếm'
-						type='text'
-						className='bg-transparent flex-1 outline-none text-[14px] font-[400] text-[#408A7E] placeholder:text-[#868686]'
+						type='checkbox'
+						id='slectAll'
+						className='w-[24px] h-[24px] cursor-pointer'
+						checked={checkCheckboxALl}
 					/>
-					{search.length > 0 && (
-						<span onClick={() => setSearch('')}>
-							<AiOutlineCloseCircle size={16} color='#868686' />
+					{choose.length > 0 ? (
+						<label
+							onClick={() => {
+								handleChoose('addAll')
+							}}
+							className='text-[#408A7E] text-[14px] font-[700] cursor-pointer'
+							htmlFor='slectAll'>
+							{`Đang chọn (${choose.length})`}
+						</label>
+					) : (
+						<label
+							onClick={() => {
+								handleChoose('addAll')
+							}}
+							className='text-[#747474] text-[14px] font-[700] cursor-pointer'
+							htmlFor='slectAll'>
+							Chọn tất cả
+						</label>
+					)}
+					<p className='text-[#9D9D9D] text-[14px] font-[400]'>{`${data?.length} sự kiện`}</p>
+					{choose.length > 0 && (
+						<span
+							onClick={() => handleChoose('removeAll')}
+							className='cursor-pointer bg-[#408A7E] text-[14px] font-[700] py-1 w-[120px] text-center rounded-[8px] text-white'>
+							Bỏ chọn tất cả
+						</span>
+					)}
+					{choose.length > 0 && (
+						<span className='cursor-pointer bg-[#408A7E] text-[14px] font-[700] py-1 w-[120px] text-center rounded-[8px] text-white'>
+							Xóa
 						</span>
 					)}
 				</div>
-				<div
-					onClick={() =>
-						navigate(`/${pathCreator.CREATOR}/${pathCreator.CREATE_EVENT}`)
-					}
-					className='flex items-center py-[6px] px-[12px] cursor-pointer gap-[9px] w-[178px] bg-[#408A7E] rounded-[4px]'>
-					<span>
-						<IoIosAdd size={24} color='#FFFFFF' />
+				<div className='flex items-center gap-[12px] relative'>
+					<span
+						id='filter'
+						onClick={() => setTool(!tool)}
+						className={clsx(
+							'text-[18px] text-[#408A7E] font-[600] w-[120px] py-1 border border-[#408A7E] rounded-[8px] cursor-pointer text-center hover:bg-[#408A7E] hover:text-white',
+							tool && 'bg-[#408A7E] text-white',
+						)}>
+						Lọc
 					</span>
-					<p className='text-white text-[14px] font-[400] flex-1'>
-						Tạo sự kiện mới
-					</p>
+					{tool && (
+						<div
+							onClick={e => e.stopPropagation()}
+							className='absolute bg-white p-[12px] w-[200px] right-0 top-[100%] rounded-[8px] shadow-table flex flex-col gap-2'>
+							{choose.length > 0 && choose.length !== data.length && (
+								<div className='flex items-center gap-[8px]'>
+									<input
+										type='checkbox'
+										id='allChoose'
+										className='w-[16px] h-[16px]'
+										onChange={() => setGetChoose(!getChoose)}
+										defaultChecked={getChoose}
+									/>
+									<label
+										htmlFor='allChoose'
+										className={clsx(
+											'text-[16px] cursor-pointer font-[400]',
+											getChoose ? 'text-[#408A7E]' : 'text-[#C2C2C2]',
+										)}>
+										Lấy đã chọn
+									</label>
+								</div>
+							)}
+							{status.map(el => (
+								<div className='flex items-center gap-[8px]' key={el.id}>
+									<input
+										onChange={() => handleStatusChoose(el.id)}
+										type='checkbox'
+										id={el.id}
+										className='w-[16px] h-[16px]'
+										defaultChecked={
+											el.id === statusChoose.status1.id
+												? statusChoose.status1.check
+												: el.id === statusChoose.status2.id
+												? statusChoose.status2.check
+												: el.id === statusChoose.status3.id
+												? statusChoose.status3.check
+												: el.id === statusChoose.status4.id
+												? statusChoose.status4.check
+												: statusChoose.status5.check
+										}
+									/>
+									<label
+										htmlFor={el.id}
+										className={clsx(
+											'text-[16px] cursor-pointer font-[400]',
+											el.id === statusChoose.status1.id &&
+												statusChoose.status1.check
+												? 'text-[#408A7E]'
+												: el.id === statusChoose.status2.id &&
+												  statusChoose.status2.check
+												? 'text-[#408A7E]'
+												: el.id === statusChoose.status3.id &&
+												  statusChoose.status3.check
+												? 'text-[#408A7E]'
+												: el.id === statusChoose.status4.id &&
+												  statusChoose.status4.check
+												? 'text-[#408A7E]'
+												: el.id === statusChoose.status5.id &&
+												  statusChoose.status5.check
+												? 'text-[#408A7E]'
+												: 'text-[#C2C2C2]',
+										)}>
+										{el.text}
+									</label>
+								</div>
+							))}
+						</div>
+					)}
 				</div>
-			</div>
-			<div className='flex items-center gap-[11px] h-[70px] py-[20px] px-[31px]'>
-				<input
-					type='checkbox'
-					id='slectAll'
-					className='w-[24px] h-[24px] cursor-pointer'
-					checked={checkCheckboxALl}
-				/>
-				{checkCheckboxALl ? (
-					<label
-						onClick={() => {
-							handleChoose('removeAll')
-						}}
-						className='text-[#747474] text-[14px] font-[700] cursor-pointer'
-						htmlFor='slectAll'>
-						Bỏ chọn tất cả
-					</label>
-				) : choose.length > 0 ? (
-					<label
-						onClick={() => {
-							handleChoose('addAll')
-						}}
-						className='text-[#408A7E] text-[14px] font-[700] cursor-pointer'
-						htmlFor='slectAll'>
-						{`Đang chọn (${choose.length})`}
-					</label>
-				) : (
-					<label
-						onClick={() => {
-							handleChoose('addAll')
-						}}
-						className='text-[#747474] text-[14px] font-[700] cursor-pointer'
-						htmlFor='slectAll'>
-						Chọn tất cả
-					</label>
-				)}
-				<p className='text-[#9D9D9D] text-[14px] font-[400]'>{`${data?.length} sự kiện`}</p>
-				{choose.length > 0 && (
-					<span className='cursor-pointer bg-[#408A7E] text-[14px] font-[700] py-1 w-[100px] text-center rounded-[8px] text-white'>
-						Xóa
-					</span>
-				)}
 			</div>
 
 			<table className='w-full'>
-				<thead className='h-[68px] rounded-[8px] bg-white text-center shadow-table'>
+				<thead className='h-[68px] rounded-[8px] bg-white shadow-table'>
 					<tr className=''>
 						<td className='w-[10%]'></td>
 						<td className='text-[14px] font-[700] text-[#5F5F5F] w-[25%]'>
 							Tên sự kiện
 						</td>
-						<td className='text-[14px] font-[700] text-[#5F5F5F] w-[10%]'>
+						<td className='text-[14px] font-[700] text-[#5F5F5F] w-[10%] text-center'>
 							Trạng thái
 						</td>
-						<td className='text-[14px] font-[700] text-[#5F5F5F]  w-[15%]'>
+						<td className='text-[14px] font-[700] text-[#5F5F5F]  w-[15%] text-center'>
 							Số người tham gia
 						</td>
-						<td className='text-[14px] font-[700] text-[#5F5F5F]  w-[15%]'>
+						<td className='text-[14px] font-[700] text-[#5F5F5F]  w-[15%] text-center'>
 							Ngày tạo
 						</td>
-						<td className='text-[14px] font-[700] text-[#5F5F5F] w-[10%]'>
+						<td className='text-[14px] font-[700] text-[#5F5F5F] w-[10%] text-center'>
 							Tạo biến thể
 						</td>
-						<td className='text-[14px] font-[700] text-[#5F5F5F] w-[10%]'>
+						<td className='text-[14px] font-[700] text-[#5F5F5F] w-[10%] text-center'>
 							Chỉnh sửa
 						</td>
-						<td className='text-[14px] font-[700] text-[#5F5F5F] w-[5%]'>
+						<td className='text-[14px] font-[700] text-[#5F5F5F] w-[5%] text-center'>
 							Xóa
 						</td>
 					</tr>
@@ -196,7 +331,9 @@ function ListEvent({ navigate, location }) {
 							}}
 							key={el.id}
 							className='border-b border-[#D3D3D3] cursor-pointer hover:bg-white hover:shadow-md'>
-							<td className='text-center w-[10%] py-[12px]'>
+							<td
+								onClick={e => e.stopPropagation()}
+								className='text-center w-[10%] py-[12px]'>
 								<input
 									type='checkbox'
 									id={el.id}
@@ -209,6 +346,8 @@ function ListEvent({ navigate, location }) {
 											setCheckCheckboxALl(false)
 											setChoose(newArray)
 										} else setChoose(prev => [e.target.id, ...prev])
+										if (choose.length === 0 || choose.length === data.length)
+											setGetChoose(false)
 									}}
 									checked={choose.some(e => e === el.id.toString())}
 								/>
@@ -240,7 +379,7 @@ function ListEvent({ navigate, location }) {
 							<td className='text-center w-[15%]'>
 								{moment(el.createdAt).fromNow()}
 							</td>
-							<td className='w-[10%]'>
+							<td onClick={e => e.stopPropagation()} className='w-[10%]'>
 								<span
 									onClick={() => handleCreateEvent(el)}
 									className='w-full cursor-pointer flex items-center justify-center bg-[#408A7E] py-[3px] rounded-md'>
@@ -252,12 +391,12 @@ function ListEvent({ navigate, location }) {
 									</span>
 								</span>
 							</td>
-							<td className='w-[10%]'>
+							<td onClick={e => e.stopPropagation()} className='w-[10%]'>
 								<span className='cursor-pointer flex items-center justify-center text-[#B3B3B3] hover:text-[#408A7E]'>
 									<BiSolidPencil size={19} />
 								</span>
 							</td>
-							<td className='w-[5%]'>
+							<td onClick={e => e.stopPropagation()} className='w-[5%]'>
 								<span className='cursor-pointer flex items-center justify-center text-[#B3B3B3] hover:text-[#408A7E]'>
 									<BiTrash size={19} />
 								</span>
