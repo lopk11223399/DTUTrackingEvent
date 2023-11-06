@@ -9,6 +9,7 @@ import { DetailRoom } from '../../components'
 import clsx from 'clsx'
 import NoImage from '../../assets/img/NoImage.jpg'
 import { v4 as uuidv4 } from 'uuid'
+import { toast } from 'react-toastify'
 
 const { AiOutlineDown } = icons
 
@@ -24,10 +25,16 @@ function CreateEvent({ dispatch }) {
 		imageErr: null,
 		limitParticipantErr: null,
 	})
+	const [time, setTime] = useState({
+		startDate: moment().format('YYYY-MM-DD'),
+		startTime: moment().format('hh:mm'),
+		finishDate: moment().format('YYYY-MM-DD'),
+		finishTime: moment().format('hh:mm'),
+	})
 	const [payload, setPayload] = useState({
 		title: '',
-		startDate: '',
-		finishDate: '',
+		startDate: `${time.startDate} - ${time.startTime}`,
+		finishDate: `${time.finishDate} - ${time.finishTime}`,
 		location: '',
 		typeEvent: null,
 		description: '',
@@ -36,12 +43,7 @@ function CreateEvent({ dispatch }) {
 		limitParticipant: 0,
 	})
 	const [room, setRoom] = useState([])
-	const [time, setTime] = useState({
-		startDate: moment().format('YYYY-MM-DD'),
-		startTime: moment().format('hh:mm'),
-		finishDate: moment().format('YYYY-MM-DD'),
-		finishTime: moment().format('hh:mm'),
-	})
+
 	const [preview, setPreview] = useState({
 		image: null,
 		imageWeb: null,
@@ -115,12 +117,8 @@ function CreateEvent({ dispatch }) {
 			error.imageErr === null &&
 			error.limitParticipantErr === null
 		) {
-			// console.log(payload)
+			console.log(payload)
 			for (let i of Object.entries(payload)) {
-				// if (i[0] == 'startDate' && i[1].length === 0)
-				// 	formData.append(i[0], `${moment().format('YYYY-MM-DD hh:mm')}`)
-				// if (i[0] === 'finishDate' && i[1].length === 0)
-				// 	formData.append(i[0], `${moment().format('YYYY-MM-DD hh:mm')}`)
 				if (i[1] === '') continue
 				if (i[1] === null) continue
 				formData.append(i[0], i[1])
@@ -131,9 +129,10 @@ function CreateEvent({ dispatch }) {
 			for (let i of formData) {
 				console.log(i[0], i[1])
 			}
-
 			const response = await apiCreateEvent(formData)
 			console.log(response)
+
+			if (response.success) toast.success(response.mess)
 		}
 	}
 
@@ -392,7 +391,7 @@ function CreateEvent({ dispatch }) {
 									Điểm rèn luyện
 								</label>
 								<input
-									type='text'
+									type='number'
 									id='addPoint'
 									className={clsx(
 										'rounded-[8px] py-[7px] px-[15px] flex-1 placeholder:text-[#848484] text-[#408A7E] text-[12px] font-[400] outline-none border bg-transparent',
@@ -435,7 +434,7 @@ function CreateEvent({ dispatch }) {
 									Số lượng người tham gia
 								</label>
 								<input
-									type='text'
+									type='number'
 									id='limitParticipantErr'
 									className={clsx(
 										'rounded-[8px] py-[7px] px-[15px] flex-1 placeholder:text-[#848484] text-[#408A7E] text-[12px] font-[400] outline-none border bg-transparent',

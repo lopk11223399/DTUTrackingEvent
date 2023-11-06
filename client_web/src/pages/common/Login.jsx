@@ -10,7 +10,7 @@ import clsx from 'clsx'
 
 function Login({ navigate, dispatch }) {
 	const [error, setError] = useState({
-		usernameErr: 'abc',
+		usernameErr: null,
 		passwordErr: null,
 	})
 	const [payload, setPayload] = useState({

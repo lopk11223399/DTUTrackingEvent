@@ -47,45 +47,45 @@ const ListEventScreen = ({
 
 	const loadMoreItem = async () => {
 		if (tabList === 'today' && countTodayEvents >= 10 * currentPage)
-			await setCurrentPage(currentPage + 1)
+			setCurrentPage(currentPage + 1)
 		else if (tabList === 'hot' && countHotEvents >= 10 * currentPage)
-			await setCurrentPage(currentPage + 1)
+			setCurrentPage(currentPage + 1)
 		else if (tabList === 'new' && countNewEvent >= 10 * currentPage)
-			await setCurrentPage(currentPage + 1)
+			setCurrentPage(currentPage + 1)
 	}
 
-	// useEffect(() => {
-	// 	const fetchEvent = async () => {
-	// 		setIsLoading(true)
-	// 		let response
-	// 		if (tabList === 'today') {
-	// 			response = await apiGetEvents({
-	// 				limit: 10,
-	// 				page: currentPage,
-	// 				date: moment().format('YYYY-MM-DD'),
-	// 			})
-	// 		} else if (tabList === 'hot') {
-	// 			response = await apiGetEvents({
-	// 				limit: 10,
-	// 				page: currentPage,
-	// 				hot: true,
-	// 			})
-	// 		} else if (tabList === 'new') {
-	// 			response = await apiGetEvents({
-	// 				limit: 10,
-	// 				page: currentPage,
-	// 				order: ['createdAt', 'DESC'],
-	// 			})
-	// 		}
+	useEffect(() => {
+		const fetchEvent = async () => {
+			setIsLoading(true)
+			let response
+			if (tabList === 'today') {
+				response = await apiGetEvents({
+					limit: 10,
+					page: currentPage,
+					date: moment().format('YYYY-MM-DD'),
+				})
+			} else if (tabList === 'hot') {
+				response = await apiGetEvents({
+					limit: 10,
+					page: currentPage,
+					hot: true,
+				})
+			} else if (tabList === 'new') {
+				response = await apiGetEvents({
+					limit: 10,
+					page: currentPage,
+					order: ['createdAt', 'DESC'],
+				})
+			}
 
-	// 		if (response?.success === true) {
-	// 			await setData([...data, ...response.response])
-	// 			await setIsLoading(false)
-	// 		}
-	// 	}
+			if (response?.success === true) {
+				await setData([...data, ...response.response])
+				await setIsLoading(false)
+			}
+		}
 
-	// 	fetchEvent()
-	// }, [tabList, currentPage])
+		fetchEvent()
+	}, [tabList, currentPage])
 
 	const fetchEvent = async () => {
 		setIsLoading(true)
@@ -111,8 +111,8 @@ const ListEventScreen = ({
 		}
 
 		if (response?.success === true) {
-			await setData([...data, ...response.response])
-			await setIsLoading(false)
+			setData([...data, ...response.response])
+			setIsLoading(false)
 		}
 	}
 
@@ -148,11 +148,11 @@ const ListEventScreen = ({
 		})
 	}, [isSearch, theme])
 
-	console.log('Số lượng dữ liệu hiện có: ', data.length)
-	console.log('Tổng dữ liệu trên database: ', countNewEvent)
-	console.log('Dữ liệu hiện cần phải có: ', 10 * currentPage)
-	console.log('Page hiện tại: ', currentPage)
-	console.log('------------------------------')
+	// console.log('Số lượng dữ liệu hiện có: ', data.length)
+	// console.log('Tổng dữ liệu trên database: ', countNewEvent)
+	// console.log('Dữ liệu hiện cần phải có: ', 10 * currentPage)
+	// console.log('Page hiện tại: ', currentPage)
+	// console.log('------------------------------')
 
 	return (
 		<SafeAreaView
