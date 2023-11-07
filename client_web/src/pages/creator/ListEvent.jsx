@@ -47,6 +47,7 @@ function ListEvent({ navigate, location }) {
 	})
 	const [tool, setTool] = useState(false)
 	const [getChoose, setGetChoose] = useState(false)
+	const [checkChoose, setCheckChoose] = useState(false)
 
 	const fetchData = async queries => {
 		const response = await apiGetEventOfAuthor({
@@ -100,7 +101,7 @@ function ListEvent({ navigate, location }) {
 		}).then(async rs => {
 			if (rs.isConfirmed) {
 				navigate(`/${pathCreator.CREATOR}/${pathCreator.CREATE_EVENT}`, {
-					state: { data },
+					state: data,
 				})
 			}
 		})
@@ -171,33 +172,54 @@ function ListEvent({ navigate, location }) {
 			</div>
 
 			<div className='flex items-center justify-between gap-2'>
-				<div className='flex items-center gap-[11px] h-[70px] py-[20px] px-[31px]'>
-					<input
-						type='checkbox'
-						id='slectAll'
-						className='w-[24px] h-[24px] cursor-pointer'
-						checked={checkCheckboxALl}
-					/>
-					{choose.length > 0 ? (
-						<label
-							onClick={() => {
-								handleChoose('addAll')
-							}}
-							className='text-[#408A7E] text-[14px] font-[700] cursor-pointer'
-							htmlFor='slectAll'>
-							{`Đang chọn (${choose.length})`}
-						</label>
+				<div className='flex items-center gap-[11px] h-[70px] py-[20px]'>
+					{checkChoose ? (
+						<div className='flex items-center gap-[11px] pl-[31px]'>
+							<input
+								type='checkbox'
+								id='slectAll'
+								className='w-[24px] h-[24px] cursor-pointer'
+								checked={checkCheckboxALl}
+							/>
+							{choose.length > 0 ? (
+								<label
+									onClick={() => {
+										handleChoose('addAll')
+									}}
+									className='text-[#408A7E] text-[14px] font-[700] cursor-pointer'
+									htmlFor='slectAll'>
+									{`Đang chọn (${choose.length})`}
+								</label>
+							) : (
+								<label
+									onClick={() => {
+										handleChoose('addAll')
+									}}
+									className='text-[#747474] text-[14px] font-[700] cursor-pointer'
+									htmlFor='slectAll'>
+									Chọn tất cả
+								</label>
+							)}
+						</div>
 					) : (
-						<label
-							onClick={() => {
-								handleChoose('addAll')
-							}}
-							className='text-[#747474] text-[14px] font-[700] cursor-pointer'
-							htmlFor='slectAll'>
-							Chọn tất cả
-						</label>
+						<span
+							onClick={() => setCheckChoose(true)}
+							className='cursor-pointer bg-[#408A7E] text-[14px] font-[700] py-1 w-[120px] text-center rounded-[8px] text-white'>
+							Chọn
+						</span>
 					)}
 					<p className='text-[#9D9D9D] text-[14px] font-[400]'>{`${data?.length} sự kiện`}</p>
+					{checkChoose && (
+						<span
+							onClick={() => {
+								setCheckChoose(false)
+								setChoose([])
+								setCheckCheckboxALl(false)
+							}}
+							className='cursor-pointer bg-[#408A7E] text-[14px] font-[700] py-1 w-[120px] text-center rounded-[8px] text-white'>
+							Tắt
+						</span>
+					)}
 					{choose.length > 0 && (
 						<span
 							onClick={() => handleChoose('removeAll')}
@@ -230,14 +252,14 @@ function ListEvent({ navigate, location }) {
 									<input
 										type='checkbox'
 										id='allChoose'
-										className='w-[16px] h-[16px]'
+										className='w-[16px] h-[16px] cursor-pointer'
 										onChange={() => setGetChoose(!getChoose)}
 										defaultChecked={getChoose}
 									/>
 									<label
 										htmlFor='allChoose'
 										className={clsx(
-											'text-[16px] cursor-pointer font-[400]',
+											'text-[16px] font-[400] cursor-pointer',
 											getChoose ? 'text-[#408A7E]' : 'text-[#C2C2C2]',
 										)}>
 										Lấy đã chọn
@@ -250,7 +272,7 @@ function ListEvent({ navigate, location }) {
 										onChange={() => handleStatusChoose(el.id)}
 										type='checkbox'
 										id={el.id}
-										className='w-[16px] h-[16px]'
+										className='w-[16px] h-[16px] cursor-pointer'
 										defaultChecked={
 											el.id === statusChoose.status1.id
 												? statusChoose.status1.check
@@ -266,7 +288,7 @@ function ListEvent({ navigate, location }) {
 									<label
 										htmlFor={el.id}
 										className={clsx(
-											'text-[16px] cursor-pointer font-[400]',
+											'text-[16px] font-[400] cursor-pointer',
 											el.id === statusChoose.status1.id &&
 												statusChoose.status1.check
 												? 'text-[#408A7E]'
@@ -296,8 +318,8 @@ function ListEvent({ navigate, location }) {
 			<table className='w-full'>
 				<thead className='h-[68px] rounded-[8px] bg-white shadow-table'>
 					<tr className=''>
-						<td className='w-[10%]'></td>
-						<td className='text-[14px] font-[700] text-[#5F5F5F] w-[25%]'>
+						{checkChoose && <td className='w-[10%]'></td>}
+						<td className='text-[14px] font-[700] text-[#5F5F5F] w-[25%] pl-2'>
 							Tên sự kiện
 						</td>
 						<td className='text-[14px] font-[700] text-[#5F5F5F] w-[10%] text-center'>
@@ -331,28 +353,34 @@ function ListEvent({ navigate, location }) {
 							}}
 							key={el.id}
 							className='border-b border-[#D3D3D3] cursor-pointer hover:bg-white hover:shadow-md'>
-							<td
-								onClick={e => e.stopPropagation()}
-								className='text-center w-[10%] py-[12px]'>
-								<input
-									type='checkbox'
-									id={el.id}
-									className='w-[24px] h-[24px] cursor-pointer'
-									onChange={e => {
-										if (choose.some(el => el === e.target.id)) {
-											const indexToRemove = choose.indexOf(e.target.id)
-											const newArray = [...choose]
-											newArray.splice(indexToRemove, 1)
-											setCheckCheckboxALl(false)
-											setChoose(newArray)
-										} else setChoose(prev => [e.target.id, ...prev])
-										if (choose.length === 0 || choose.length === data.length)
-											setGetChoose(false)
-									}}
-									checked={choose.some(e => e === el.id.toString())}
-								/>
-							</td>
-							<td className='w-[25%]'>
+							{checkChoose && (
+								<td
+									onClick={e => e.stopPropagation()}
+									className='text-center w-[10%]'>
+									<input
+										type='checkbox'
+										id={el.id}
+										className='w-[24px] h-[24px] cursor-pointer'
+										onChange={e => {
+											if (choose.some(el => el === e.target.id)) {
+												const indexToRemove = choose.indexOf(e.target.id)
+												const newArray = [...choose]
+												newArray.splice(indexToRemove, 1)
+												setCheckCheckboxALl(false)
+												setChoose(newArray)
+											} else setChoose(prev => [e.target.id, ...prev])
+											if (
+												choose.length === 0 ||
+												choose.length === data.length
+											) {
+												setGetChoose(false)
+											}
+										}}
+										checked={choose.some(e => e === el.id.toString())}
+									/>
+								</td>
+							)}
+							<td className='w-[25%] py-[12px] pl-2'>
 								<p className='line-clamp-1'>{el.title}</p>
 							</td>
 							<td className='text-center w-[10%]'>
@@ -392,7 +420,13 @@ function ListEvent({ navigate, location }) {
 								</span>
 							</td>
 							<td onClick={e => e.stopPropagation()} className='w-[10%]'>
-								<span className='cursor-pointer flex items-center justify-center text-[#B3B3B3] hover:text-[#408A7E]'>
+								<span
+									onClick={() =>
+										navigate(
+											`/${pathCreator.CREATOR}/${pathCreator.UPDATE}/${el.id}`,
+										)
+									}
+									className='cursor-pointer flex items-center justify-center text-[#B3B3B3] hover:text-[#408A7E]'>
 									<BiSolidPencil size={19} />
 								</span>
 							</td>

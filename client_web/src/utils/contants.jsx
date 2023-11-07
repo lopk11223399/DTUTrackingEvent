@@ -1,7 +1,17 @@
 import { pathAdmin, common, pathCreator } from './path'
 import icons from './icons'
-const { AiOutlineDashboard, MdGroups, IoMdCreate, AiOutlineUnorderedList } =
-	icons
+const {
+	AiOutlineDashboard,
+	MdGroups,
+	IoMdCreate,
+	AiOutlineUnorderedList,
+	IoIosStats,
+	MdPendingActions,
+	BsCheckAll,
+	TbRun,
+	BiBadgeCheck,
+	MdCancelScheduleSend,
+} = icons
 
 export const adminSidebar = [
 	{
@@ -39,9 +49,9 @@ export const creatorSidebar = [
 	{
 		id: 1,
 		type: 'SINGLE',
-		text: 'Dashboard',
+		text: 'Thống kê',
 		path: `/${pathCreator.CREATOR}/${common.DASHBOARD}`,
-		icon: <AiOutlineDashboard size={20} />,
+		icon: <IoIosStats size={20} />,
 	},
 	{
 		id: 2,
@@ -62,21 +72,26 @@ export const status = [
 	{
 		id: 1,
 		text: 'Chờ duyệt',
+		icon: <MdPendingActions size='21' />,
 	},
 	{
 		id: 2,
 		text: 'Đã duyệt',
+		icon: <BsCheckAll size='21' />,
 	},
 	{
 		id: 3,
 		text: 'Đang diễn ra',
+		icon: <TbRun size='21' />,
 	},
 	{
 		id: 4,
 		text: 'Đã kết thúc',
+		icon: <BiBadgeCheck size='21' />,
 	},
 	{
 		id: 5,
 		text: 'Đã hủy',
+		icon: <MdCancelScheduleSend size='21' />,
 	},
 ]

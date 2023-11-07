@@ -10,7 +10,12 @@ import {
 	EventDetail,
 	Chart,
 } from './pages/admin'
-import { CreateEvent, CreatorLayout, ListEvent } from './pages/creator'
+import {
+	CreateEvent,
+	CreatorLayout,
+	Dashboard,
+	ListEvent,
+} from './pages/creator'
 import { useSelector } from 'react-redux'
 import { Modal } from './components'
 import { ToastContainer } from 'react-toastify'
@@ -43,6 +48,8 @@ function App() {
 					<Route path={pathCreator.CREATE_EVENT} element={<CreateEvent />} />
 					<Route path={pathCreator.LIST_EVENT} element={<ListEvent />} />
 					<Route path={common.DETAILEVENT_EID} element={<DetailEvent />} />
+					<Route path={pathCreator.UPDATE_EID} element={<CreateEvent />} />
+					<Route path={common.DASHBOARD} element={<Dashboard />} />
 				</Route>
 			</Routes>
 			<ToastContainer

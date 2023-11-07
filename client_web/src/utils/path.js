@@ -12,6 +12,8 @@ export const pathCreator = {
 	CREATOR: 'creator',
 	CREATE_EVENT: 'create-event',
 	LIST_EVENT: 'list-event',
+	UPDATE: 'update-event',
+	UPDATE_EID: 'update-event/:eid',
 }
 
 export const common = {

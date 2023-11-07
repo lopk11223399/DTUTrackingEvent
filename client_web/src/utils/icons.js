@@ -4,7 +4,12 @@ import {
 	RiBillLine,
 	RiDeleteBin2Fill,
 } from 'react-icons/ri'
-import { MdEmail, MdGroups } from 'react-icons/md'
+import {
+	MdEmail,
+	MdGroups,
+	MdPendingActions,
+	MdCancelScheduleSend,
+} from 'react-icons/md'
 import {
 	BsHandbagFill,
 	BsFillSuitHeartFill,
@@ -14,6 +19,7 @@ import {
 	BsFillCartCheckFill,
 	BsFillCartPlusFill,
 	BsChatRightTextFill,
+	BsCheckAll,
 } from 'react-icons/bs'
 import { FaUserCircle, FaTty } from 'react-icons/fa'
 import {
@@ -35,17 +41,23 @@ import {
 	AiOutlineSearch,
 	AiOutlineRollback,
 } from 'react-icons/ai'
-import { IoIosArrowForward, IoMdCreate, IoIosAdd } from 'react-icons/io'
+import {
+	IoIosArrowForward,
+	IoMdCreate,
+	IoIosAdd,
+	IoIosStats,
+} from 'react-icons/io'
 import {
 	BiDotsHorizontalRounded,
 	BiEdit,
 	BiTrash,
 	BiCustomize,
 	BiSolidPencil,
+	BiBadgeCheck,
 } from 'react-icons/bi'
-import { TbBrandProducthunt, TbDoorExit } from 'react-icons/tb'
+import { TbBrandProducthunt, TbDoorExit, TbRun } from 'react-icons/tb'
 import { ImBin } from 'react-icons/im'
-import { GrFormAdd } from 'react-icons/gr'
+import { GrFormAdd, GrCompliance } from 'react-icons/gr'
 import { TfiImport } from 'react-icons/tfi'
 
 const icons = {
@@ -95,6 +107,13 @@ const icons = {
 	AiOutlineRollback,
 	TfiImport,
 	BsChatRightTextFill,
+	IoIosStats,
+	MdPendingActions,
+	BsCheckAll,
+	TbRun,
+	GrCompliance,
+	MdCancelScheduleSend,
+	BiBadgeCheck,
 }
 
 export default icons
