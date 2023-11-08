@@ -8,12 +8,12 @@ import {
   Calendar,
   UserDetail,
   EventDetail,
+  Chart,
 } from "./pages/admin";
 import CheckLogin from "./pages/common/CheckLogin";
 import { CreateEvent, CreatorLayout } from "./pages/creator";
 import { useSelector } from "react-redux";
 import { Modal } from "./components";
-import { Chart } from "chart.js";
 
 function App() {
   const { isShowModal, modalChildren } = useSelector((state) => state.app);

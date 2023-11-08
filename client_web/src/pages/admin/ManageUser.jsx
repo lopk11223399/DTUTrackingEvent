@@ -58,7 +58,7 @@ const ManageUser = () => {
     }
   };
 
-  //console.log(data);
+  console.log(data);
   //console.log(count);
   useEffect(() => {
     const queries = Object.fromEntries([...params]);
@@ -71,27 +71,22 @@ const ManageUser = () => {
   };
   const [roleId, setRoleId] = useState({
     uid: null,
-    rid: null,
   });
-
-  const handUpdateRole = async (uid, rid, name) => {
-    // console.log(name);
-    // console.log(uid, rid);
-    if (rid === 3) {
-      Swal.fire({
-        title: "Thông báo",
-        text: `Bạn có xác nhận ${name} trở thành người tạo sự kiện`,
-        icon: "question",
-        showCancelButton: true,
-        cancelButtonText: "Hủy",
-        confirmButtonText: "Xác nhận",
-      }).then(async (rs) => {
-        if (rs.isConfirmed) {
-          const reponse = await apiUpdateRoleId(uid, { rid: 2 });
-          //console.log(reponse);
-        }
+  useEffect(() => {
+    if (roleId.uid !== null) {
+      navigate({
+        pathname: "",
+        search: createSearchParams({ id: roleId.uid }).toString(),
       });
     }
+  }, [roleId.uid]);
+  const handUpdateRole = async (uid, rid, name) => {
+    setRoleId({ uid: uid });
+    console.log(rid);
+    const response = await apiUpdateRoleId(
+      { roleId: parseInt(rid) },
+      { id: uid }
+    );
   };
   return (
     <div className="w-full h-full py-2 px-[20px]">
@@ -182,10 +177,9 @@ const ManageUser = () => {
                     <select
                       className="text-center border rounded-md"
                       name=""
-                      id=""
-                      value={roleId || user.roleId}
-                      onChange={(text) => {
-                        handUpdateRole(user.id, text.target.value, user.name);
+                      value={user.roleId}
+                      onChange={(e) => {
+                        handUpdateRole(user.id, e.target.value, user.name);
                       }}
                     >
                       <option value={3}>Người dùng</option>
