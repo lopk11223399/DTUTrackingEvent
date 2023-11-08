@@ -48,7 +48,7 @@ const Chart = () => {
       ...queries,
     });
 
-    if (response.success === 0) {
+    if (response.success) {
       setUserData(response.response.rows);
     }
   };
