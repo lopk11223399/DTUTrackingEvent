@@ -52,7 +52,7 @@ function ManageEvent() {
     });
     if (response.success) {
       //console.log(response.count);
-      console.log(response.response);
+      //console.log(response.response);
       setData(response.response);
       setCount(response.count);
       setStatusEvent(false);
@@ -70,6 +70,7 @@ function ManageEvent() {
     fetchData({ ...queries });
   }, [statusEvent]);
   //console.log(data);
+
   const handleUpdateStatus = async (eid, status) => {
     if (status === 1) {
       Swal.fire({
@@ -81,9 +82,9 @@ function ManageEvent() {
         confirmButtonText: "Xác nhận",
       }).then(async (rs) => {
         if (rs.isConfirmed) {
+          setStatusEvent(true);
           const reponse = await apiUpdateStatus(eid, { status: 2 });
           //console.log(reponse);
-          setStatusEvent(true);
         }
       });
     } else if (status === 5) {
@@ -96,6 +97,7 @@ function ManageEvent() {
         confirmButtonText: "Xác nhận",
       }).then(async (rs) => {
         if (rs.isConfirmed) {
+          setStatusEvent(true);
           const reponse = await apiUpdateStatus(eid, { status: 2 });
           //console.log(reponse);
         }
@@ -127,13 +129,14 @@ function ManageEvent() {
         confirmButtonText: "Xác nhận",
       }).then(async (rs) => {
         if (rs.isConfirmed) {
+          setStatusEvent(true);
           const reponse = await apiUpdateStatus(eid, { status: 5 });
           //console.log(reponse);
         }
       });
     }
   };
-
+  console.log(statusEvent);
   return (
     <div className="w-full h-full py-2 px-[20px]">
       <h1 className=" uppercase text-zinc-500 font-[500] text-3xl mb-2">

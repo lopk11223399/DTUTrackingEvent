@@ -18,6 +18,11 @@ const ManageUser = () => {
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
 
+  // const [roleId, setRoleId] = useState({
+  //   uid: null,
+  //   rid: null,
+  // });
+
   const handleUserClick = (user) => {
     navigate(
       `/${pathAdmin.ADMIN}/${pathAdmin.USERDETAIL}/${user.studentData.studentCode}`,
@@ -58,7 +63,7 @@ const ManageUser = () => {
     }
   };
 
-  console.log(data);
+  //  console.log(data);
   //console.log(count);
   useEffect(() => {
     const queries = Object.fromEntries([...params]);
@@ -69,20 +74,22 @@ const ManageUser = () => {
   const handleResetPointClick = () => {
     setShowCheckbox(!showCheckBox);
   };
-  const [roleId, setRoleId] = useState({
-    uid: null,
-  });
-  useEffect(() => {
-    if (roleId.uid !== null) {
-      navigate({
-        pathname: "",
-        search: createSearchParams({ id: roleId.uid }).toString(),
-      });
-    }
-  }, [roleId.uid]);
+
+  // useEffect(() => {
+  //   if (roleId.uid > 0) {
+  //     navigate({
+  //       pathname: "",
+  //       search: createSearchParams({ id: roleId.uid }).toString(),
+  //     });
+  //   }
+  // }, [roleId]);
+  // const [roleId, setRoleId] = useState({
+  //   rid: null,
+  // });
+
   const handUpdateRole = async (uid, rid, name) => {
-    setRoleId({ uid: uid });
-    console.log(rid);
+    console.log(uid, rid);
+
     const response = await apiUpdateRoleId(
       { roleId: parseInt(rid) },
       { id: uid }
