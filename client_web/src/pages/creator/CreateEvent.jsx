@@ -1,18 +1,19 @@
-import React, { useRef, useState } from 'react'
-import moment from 'moment'
+import React, { useEffect, useRef, useState } from 'react'
+import moment from 'moment/moment'
 import { getBase64 } from '../../utils/helper'
 import { apiCreateEvent } from '../../apis'
-import { BsCheckLg } from 'react-icons/bs'
 import icons from '../../utils/icons'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import { showModal } from '../../store/app/appSlice'
-import { DetailRoom, Pagination } from '../../components'
+import { DetailRoom } from '../../components'
 import clsx from 'clsx'
 import NoImage from '../../assets/img/NoImage.jpg'
+import { toast } from 'react-toastify'
+import Swal from 'sweetalert2'
 
-const { AiOutlineUpload, AiOutlineDown } = icons
+const { AiOutlineDown } = icons
 
-function CreateEvent({ dispatch }) {
+function CreateEvent({ dispatch, location }) {
 	const [error, setError] = useState({
 		tittleErr: null,
 		startDateErr: null,
@@ -23,11 +24,14 @@ function CreateEvent({ dispatch }) {
 		addPointErr: null,
 		imageErr: null,
 		limitParticipantErr: null,
+		roomErr: null,
 	})
 	const [payload, setPayload] = useState({
 		title: '',
-		startDate: '',
-		finishDate: '',
+		startDate: moment(Date.now() + 15 * (60 * 1000)).format('YYYY-DD-MM hh:mm'),
+		finishDate: moment(Date.now() + 1 * (60 * 60 * 1000)).format(
+			'YYYY-DD-MM hh:mm',
+		),
 		location: '',
 		typeEvent: null,
 		description: '',
@@ -36,18 +40,41 @@ function CreateEvent({ dispatch }) {
 		limitParticipant: 0,
 	})
 	const [room, setRoom] = useState([])
-	const [time, setTime] = useState({
-		startDate: moment().format('YYYY-MM-DD'),
-		startTime: moment().format('hh:mm'),
-		finishDate: moment().format('YYYY-MM-DD'),
-		finishTime: moment().format('hh:mm'),
-	})
 	const [preview, setPreview] = useState({
 		image: null,
 		imageWeb: null,
 	})
 	const [showCategoryEvent, setShowCategoryEvent] = useState(false)
 	const inpFile = useRef()
+
+	useEffect(() => {
+		if (location.state) {
+			setPayload({
+				title: location.state?.title,
+				startDate: moment(
+					location.state?.startDate || Date.now() + 15 * (60 * 1000),
+				).format('YYYY-DD-MM hh:mm'),
+				finishDate: moment(
+					location.state?.finishDate || Date.now() + 1 * (60 * 60 * 1000),
+				).format('YYYY-DD-MM hh:mm'),
+				location:
+					location.state?.typeEvent === false ? location.state?.location : '',
+				typeEvent: location.state?.typeEvent,
+				description: location.state?.description,
+				linkUrl:
+					location.state?.typeEvent === true ? location.state?.linkUrl : '',
+				addPoint: location.state?.addPoint,
+				limitParticipant: location.state?.limitParticipant,
+			})
+			setPreview(prev => ({
+				...prev,
+				imageWeb: location.state?.image,
+				image: location.state?.image,
+			}))
+		}
+
+		window.scrollTo(0, 0)
+	}, [location.state])
 
 	const handleSubmit = async () => {
 		const formData = new FormData()
@@ -116,10 +143,6 @@ function CreateEvent({ dispatch }) {
 			error.limitParticipantErr === null
 		) {
 			for (let i of Object.entries(payload)) {
-				if (i[0] == 'startDate' && i[1].length === 0)
-					formData.append(i[0], `${moment().format('YYYY-MM-DD hh:mm')}`)
-				if (i[0] === 'finishDate' && i[1].length === 0)
-					formData.append(i[0], `${moment().format('YYYY-MM-DD hh:mm')}`)
 				if (i[1] === '') continue
 				if (i[1] === null) continue
 				formData.append(i[0], i[1])
@@ -131,20 +154,72 @@ function CreateEvent({ dispatch }) {
 				console.log(i[0], i[1])
 			}
 
-			const response = await apiCreateEvent(formData)
-			console.log(response)
+			return Swal.fire({
+				title: 'Thông báo',
+				text:
+					'Bạn muốn tạo mới sự kiện "' +
+					payload.title +
+					'". Nếu bạn muốn chỉnh sửa thêm, vui lòng chọn hủy. Nếu đã chắc chắn thì hãy chọn xác nhận',
+				icon: 'question',
+				showCancelButton: true,
+				cancelButtonText: 'Hủy',
+				confirmButtonText: 'Xác nhận',
+			}).then(async rs => {
+				if (rs.isConfirmed) {
+					const response = await apiCreateEvent(formData)
+
+					if (response.success) {
+						setPreview({
+							image: null,
+							imageWeb: null,
+						})
+						setPayload({
+							title: '',
+							startDate: moment(Date.now() + 15 * (60 * 1000)).format(
+								'YYYY-DD-MM hh:mm',
+							),
+							finishDate: moment(Date.now() + 1 * (60 * 60 * 1000)).format(
+								'YYYY-DD-MM hh:mm',
+							),
+							location: '',
+							typeEvent: null,
+							description: '',
+							linkUrl: '',
+							addPoint: 0,
+							limitParticipant: 0,
+						})
+						setRoom([])
+						toast.success(response.mess)
+					}
+				}
+			})
 		}
 	}
 
-	const handleCreateRoom = () => {
-		setRoom([
-			...room,
-			{
-				topic: 'topic' + Math.floor(Math.random() * 10),
-				timeRoom: time.startTime || moment().format('hh:mm'),
-				numberRoom: '0',
-			},
-		])
+	const handleCreateRoom = typeEvent => {
+		if (typeEvent === true)
+			setRoom([
+				...room,
+				{
+					topic: 'topic' + Math.floor(Math.random() * 10),
+					timeRoom: moment(payload.startDate).format('hh:mm'),
+					linkRoomUrl: '',
+				},
+			])
+		else if (typeEvent === false)
+			setRoom([
+				...room,
+				{
+					topic: 'topic ' + Math.floor(Math.random() * 10),
+					timeRoom: moment(payload.startDate).format('hh:mm'),
+					numberRoom: '',
+				},
+			])
+		else
+			setError(prev => ({
+				...prev,
+				roomErr: 'Vui lòng chọn loại sự kiện trước!',
+			}))
 	}
 
 	const handleDeleteRoom = rid => {
@@ -159,7 +234,13 @@ function CreateEvent({ dispatch }) {
 			showModal({
 				isShowModal: true,
 				modalChildren: (
-					<DetailRoom data={data[0]} room={room} setRoom={setRoom} rid={rid} />
+					<DetailRoom
+						data={data[0]}
+						room={room}
+						setRoom={setRoom}
+						rid={rid}
+						typeEvent={payload.typeEvent}
+					/>
 				),
 			}),
 		)
@@ -168,7 +249,7 @@ function CreateEvent({ dispatch }) {
 	return (
 		<div className='w-full h-full px-[20px] bg-[#FAFAFA] pt-[100px] mb-[12px]'>
 			<div className='z-10 px-[20px] flex items-center justify-between fixed top-0 right-0 left-[327px] bg-white h-[80px] shadow'>
-				<h1 className='text-[18px] font-[600] text-[#408A7E]'>Tạo sự kiện</h1>
+				<h1 className='text-[24px] font-[700] text-[#408A7E]'>Tạo sự kiện</h1>
 				<div
 					onClick={handleSubmit}
 					className='w-[20%] text-center bg-[#408A7E] p-[11px] text-[14px] font-[600] text-white rounded-[8px] cursor-pointer'>
@@ -230,6 +311,7 @@ function CreateEvent({ dispatch }) {
 										...prev,
 										typeEventErr: null,
 										locationErr: null,
+										roomErr: null,
 									}))
 								}}
 								className={clsx(
@@ -260,6 +342,7 @@ function CreateEvent({ dispatch }) {
 									)}>
 									<p
 										onClick={() => {
+											if (payload.typeEvent === false) setRoom([])
 											setShowCategoryEvent(false)
 											setPayload(prev => ({
 												...prev,
@@ -271,6 +354,7 @@ function CreateEvent({ dispatch }) {
 									</p>
 									<p
 										onClick={() => {
+											if (payload.typeEvent === true) setRoom([])
 											setShowCategoryEvent(false)
 											setPayload(prev => ({
 												...prev,
@@ -336,6 +420,7 @@ function CreateEvent({ dispatch }) {
 										location: text.target.value,
 										linkUrl: '',
 									}))
+
 									setError(prev => ({
 										...prev,
 										locationErr: null,
@@ -369,7 +454,7 @@ function CreateEvent({ dispatch }) {
 									Điểm rèn luyện
 								</label>
 								<input
-									type='text'
+									type='number'
 									id='addPoint'
 									className={clsx(
 										'rounded-[8px] py-[7px] px-[15px] flex-1 placeholder:text-[#848484] text-[#408A7E] text-[12px] font-[400] outline-none border bg-transparent',
@@ -412,7 +497,7 @@ function CreateEvent({ dispatch }) {
 									Số lượng người tham gia
 								</label>
 								<input
-									type='text'
+									type='number'
 									id='limitParticipantErr'
 									className={clsx(
 										'rounded-[8px] py-[7px] px-[15px] flex-1 placeholder:text-[#848484] text-[#408A7E] text-[12px] font-[400] outline-none border bg-transparent',
@@ -461,29 +546,19 @@ function CreateEvent({ dispatch }) {
 									Ngày bắt đầu
 								</label>
 								<input
-									type='date'
+									type='datetime-local'
 									id='startDate'
 									className={clsx(
 										'rounded-[8px] py-[7px] px-[15px] flex-1 placeholder:text-[#848484] text-[#408A7E] text-[12px] font-[400] outline-none border bg-transparent',
 										error?.startDateErr ? 'border-red-400' : 'border-[#408A7E]',
 									)}
 									placeholder='Ngày bắt đầu'
-									value={time.startDate}
+									value={payload.startDate}
 									onChange={text => {
-										setTime(prev => ({
+										setPayload(prev => ({
 											...prev,
 											startDate: text.target.value,
 										}))
-										if (time.startDate && time.startTime)
-											setPayload(prev => ({
-												...prev,
-												startDate: `${time.startDate} ${time.startTime}`,
-											}))
-										else
-											setPayload(prev => ({
-												...prev,
-												startDate: `${time.startDate}`,
-											}))
 									}}
 								/>
 							</div>
@@ -496,49 +571,7 @@ function CreateEvent({ dispatch }) {
 								</div>
 							)}
 						</div>
-						<div className='flex flex-col items-center gap-1 w-full'>
-							<div className='flex items-center w-full'>
-								<label
-									htmlFor='startTime'
-									className=' text-[#B3B3B3] text-[14px] font-[600] mr-[15px] w-[30%]'>
-									Thời gian bắt đầu
-								</label>
-								<input
-									type='time'
-									id='startTime'
-									className={clsx(
-										'rounded-[8px] py-[7px] px-[15px] flex-1 placeholder:text-[#848484] text-[#408A7E] text-[12px] font-[400] outline-none border bg-transparent',
-										error?.startDateErr ? 'border-red-400' : 'border-[#408A7E]',
-									)}
-									placeholder='Số lượng người tham gia'
-									value={time.startTime}
-									onChange={text => {
-										setTime(prev => ({
-											...prev,
-											startTime: text.target.value,
-										}))
-										if (time.startDate && time.startTime)
-											setPayload(prev => ({
-												...prev,
-												startDate: `${time.startDate} ${time.startTime}`,
-											}))
-										else
-											setPayload(prev => ({
-												...prev,
-												startDate: `${time.startTime}`,
-											}))
-									}}
-								/>
-							</div>
-							{error?.startDateErr !== null && (
-								<div className='flex items-center w-full'>
-									<div className='w-[30%] mr-[15px]'></div>
-									<small className='text-red-400 text-[12px]'>
-										{error?.startDateErr}
-									</small>
-								</div>
-							)}
-						</div>
+
 						<div className='flex flex-col items-center gap-1 w-full'>
 							<div className='flex items-center w-full'>
 								<label
@@ -547,7 +580,7 @@ function CreateEvent({ dispatch }) {
 									Ngày kết thúc
 								</label>
 								<input
-									type='date'
+									type='datetime-local'
 									id='finishDate'
 									className={clsx(
 										'rounded-[8px] py-[7px] px-[15px] flex-1 placeholder:text-[#848484] text-[#408A7E] text-[12px] font-[400] outline-none border bg-transparent',
@@ -556,67 +589,12 @@ function CreateEvent({ dispatch }) {
 											: 'border-[#408A7E]',
 									)}
 									placeholder='Ngày kết thúc'
-									value={time.finishDate}
+									value={payload.finishDate}
 									onChange={text => {
-										setTime(prev => ({
+										setPayload(prev => ({
 											...prev,
 											finishDate: text.target.value,
 										}))
-										if (time.finishDate && time.finishTime)
-											setPayload(prev => ({
-												...prev,
-												finishDate: `${time.finishDate} ${time.finishTime}`,
-											}))
-										else
-											setPayload(prev => ({
-												...prev,
-												finishDate: `${time.finishDate}`,
-											}))
-									}}
-								/>
-							</div>
-							{error?.finishDateErr !== null && (
-								<div className='flex items-center w-full'>
-									<div className='w-[30%] mr-[15px]'></div>
-									<small className='text-red-400 text-[12px]'>
-										{error?.finishDateErr}
-									</small>
-								</div>
-							)}
-						</div>
-						<div className='flex flex-col items-center gap-1 w-full'>
-							<div className='flex items-center w-full'>
-								<label
-									htmlFor='finishTime'
-									className=' text-[#B3B3B3] text-[14px] font-[600] mr-[15px] w-[30%]'>
-									Thời gian kết thúc
-								</label>
-								<input
-									type='time'
-									id='finishTime'
-									className={clsx(
-										'rounded-[8px] py-[7px] px-[15px] flex-1 placeholder:text-[#848484] text-[#408A7E] text-[12px] font-[400] outline-none border bg-transparent',
-										error?.finishDateErr
-											? 'border-red-400'
-											: 'border-[#408A7E]',
-									)}
-									placeholder='Thời gian kết thúc'
-									value={time.finishTime}
-									onChange={text => {
-										setTime(prev => ({
-											...prev,
-											finishTime: text.target.value,
-										}))
-										if (time.finishDate && time.finishTime)
-											setPayload(prev => ({
-												...prev,
-												finishDate: `${time.finishDate} ${time.finishTime}`,
-											}))
-										else
-											setPayload(prev => ({
-												...prev,
-												finishDate: `${time.finishTime}`,
-											}))
 									}}
 								/>
 							</div>
@@ -661,7 +639,7 @@ function CreateEvent({ dispatch }) {
 						<img
 							src={preview.imageWeb ? preview.imageWeb : NoImage}
 							alt='thumbnail'
-							className='w-full h-[300px] object-contain'
+							className='w-full h-[200px] object-contain'
 						/>
 					</div>
 					{error?.imageErr !== null && (
@@ -674,50 +652,48 @@ function CreateEvent({ dispatch }) {
 					)}
 				</div>
 			</div>
-			<div className='py-[19px] border-t border-b border-[#797799] flex flex-col gap-[20px]'>
-				<div className='flex flex-col items-center gap-1 w-full'>
-					<div className='flex flex-col w-full gap-[12px]'>
-						<label
-							htmlFor='description'
-							className=' text-[#B3B3B3] text-[14px] font-[600]'>
-							Mô tả
-						</label>
-						<textarea
-							type='text'
-							id='description'
-							className={clsx(
-								'rounded-[8px] py-[17px] px-[21px] flex-1 placeholder:text-[#848484] text-[#408A7E] text-[12px] font-[400] outline-none border bg-transparent h-[106px]',
-								error?.descriptionErr ? 'border-red-400' : 'border-[#408A7E]',
-							)}
-							placeholder='Mô tả'
-							value={payload.description}
-							onChange={text => {
-								setPayload(prev => ({
+			<div className='flex flex-col items-center w-full h-[200px] py-[19px] border-t border-b border-[#797799] gap-[20px]'>
+				<div className='flex flex-col w-full gap-[12px] flex-1'>
+					<label
+						htmlFor='description'
+						className=' text-[#B3B3B3] text-[14px] font-[600]'>
+						Mô tả
+					</label>
+					<textarea
+						type='text'
+						id='description'
+						className={clsx(
+							'rounded-[8px] py-[7px] px-[15px] flex-1 placeholder:text-[#848484] text-[#408A7E] text-[12px] font-[400] outline-none border bg-transparent',
+							error?.descriptionErr ? 'border-red-400' : 'border-[#408A7E]',
+						)}
+						placeholder='Mô tả'
+						value={payload.description}
+						onChange={text => {
+							setPayload(prev => ({
+								...prev,
+								description: text.target.value,
+							}))
+							if (payload.description.length < 7)
+								setError(prev => ({
 									...prev,
-									description: text.target.value,
+									descriptionErr: 'Phải nhập ít nhất 8 ký tự',
 								}))
-								if (payload.description.length < 7)
-									setError(prev => ({
-										...prev,
-										descriptionErr: 'Phải nhập ít nhất 8 ký tự',
-									}))
-								else
-									setError(prev => ({
-										...prev,
-										descriptionErr: null,
-									}))
-							}}
-						/>
-					</div>
-					{error?.descriptionErr !== null && (
-						<div className='flex items-center w-full'>
-							<div className=''></div>
-							<small className='text-red-400 text-[12px]'>
-								{error?.descriptionErr}
-							</small>
-						</div>
-					)}
+							else
+								setError(prev => ({
+									...prev,
+									descriptionErr: null,
+								}))
+						}}
+					/>
 				</div>
+				{error?.descriptionErr !== null && (
+					<div className='flex items-center w-full'>
+						<div className=''></div>
+						<small className='text-red-400 text-[12px]'>
+							{error?.descriptionErr}
+						</small>
+					</div>
+				)}
 			</div>
 			<div className='py-[19px] border-b border-[#797799] flex flex-col gap-[20px]'>
 				<div className='flex flex-col w-full gap-[12px]'>
@@ -726,7 +702,9 @@ function CreateEvent({ dispatch }) {
 							Room
 						</label>
 						<div
-							onClick={handleCreateRoom}
+							onClick={() => {
+								handleCreateRoom(payload.typeEvent)
+							}}
 							className='text-[#408A7E] text-[14px] font-[400] px-[25px] py-[7px] border border-[#408A7E] rounded-[8px] cursor-pointer hover:bg-[#408A7E] hover:text-white'>
 							Thêm room
 						</div>
@@ -766,10 +744,12 @@ function CreateEvent({ dispatch }) {
 									</div>
 									<div className='flex gap-2 items-center'>
 										<p className='text-[#B3B3B3] text-[14px] font-[600]'>
-											Số phòng:
+											{payload.typeEvent === true ? 'Link room' : 'Số phòng'}
 										</p>
 										<p className='text-[#408A7E] text-[14px] font-[400] flex-1  line-clamp-1'>
-											{el.numberRoom}
+											{payload.typeEvent === true
+												? el.linkRoomUrl
+												: el.numberRoom}
 										</p>
 									</div>
 									<div className='flex gap-2 items-center justify-center'>
@@ -787,6 +767,13 @@ function CreateEvent({ dispatch }) {
 								</div>
 							))}
 					</div>
+					{error?.roomErr !== null && (
+						<div className='flex items-center w-full'>
+							<small className='text-red-400 text-[12px]'>
+								{error?.roomErr}
+							</small>
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

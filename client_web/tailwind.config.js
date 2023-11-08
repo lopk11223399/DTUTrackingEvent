@@ -9,6 +9,10 @@ export default {
 			backgroundColor: {
 				overlay: 'rgba(0,0,0,0.7)',
 			},
+			boxShadow: {
+				table: '0px 2px 50px 0px rgba(0, 0, 0, 0.08)',
+				table_1: '0px 3px 50px 0px rgba(0, 0, 0, 0.08)',
+			},
 		},
 	},
 	plugins: [],

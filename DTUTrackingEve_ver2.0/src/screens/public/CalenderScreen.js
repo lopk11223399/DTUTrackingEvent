@@ -98,7 +98,7 @@ const CalenderScreen = ({ navigation: { setOptions, navigate }, layout }) => {
 		setIsLoading(true)
 
 		const response = await apiGetEvents({
-			limit: 5,
+			limit: 50,
 			page: currentPage,
 			date: selected,
 		})

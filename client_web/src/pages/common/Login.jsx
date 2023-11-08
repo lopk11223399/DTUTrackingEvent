@@ -9,24 +9,25 @@ import rightSide from "../../assets/img/right_side.png";
 import clsx from "clsx";
 
 function Login({ navigate, dispatch }) {
-  const [error, setError] = useState({
-    usernameErr: null,
-    passwordErr: null,
-  });
-  const [payload, setPayload] = useState({
-    username: "",
-    password: "",
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-  const handleLogin = async () => {
-    if (payload.username.length < 0 || payload.username === "")
-      setError((prev) => ({
-        ...prev,
-        usernameErr: "Tài khoản không được để trống",
-      }));
+
+	const [error, setError] = useState({
+		usernameErr: null,
+		passwordErr: null,
+	})
+	const [payload, setPayload] = useState({
+		username: '',
+		password: '',
+	})
+	const [showPassword, setShowPassword] = useState(false)
+	const toggleShowPassword = () => {
+		setShowPassword(!showPassword)
+	}
+	const handleLogin = async () => {
+		if (payload.username.length < 0 || payload.username === '')
+			setError(prev => ({
+				...prev,
+				usernameErr: 'Tài khoản không được để trống',
+			}))
 
     if (payload.password.length < 0 || payload.password === "")
       setError((prev) => ({

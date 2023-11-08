@@ -5,7 +5,7 @@ import { showModal } from '../../store/app/appSlice'
 
 const { AiOutlineCloseCircle } = icons
 
-function DetailRoom({ data, room, setRoom, rid, dispatch }) {
+function DetailRoom({ data, room, setRoom, rid, typeEvent, dispatch }) {
 	const modalRef = useRef()
 	const [roomCurrent, setRoomCurrent] = useState(data)
 
@@ -17,7 +17,6 @@ function DetailRoom({ data, room, setRoom, rid, dispatch }) {
 		const newArray = [...room]
 		newArray.splice(rid, 1, roomCurrent)
 		setRoom(newArray)
-
 		dispatch(showModal({ isShowModal: false, modalChildren: null }))
 	}
 	return (
@@ -72,18 +71,28 @@ function DetailRoom({ data, room, setRoom, rid, dispatch }) {
 					<label
 						htmlFor='topic'
 						className='text-[#B3B3B3] text-[14px] font-[600] w-[120px]'>
-						Số phòng:
+						{typeEvent === true ? 'Link room:' : 'Số phòng:'}
 					</label>
 					<input
-						value={roomCurrent.numberRoom}
+						value={
+							typeEvent === true
+								? roomCurrent.linkRoomUrl
+								: roomCurrent.numberRoom
+						}
 						type='text'
 						placeholder='Topic'
 						className='text-[12px] text-[#408A7E] outline-none py-[7px] px-[15px] border border-[#408A7E] flex-1 rounded-[8px]'
 						onChange={text => {
-							setRoomCurrent(prev => ({
-								...prev,
-								numberRoom: text.target.value,
-							}))
+							if (typeEvent === true)
+								setRoomCurrent(prev => ({
+									...prev,
+									linkRoomUrl: text.target.value,
+								}))
+							else if (typeEvent === false)
+								setRoomCurrent(prev => ({
+									...prev,
+									numberRoom: text.target.value,
+								}))
 						}}
 					/>
 				</div>
