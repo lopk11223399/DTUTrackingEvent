@@ -9,8 +9,11 @@ import { logout } from "../../store/user/userSlice";
 
 const { AiOutlineCaretDown, AiOutlineCaretRight } = icons;
 
-const activedStyle = "px-4 py-2 flex items-center gap-2 bg-blue-500";
-const notActivedStyle = "px-4 py-2 flex items-center gap-2 hover:bg-blue-100";
+const activedStyle =
+  " px-4 py-2 text-black flex items-center gap-2 bg-[#fff] rounded-tl-2xl rounded-bl-2xl relative  ";
+
+const notActivedStyle =
+  "px-4 py-2 flex text items-center hover:text-black gap-2 hover:bg-white hover:rounded-tl-2xl hover:rounded-bl-2xl";
 
 const AdminSidebar = ({ dispatch, navigate }) => {
   const [actived, setActived] = useState([]);
@@ -22,8 +25,8 @@ const AdminSidebar = ({ dispatch, navigate }) => {
   };
 
   return (
-    <div className=" bg-[#4E73DF] text-white h-full py-4">
-      <div>
+    <div className=" bg-[#4E73DF] text-white h-full py-4 rounded-tl ">
+      <div className=" pl-2 relative ">
         {adminSidebar.map((el) => (
           <Fragment key={el.id}>
             {el.type === "SINGLE" && (
