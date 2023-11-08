@@ -59,11 +59,13 @@ function ManageEvent() {
 		}
 	}
 
+
 	useEffect(() => {
 		const queries = Object.fromEntries([...params])
 
 		fetchData({ ...queries })
 	}, [params])
+
 
 	useEffect(() => {
 		const queries = Object.fromEntries([...params])
@@ -234,6 +236,7 @@ function ManageEvent() {
 			</div>
 		</div>
 	)
+
 }
 
 export default ManageEvent

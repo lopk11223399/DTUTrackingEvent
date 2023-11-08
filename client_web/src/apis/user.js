@@ -18,10 +18,11 @@ export const apiUser = (params) =>
     method: "get",
     params,
   });
-export const apiUpdateRoleId = (params, data) =>
-  axios({
-    url: "/update-role/",
+export const apiUpdateRoleId = (data, params) => {
+  console.log(data, params);
+  return axios({
+    url: `/user/update-role?id=${params.id}`,
     method: "put",
-    data,
-    params,
+    data: data,
   });
+};
