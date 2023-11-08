@@ -71,6 +71,23 @@ function CreateEvent({ dispatch, location }) {
 				imageWeb: location.state?.image,
 				image: location.state?.image,
 			}))
+			if (location.state.typeEvent) {
+				const newArr = location.state.onlineEvent.map(el => ({
+					topic: el.roomId,
+					timeRoom: el.timeRoom,
+					linkRoomUrl: el.numberRoom,
+				}))
+
+				setRoom(newArr)
+			} else {
+				const newArr = location.state.offlineEvent.map(el => ({
+					topic: el.roomId,
+					timeRoom: el.timeRoom,
+					numberRoom: el.numberRoom,
+				}))
+
+				setRoom(newArr)
+			}
 		}
 
 		window.scrollTo(0, 0)
@@ -148,11 +165,11 @@ function CreateEvent({ dispatch, location }) {
 				formData.append(i[0], i[1])
 			}
 
-			if (room.length > 0) formData.append('rooms', JSON.stringify(room))
+			formData.append('rooms', JSON.stringify(room))
 
-			for (let i of formData) {
-				console.log(i[0], i[1])
-			}
+			// for (let i of formData) {
+			// 	console.log(i[0], i[1])
+			// }
 
 			return Swal.fire({
 				title: 'Thông báo',

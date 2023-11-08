@@ -53,7 +53,7 @@ function App() {
 				</Route>
 			</Routes>
 			<ToastContainer
-				position='top-right'
+				position='top-center'
 				autoClose={5000}
 				hideProgressBar={true}
 				newestOnTop={false}
@@ -63,8 +63,6 @@ function App() {
 				draggable
 				pauseOnHover
 			/>
-			{/* Same as */}
-			<ToastContainer />
 		</div>
 	)
 }

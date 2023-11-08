@@ -40,3 +40,10 @@ export const apiGetEventOfAuthor = params =>
 		method: 'get',
 		params,
 	})
+
+export const apiDeleteEvent = data =>
+	axios({
+		url: 'post/delete-event',
+		method: 'delete',
+		data,
+	})

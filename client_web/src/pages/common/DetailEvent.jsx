@@ -12,14 +12,11 @@ const { AiOutlineRollback, TfiImport, BsChatRightTextFill } = icons
 function DetailEvent({ navigate, dispatch }) {
 	const { eid } = useParams()
 	const [data, setData] = useState(null)
-	const [loading, setLoading] = useState(true)
 
 	const fetchDetailEvent = async eid => {
-		setLoading(true)
 		const response = await apiGetDetailEvent(eid)
 		if (response.success) {
 			setData(response.response)
-			setLoading(false)
 		}
 	}
 
@@ -27,6 +24,8 @@ function DetailEvent({ navigate, dispatch }) {
 		fetchDetailEvent(eid)
 		window.scrollTo(0, 0)
 	}, [eid])
+
+	console.log(data)
 
 	return (
 		<div className='my-[30px] mx-[56px] p-[43px] bg-white rounded-[8px] flex flex-col gap-[43px]'>
@@ -160,9 +159,9 @@ function DetailEvent({ navigate, dispatch }) {
 						Thời gian diễn ra
 					</p>
 					<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400]'>
-						{`${moment(data?.startDate).format(
-							'DD/MM/YYYY hh:mm a',
-						)} - ${moment(data?.finishDate).format('DD/MM/YYYY hh:mm a')}`}
+						{`${moment(data?.startDate).format('DD/MM/YYYY hh:mm')} - ${moment(
+							data?.finishDate,
+						).format('DD/MM/YYYY hh:mm')}`}
 					</p>
 				</div>
 				<div className='flex items-center'>
@@ -172,6 +171,76 @@ function DetailEvent({ navigate, dispatch }) {
 					<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400]'>
 						{data?.description}
 					</p>
+				</div>
+			</div>
+			<div className='w-full bg-white shadow-table px-[50px] py-[38px] rounded-[8px] flex flex-col gap-[27px]'>
+				<p className='text-[18px] text-[#418A7E] font-[600]'>Phòng</p>
+				<div>
+					{data?.typeEvent ? (
+						<div className='grid grid-cols-4 gap-[28px] '>
+							{data?.onlineEvent?.map(el => (
+								<div
+									key={el.id}
+									className='w-full col-span-1 flex flex-col items-center border rounded-[8px] px-[24px] py-[12px] gap-[12px]'>
+									<img
+										src={el.qrCode}
+										alt='QR'
+										className='w-[140px] h-[140px] object-contain'
+									/>
+									<p className='text-[16px] font-[600] text-[#000] self-start'>
+										Chủ đề:{' '}
+										<span className='text-[#408A7E] font-[400]'>
+											{el.topic}
+										</span>
+									</p>
+									<p className='text-[16px] font-[600] text-[#000] self-start'>
+										Link phòng:{' '}
+										<span className='text-[#408A7E] font-[400]'>
+											{el.linkRoomUrl}
+										</span>
+									</p>
+									<p className='text-[16px] font-[600] text-[#000] self-start'>
+										Thời gian:{' '}
+										<span className='text-[#408A7E] font-[400]'>
+											{el.timeRoom}
+										</span>
+									</p>
+								</div>
+							))}
+						</div>
+					) : (
+						<div className='grid grid-cols-4 gap-[28px] '>
+							{data?.offlineEvent?.map(el => (
+								<div
+									key={el.id}
+									className='w-full col-span-1 flex flex-col items-center border rounded-[8px] px-[24px] py-[12px] gap-[12px]'>
+									<img
+										src={el.qrCode}
+										alt='QR'
+										className='w-[140px] h-[140px] object-contain'
+									/>
+									<p className='text-[16px] font-[600] text-[#000] self-start'>
+										Chủ đề:{' '}
+										<span className='text-[#408A7E] font-[400]'>
+											{el.topic}
+										</span>
+									</p>
+									<p className='text-[16px] font-[600] text-[#000] self-start'>
+										Số phòng:{' '}
+										<span className='text-[#408A7E] font-[400]'>
+											{el.numberRoom}
+										</span>
+									</p>
+									<p className='text-[16px] font-[600] text-[#000] self-start'>
+										Thời gian:{' '}
+										<span className='text-[#408A7E] font-[400]'>
+											{el.timeRoom}
+										</span>
+									</p>
+								</div>
+							))}
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

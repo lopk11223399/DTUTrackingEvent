@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import icons from '../../utils/icons'
-import { apiGetEventOfAuthor } from '../../apis/event'
+import { apiDeleteEvent, apiGetEventOfAuthor } from '../../apis/event'
 import moment from 'moment/moment'
 import { status } from '../../utils/contants'
 import clsx from 'clsx'
 import withBaseComponent from '../../hocs/withBaseComponent'
-import { createSearchParams, useSearchParams } from 'react-router-dom'
+import {
+	createSearchParams,
+	useParams,
+	useSearchParams,
+} from 'react-router-dom'
 import { pathCreator, common } from '../../utils/path'
 import Swal from 'sweetalert2'
+import { toast } from 'react-toastify'
 
 const {
 	AiOutlineSearch,
@@ -48,31 +53,57 @@ function ListEvent({ navigate, location }) {
 	const [tool, setTool] = useState(false)
 	const [getChoose, setGetChoose] = useState(false)
 	const [checkChoose, setCheckChoose] = useState(false)
+	const [update, setUpdate] = useState(false)
+	const [filter, setFilter] = useState([])
 
 	const fetchData = async queries => {
 		const response = await apiGetEventOfAuthor({
+			limit: 10,
+			page: 1,
 			...queries,
 		})
-		if (response.success) setdata(response.response)
+		if (response.success) {
+			setdata(response.response)
+		}
 	}
+
+	const render = useCallback(() => {
+		setUpdate(!update)
+	}, [update])
 
 	useEffect(() => {
 		const queries = Object.fromEntries([...params])
+
+		if (queries.status) queries.status = queries.status.split(',').map(Number)
+
 		fetchData({ ...queries })
-	}, [params])
+	}, [params, update])
 
 	useEffect(() => {
+		let queries = {}
+
 		if (search.length > 0) {
+			queries.title = search
 			navigate({
 				pathname: location.pathname,
-				search: createSearchParams({ title: search }).toString(),
+				search: createSearchParams(queries).toString(),
 			})
 		} else {
+			delete queries.title
 			navigate({
 				pathname: location.pathname,
+				search: createSearchParams(queries).toString(),
 			})
 		}
-	}, [search])
+
+		if (filter.length > 0) {
+			queries.status = filter.join(',')
+			navigate({
+				pathname: location.pathname,
+				search: createSearchParams(queries).toString(),
+			})
+		}
+	}, [search, filter])
 
 	const handleChoose = flag => {
 		if (flag === 'addAll') {
@@ -98,7 +129,7 @@ function ListEvent({ navigate, location }) {
 			showCancelButton: true,
 			cancelButtonText: 'Hủy',
 			confirmButtonText: 'Xác nhận',
-		}).then(async rs => {
+		}).then(rs => {
 			if (rs.isConfirmed) {
 				navigate(`/${pathCreator.CREATOR}/${pathCreator.CREATE_EVENT}`, {
 					state: data,
@@ -111,18 +142,63 @@ function ListEvent({ navigate, location }) {
 		if (sid === 1) {
 			const check = !statusChoose.status1.check
 			setStatusChoose(prev => ({ ...prev, status1: { id: 1, check } }))
+
+			if (sid === 1 && check) {
+				setFilter(prev => [...prev, sid])
+			} else {
+				const indexToRemove = filter.indexOf(sid)
+				const updatedArray = [...filter]
+				updatedArray.splice(indexToRemove, 1)
+				setFilter(updatedArray)
+			}
 		} else if (sid === 2) {
 			const check = !statusChoose.status2.check
 			setStatusChoose(prev => ({ ...prev, status2: { id: 2, check } }))
+
+			if (sid === 2 && check) {
+				setFilter(prev => [...prev, sid])
+			} else {
+				const indexToRemove = filter.indexOf(sid)
+				const updatedArray = [...filter]
+				updatedArray.splice(indexToRemove, 1)
+				setFilter(updatedArray)
+			}
 		} else if (sid === 3) {
 			const check = !statusChoose.status3.check
 			setStatusChoose(prev => ({ ...prev, status3: { id: 3, check } }))
+
+			if (sid === 3 && check) {
+				setFilter(prev => [...prev, sid])
+			} else {
+				const indexToRemove = filter.indexOf(sid)
+				const updatedArray = [...filter]
+				updatedArray.splice(indexToRemove, 1)
+				setFilter(updatedArray)
+			}
 		} else if (sid === 4) {
 			const check = !statusChoose.status4.check
 			setStatusChoose(prev => ({ ...prev, status4: { id: 4, check } }))
+
+			if (sid === 4 && check) {
+				setFilter(prev => [...prev, sid])
+			} else {
+				const indexToRemove = filter.indexOf(sid)
+				const updatedArray = [...filter]
+				updatedArray.splice(indexToRemove, 1)
+				setFilter(updatedArray)
+			}
 		} else if (sid === 5) {
 			const check = !statusChoose.status5.check
 			setStatusChoose(prev => ({ ...prev, status5: { id: 5, check } }))
+
+			if (sid === 5 && check) {
+				setFilter(prev => [...prev, sid])
+			} else {
+				const indexToRemove = filter.indexOf(sid)
+				const updatedArray = [...filter]
+				updatedArray.splice(indexToRemove, 1)
+				setFilter(updatedArray)
+			}
 		}
 	}
 
@@ -131,6 +207,53 @@ function ListEvent({ navigate, location }) {
 			if (!(event.target.id === 'filter')) setTool(false)
 		}
 	}, [])
+
+	const handleDeleteIcon = (eid, name) => {
+		if (!eid) return
+		else {
+			let array = [eid]
+
+			return Swal.fire({
+				title: 'Thông báo',
+				text:
+					'Bạn muốn muốn xóa sự kiện "' +
+					name +
+					'". Điều này sẽ xóa sự kiện và không thể khôi phục. Nếu như bạn đã chắc chắn với quyết định của mình vui lòng chọn xác nhận!',
+				icon: 'question',
+				showCancelButton: true,
+				cancelButtonText: 'Hủy',
+				confirmButtonText: 'Xác nhận',
+			}).then(async rs => {
+				if (rs.isConfirmed) {
+					const response = await apiDeleteEvent({ eventIds: array })
+					if (response.success) {
+						toast.success(response.mess)
+						render()
+					}
+				}
+			})
+		}
+	}
+
+	const handleDeleteEvents = () => {
+		return Swal.fire({
+			title: 'Thông báo',
+			text: `Bạn muốn muốn xóa ${choose.length} sự kiện đã chọn. Điều này sẽ xóa sự kiện và không thể khôi phục. Nếu như bạn đã chắc chắn với quyết định của mình vui lòng chọn xác nhận!`,
+			icon: 'question',
+			showCancelButton: true,
+			cancelButtonText: 'Hủy',
+			confirmButtonText: 'Xác nhận',
+		}).then(async rs => {
+			if (rs.isConfirmed) {
+				const response = await apiDeleteEvent({ eventIds: choose })
+				if (response.success) {
+					toast.success(response.mess)
+					render()
+					setChoose([])
+				}
+			}
+		})
+	}
 
 	return (
 		<div className='px-[12px] pt-[70px]'>
@@ -228,7 +351,9 @@ function ListEvent({ navigate, location }) {
 						</span>
 					)}
 					{choose.length > 0 && (
-						<span className='cursor-pointer bg-[#408A7E] text-[14px] font-[700] py-1 w-[120px] text-center rounded-[8px] text-white'>
+						<span
+							onClick={handleDeleteEvents}
+							className='cursor-pointer bg-[#408A7E] text-[14px] font-[700] py-1 w-[120px] text-center rounded-[8px] text-white'>
 							Xóa
 						</span>
 					)}
@@ -431,7 +556,9 @@ function ListEvent({ navigate, location }) {
 								</span>
 							</td>
 							<td onClick={e => e.stopPropagation()} className='w-[5%]'>
-								<span className='cursor-pointer flex items-center justify-center text-[#B3B3B3] hover:text-[#408A7E]'>
+								<span
+									onClick={() => handleDeleteIcon(el.id, el.title)}
+									className='cursor-pointer flex items-center justify-center text-[#B3B3B3] hover:text-[#408A7E]'>
 									<BiTrash size={19} />
 								</span>
 							</td>
