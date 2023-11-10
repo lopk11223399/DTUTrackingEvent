@@ -40,6 +40,8 @@ import {
 	AiOutlineUnorderedList,
 	AiOutlineSearch,
 	AiOutlineRollback,
+	AiOutlineCloudUpload,
+	AiOutlineCamera,
 } from 'react-icons/ai'
 import {
 	IoIosArrowForward,
@@ -114,6 +116,8 @@ const icons = {
 	GrCompliance,
 	MdCancelScheduleSend,
 	BiBadgeCheck,
+	AiOutlineCloudUpload,
+	AiOutlineCamera,
 }
 
 export default icons

@@ -1,9 +1,9 @@
 import { memo, Fragment, useState } from 'react'
 import { creatorSidebar } from '../../utils/contants'
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import clsx from 'clsx'
 import icons from '../../utils/icons'
-import { common } from '../../utils/path'
+import { common, pathCreator } from '../../utils/path'
 import { logout } from '../../store/user/userSlice'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import avatarDefault from '../../assets/img/avatarDefault.jpg'
@@ -27,10 +27,14 @@ const CreatorSidebar = ({ dispatch, navigate }) => {
 
 	return (
 		<div className=' bg-[#408A7E] text-white h-full py-4 rounded-tr-md rounded-br-md'>
-			<div className='px-4 py-2 flex items-center gap-[12px] border-b mb-2 cursor-pointer'>
+			<div
+				onClick={() =>
+					navigate(`/${pathCreator.CREATOR}/${common.PROFILE}/${current.id}`)
+				}
+				className='px-4 py-2 flex items-center gap-[12px] border-b mb-2 cursor-pointer'>
 				<div>
 					<img
-						src={avatarDefault}
+						src={current.avatar || avatarDefault}
 						alt='avatar'
 						className='w-[60px] h-[60px] rounded-full'
 					/>
@@ -39,7 +43,9 @@ const CreatorSidebar = ({ dispatch, navigate }) => {
 					<p className='text-[20px] font-[700] text-white line-clamp-1'>
 						{current.name}
 					</p>
-					<p className='text-[14px] font-[400] text-[#5B5C5C]'>role</p>
+					<p className='text-[14px] font-[400] text-[#5B5C5C]'>
+						{current.roleId === 2 && 'Người tổ chức sự kiện'}
+					</p>
 				</div>
 			</div>
 			<div>

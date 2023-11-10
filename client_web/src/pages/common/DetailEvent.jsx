@@ -168,7 +168,7 @@ function DetailEvent({ navigate, dispatch }) {
 					<p className='w-[160px] text-[#828282] text-[16px] font-[600] self-start py-[9px]'>
 						Mô tả
 					</p>
-					<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400]'>
+					<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400] text-justify'>
 						{data?.description}
 					</p>
 				</div>
@@ -177,7 +177,7 @@ function DetailEvent({ navigate, dispatch }) {
 				<p className='text-[18px] text-[#418A7E] font-[600]'>Phòng</p>
 				<div>
 					{data?.typeEvent ? (
-						<div className='grid grid-cols-4 gap-[28px] '>
+						<div className='grid grid-cols-4 gap-[28px]'>
 							{data?.onlineEvent?.map(el => (
 								<div
 									key={el.id}

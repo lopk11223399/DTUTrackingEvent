@@ -16,7 +16,7 @@ export const apiGetEvents = params =>
 
 export const apiGetDetailEvent = eid =>
 	axios({
-		url: '/post//detail-event/' + eid,
+		url: '/post/detail-event/' + eid,
 		method: 'get',
 	})
 
@@ -45,5 +45,12 @@ export const apiDeleteEvent = data =>
 	axios({
 		url: 'post/delete-event',
 		method: 'delete',
+		data,
+	})
+
+export const apiUpdateEvent = (eid, data) =>
+	axios({
+		url: 'post/update-event/' + eid,
+		method: 'put',
 		data,
 	})

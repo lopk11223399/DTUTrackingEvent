@@ -19,6 +19,8 @@ export const pathCreator = {
 export const common = {
 	LOGIN: 'login',
 	DASHBOARD: 'dashboard',
+	PROFILE: 'profile',
+	PROFILE_UID: 'profile/:uid',
 	EVENTDETAIL: 'eventdetail',
 	DETAILEVENT: 'detail-event',
 	DETAILEVENT_EID: 'detail-event/:eid',

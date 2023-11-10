@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 import { common, pathAdmin, pathCreator } from './utils/path'
-import { Login, CheckLogin, DetailEvent } from './pages/common'
+import { Login, CheckLogin, DetailEvent, Profile } from './pages/common'
 import {
 	AdminLayout,
 	ManageEvent,
@@ -50,6 +50,7 @@ function App() {
 					<Route path={common.DETAILEVENT_EID} element={<DetailEvent />} />
 					<Route path={pathCreator.UPDATE_EID} element={<CreateEvent />} />
 					<Route path={common.DASHBOARD} element={<Dashboard />} />
+					<Route path={common.PROFILE_UID} element={<Profile />} />
 				</Route>
 			</Routes>
 			<ToastContainer
