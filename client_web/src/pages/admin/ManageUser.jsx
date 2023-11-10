@@ -56,14 +56,14 @@ const ManageUser = () => {
       order: ["createdAt", "DESC"],
       ...queries,
     });
-
-    if (response.success === 0) {
+    console.log(response);
+    if (response.success) {
       setData(response.response.rows);
       setCount(response.response.count);
     }
   };
 
-  //  console.log(data);
+  console.log(data);
   //console.log(count);
   useEffect(() => {
     const queries = Object.fromEntries([...params]);
