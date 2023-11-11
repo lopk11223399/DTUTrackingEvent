@@ -61,6 +61,7 @@ import { TbBrandProducthunt, TbDoorExit, TbRun } from 'react-icons/tb'
 import { ImBin } from 'react-icons/im'
 import { GrFormAdd, GrCompliance } from 'react-icons/gr'
 import { TfiImport } from 'react-icons/tfi'
+import { VscCalendar } from 'react-icons/vsc'
 
 const icons = {
 	RiPhoneFill,
@@ -118,6 +119,7 @@ const icons = {
 	BiBadgeCheck,
 	AiOutlineCloudUpload,
 	AiOutlineCamera,
+	VscCalendar,
 }
 
 export default icons

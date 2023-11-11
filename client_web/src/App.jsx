@@ -43,6 +43,7 @@ function App() {
 						element={<UserDetail />}
 					/>
 					<Route path={`${common.EVENTDETAIL}`} element={<EventDetail />} />
+					<Route path={common.PROFILE_UID} element={<Profile />} />
 				</Route>
 				<Route path={pathCreator.CREATOR} element={<CreatorLayout />}>
 					<Route path={pathCreator.CREATE_EVENT} element={<CreateEvent />} />

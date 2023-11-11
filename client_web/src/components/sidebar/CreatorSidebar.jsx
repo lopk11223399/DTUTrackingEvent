@@ -36,7 +36,7 @@ const CreatorSidebar = ({ dispatch, navigate }) => {
 					<img
 						src={current.avatar || avatarDefault}
 						alt='avatar'
-						className='w-[60px] h-[60px] rounded-full'
+						className='w-[60px] h-[60px] rounded-full object-cover'
 					/>
 				</div>
 				<div className='flex-1'>
