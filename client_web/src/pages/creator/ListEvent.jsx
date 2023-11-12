@@ -448,8 +448,8 @@ function ListEvent({ navigate, location }) {
 			<table className='w-full'>
 				<thead className='h-[68px] rounded-[8px] bg-white shadow-table'>
 					<tr className=''>
-						{checkChoose && <td className='w-[10%]'></td>}
-						<td className='text-[14px] font-[700] text-[#5F5F5F] w-[25%] pl-2'>
+						<td className='w-[5%]'></td>
+						<td className='text-[14px] font-[700] text-[#5F5F5F] w-[30%] pl-2'>
 							Tên sự kiện
 						</td>
 						<td className='text-[14px] font-[700] text-[#5F5F5F] w-[10%] text-center'>
@@ -473,7 +473,7 @@ function ListEvent({ navigate, location }) {
 					</tr>
 				</thead>
 				<tbody>
-					{data?.map(el => (
+					{data?.map((el, index) => (
 						<tr
 							onClick={e => {
 								e.stopPropagation()
@@ -483,10 +483,10 @@ function ListEvent({ navigate, location }) {
 							}}
 							key={el.id}
 							className='border-b border-[#D3D3D3] cursor-pointer hover:bg-white hover:shadow-md'>
-							{checkChoose && (
-								<td
-									onClick={e => e.stopPropagation()}
-									className='text-center w-[10%]'>
+							<td
+								onClick={e => e.stopPropagation()}
+								className='text-center w-[5%]'>
+								{checkChoose ? (
 									<input
 										type='checkbox'
 										id={el.id}
@@ -508,9 +508,14 @@ function ListEvent({ navigate, location }) {
 										}}
 										checked={choose.some(e => e === el.id.toString())}
 									/>
-								</td>
-							)}
-							<td className='w-[25%] py-[12px] pl-2'>
+								) : (
+									(+params.get('page') > 1 ? +params.get('page') - 1 : 0) *
+										+import.meta.env.VITE_REACT_APP_LIMIT +
+									index +
+									1
+								)}
+							</td>
+							<td className='w-[30%] py-[12px] pl-2'>
 								<p className='line-clamp-1'>{el.title}</p>
 							</td>
 							<td className='text-center w-[10%]'>

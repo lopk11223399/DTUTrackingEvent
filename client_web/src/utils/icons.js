@@ -20,6 +20,8 @@ import {
 	BsFillCartPlusFill,
 	BsChatRightTextFill,
 	BsCheckAll,
+	BsCheckSquare,
+	BsCheckSquareFill,
 } from 'react-icons/bs'
 import { FaUserCircle, FaTty } from 'react-icons/fa'
 import {
@@ -42,6 +44,10 @@ import {
 	AiOutlineRollback,
 	AiOutlineCloudUpload,
 	AiOutlineCamera,
+	AiFillCloseSquare,
+	AiOutlineCloseSquare,
+	AiFillCheckSquare,
+	AiOutlineCheckSquare,
 } from 'react-icons/ai'
 import {
 	IoIosArrowForward,
@@ -120,6 +126,10 @@ const icons = {
 	AiOutlineCloudUpload,
 	AiOutlineCamera,
 	VscCalendar,
+	AiFillCheckSquare,
+	AiOutlineCheckSquare,
+	AiFillCloseSquare,
+	AiOutlineCloseSquare,
 }
 
 export default icons

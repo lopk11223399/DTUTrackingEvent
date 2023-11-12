@@ -27,7 +27,7 @@ export const adminSidebar = [
 		type: 'SINGLE',
 		text: 'Thống kê',
 		path: `/${pathAdmin.ADMIN}/${common.DASHBOARD}`,
-		icon: <AiOutlineDashboard size={20} />,
+		icon: <IoIosStats size={20} />,
 	},
 
 	{
@@ -42,7 +42,7 @@ export const adminSidebar = [
 		type: 'SINGLE',
 		text: 'Quản lý sự kiện',
 		path: `/${pathAdmin.ADMIN}/${pathAdmin.MANAGE_EVENT}`,
-		icon: <MdGroups size={20} />,
+		icon: <AiOutlineUnorderedList size={20} />,
 	},
 ]
 

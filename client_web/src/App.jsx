@@ -38,11 +38,7 @@ function App() {
 					<Route path={common.DASHBOARD} element={<Chart />} />
 					<Route path={pathAdmin.MANAGE_EVENT} element={<ManageEvent />} />
 					<Route path={pathAdmin.MANAGE_USERS} element={<ManageUser />} />
-					<Route
-						path={`${pathAdmin.USERDETAIL}/:id`}
-						element={<UserDetail />}
-					/>
-					<Route path={`${common.EVENTDETAIL}`} element={<EventDetail />} />
+					<Route path={common.DETAILEVENT_EID} element={<DetailEvent />} />
 					<Route path={common.PROFILE_UID} element={<Profile />} />
 				</Route>
 				<Route path={pathCreator.CREATOR} element={<CreatorLayout />}>
