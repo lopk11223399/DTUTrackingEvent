@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import moment from 'moment/moment'
 import { getBase64 } from '../../utils/helper'
-import { apiCreateEvent } from '../../apis'
+import { apiCreateEvent, apiGetDetailEvent, apiUpdateEvent } from '../../apis'
 import icons from '../../utils/icons'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import { showModal } from '../../store/app/appSlice'
@@ -10,10 +10,11 @@ import clsx from 'clsx'
 import NoImage from '../../assets/img/NoImage.jpg'
 import { toast } from 'react-toastify'
 import Swal from 'sweetalert2'
+import { useParams } from 'react-router-dom'
 
 const { AiOutlineDown } = icons
 
-function CreateEvent({ dispatch, location }) {
+function CreateEvent({ dispatch, location, navigate }) {
 	const [error, setError] = useState({
 		tittleErr: null,
 		startDateErr: null,
@@ -45,42 +46,49 @@ function CreateEvent({ dispatch, location }) {
 		imageWeb: null,
 	})
 	const [showCategoryEvent, setShowCategoryEvent] = useState(false)
+	const [update, setupdate] = useState(false)
 	const inpFile = useRef()
+	const params = useParams()
 
 	useEffect(() => {
-		if (location.state) {
+		if (location.state?.type === 'create') {
+			console.log(true)
 			setPayload({
-				title: location.state?.title,
+				title: location.state?.data.title,
 				startDate: moment(
-					location.state?.startDate || Date.now() + 15 * (60 * 1000),
+					location.state?.data.startDate || Date.now() + 15 * (60 * 1000),
 				).format('YYYY-DD-MM hh:mm'),
 				finishDate: moment(
-					location.state?.finishDate || Date.now() + 1 * (60 * 60 * 1000),
+					location.state?.data.finishDate || Date.now() + 1 * (60 * 60 * 1000),
 				).format('YYYY-DD-MM hh:mm'),
 				location:
-					location.state?.typeEvent === false ? location.state?.location : '',
-				typeEvent: location.state?.typeEvent,
-				description: location.state?.description,
+					location.state?.data.typeEvent === false
+						? location.state?.data.location
+						: '',
+				typeEvent: location.state?.data.typeEvent,
+				description: location.state?.data.description,
 				linkUrl:
-					location.state?.typeEvent === true ? location.state?.linkUrl : '',
-				addPoint: location.state?.addPoint,
-				limitParticipant: location.state?.limitParticipant,
+					location.state?.data.typeEvent === true
+						? location.state?.data.linkUrl
+						: '',
+				addPoint: location.state?.data.addPoint,
+				limitParticipant: location.state?.data.limitParticipant,
 			})
 			setPreview(prev => ({
 				...prev,
-				imageWeb: location.state?.image,
-				image: location.state?.image,
+				imageWeb: location.state?.data.image,
+				image: location.state?.data.image,
 			}))
-			if (location.state.typeEvent) {
-				const newArr = location.state.onlineEvent.map(el => ({
+			if (location.state?.data.typeEvent) {
+				const newArr = location.state.data.onlineEvent?.map(el => ({
 					topic: el.roomId,
 					timeRoom: el.timeRoom,
-					linkRoomUrl: el.numberRoom,
+					linkRoomUrl: el.linkRoomUrl,
 				}))
 
 				setRoom(newArr)
 			} else {
-				const newArr = location.state.offlineEvent.map(el => ({
+				const newArr = location.state.data.offlineEvent?.map(el => ({
 					topic: el.roomId,
 					timeRoom: el.timeRoom,
 					numberRoom: el.numberRoom,
@@ -90,8 +98,180 @@ function CreateEvent({ dispatch, location }) {
 			}
 		}
 
+		if (location.state?.type === 'update') {
+			setupdate(true)
+			fetchDetailEvent(params.eid)
+		}
+
 		window.scrollTo(0, 0)
-	}, [location.state])
+	}, [location])
+
+	const fetchDetailEvent = async eid => {
+		const response = await apiGetDetailEvent(eid)
+		if (response.success) {
+			setPayload({
+				title: response?.response?.title,
+				startDate: moment(
+					response?.response?.startDate || Date.now() + 15 * (60 * 1000),
+				).format('YYYY-DD-MM hh:mm'),
+				finishDate: moment(
+					response?.response?.finishDate || Date.now() + 1 * (60 * 60 * 1000),
+				).format('YYYY-DD-MM hh:mm'),
+				location:
+					response?.response?.typeEvent === false
+						? response?.response?.location
+						: '',
+				typeEvent: response?.response?.typeEvent,
+				description: response?.response?.description,
+				linkUrl:
+					response?.response?.typeEvent === true
+						? response?.response?.linkUrl
+						: '',
+				addPoint: response?.response?.addPoint,
+				limitParticipant: response?.response?.limitParticipant,
+			})
+			setPreview(prev => ({
+				...prev,
+				imageWeb: response?.response?.image,
+				image: response?.response?.image,
+			}))
+			if (response?.response.typeEvent) {
+				const newArr = response?.response.onlineEvent?.map(el => ({
+					topic: el.roomId,
+					timeRoom: el.timeRoom,
+					linkRoomUrl: el.linkRoomUrl,
+				}))
+				setRoom(newArr)
+			} else {
+				const newArr = response?.response.offlineEvent?.map(el => ({
+					topic: el.roomId,
+					timeRoom: el.timeRoom,
+					numberRoom: el.numberRoom,
+				}))
+				setRoom(newArr)
+			}
+		}
+	}
+
+	const handleUpdate = eid => {
+		const formData = new FormData()
+
+		if (payload.title.length < 0 || payload.title === '')
+			return setError(prev => ({
+				...prev,
+				tittleErr: 'Tiêu đề không được để trống',
+			}))
+
+		if (payload.typeEvent === null)
+			return setError(prev => ({
+				...prev,
+				typeEventErr: 'Vui lòng chọn loại sự kiện',
+				locationErr:
+					'Vui lòng chọn loại sự kiện và điền thông tin vào trường này',
+			}))
+
+		if (payload.addPoint === 0)
+			return setError(prev => ({
+				...prev,
+				addPointErr: 'Vui lòng nhập điểm rèn luyện',
+			}))
+
+		if (payload.limitParticipant === 0)
+			return setError(prev => ({
+				...prev,
+				limitParticipantErr: 'Vui lòng nhập số lượng người tham gia',
+			}))
+
+		if (payload.typeEvent === true && payload.linkUrl === '')
+			return setError(prev => ({
+				...prev,
+				locationErr: 'Vui lòng nhập địa chỉ room online',
+			}))
+
+		if (payload.typeEvent === false && payload.location === '')
+			return setError(prev => ({
+				...prev,
+				locationErr: 'Vui lòng nhập địa điểm của sự kiện',
+			}))
+
+		if (payload.description === '')
+			return setError(prev => ({
+				...prev,
+				descriptionErr: 'Vui lòng nhập mô tả của sự kiện',
+			}))
+
+		if (preview.image && preview.imageWeb)
+			formData.append('image', preview.image)
+		else
+			return setError(prev => ({
+				...prev,
+				imageErr: 'Vui lòng chọn ảnh',
+			}))
+
+		if (
+			error.tittleErr === null &&
+			error.startDateErr === null &&
+			error.finishDateErr === null &&
+			error.locationErr === null &&
+			error.typeEventErr === null &&
+			error.descriptionErr === null &&
+			error.addPointErr === null &&
+			error.imageErr === null &&
+			error.limitParticipantErr === null
+		) {
+			for (let i of Object.entries(payload)) {
+				if (i[1] === '') continue
+				if (i[1] === null) continue
+				formData.append(i[0], i[1])
+			}
+
+			formData.append('rooms', JSON.stringify(room))
+
+			for (let i of formData) {
+				console.log(i[0], i[1])
+			}
+
+			return Swal.fire({
+				title: 'Thông báo',
+				text:
+					'Bạn muốn cập nhâp lại thông tin sự kiện "' +
+					payload.title +
+					'" có phải không?',
+				icon: 'question',
+				showCancelButton: true,
+				cancelButtonText: 'Hủy',
+				confirmButtonText: 'Xác nhận',
+			}).then(async rs => {
+				if (rs.isConfirmed) {
+					const response = await apiUpdateEvent(eid, formData)
+					if (response.success) {
+						setPreview({
+							image: null,
+							imageWeb: null,
+						})
+						setPayload({
+							title: '',
+							startDate: moment(Date.now() + 15 * (60 * 1000)).format(
+								'YYYY-DD-MM hh:mm',
+							),
+							finishDate: moment(Date.now() + 1 * (60 * 60 * 1000)).format(
+								'YYYY-DD-MM hh:mm',
+							),
+							location: '',
+							typeEvent: null,
+							description: '',
+							linkUrl: '',
+							addPoint: 0,
+							limitParticipant: 0,
+						})
+						setRoom([])
+						toast.success(response.mess)
+						navigate(location.state.pathname)
+					}
+				}
+			})
+		}
+	}
 
 	const handleSubmit = async () => {
 		const formData = new FormData()
@@ -266,12 +446,22 @@ function CreateEvent({ dispatch, location }) {
 	return (
 		<div className='w-full h-full px-[20px] bg-[#FAFAFA] pt-[100px] mb-[12px]'>
 			<div className='z-10 px-[20px] flex items-center justify-between fixed top-0 right-0 left-[327px] bg-white h-[80px] shadow'>
-				<h1 className='text-[24px] font-[700] text-[#408A7E]'>Tạo sự kiện</h1>
-				<div
-					onClick={handleSubmit}
-					className='w-[20%] text-center bg-[#408A7E] p-[11px] text-[14px] font-[600] text-white rounded-[8px] cursor-pointer'>
-					Tạo sự kiện
-				</div>
+				<h1 className='text-[24px] font-[700] text-[#408A7E]'>
+					{update ? `Cập nhập sự kiện` : 'Tạo sự kiện'}
+				</h1>
+				{update ? (
+					<div
+						onClick={() => handleUpdate(params.eid)}
+						className='w-[20%] text-center bg-[#408A7E] p-[11px] text-[14px] font-[600] text-white rounded-[8px] cursor-pointer'>
+						Cập nhập sự kiện
+					</div>
+				) : (
+					<div
+						onClick={handleSubmit}
+						className='w-[20%] text-center bg-[#408A7E] p-[11px] text-[14px] font-[600] text-white rounded-[8px] cursor-pointer'>
+						Tạo sự kiện
+					</div>
+				)}
 			</div>
 			<div className='py-[33px] border-t border-b border-[#797799] flex flex-col gap-[20px]'>
 				<div className='flex gap-[40px]'>
@@ -471,7 +661,7 @@ function CreateEvent({ dispatch, location }) {
 									Điểm rèn luyện
 								</label>
 								<input
-									type='number'
+									type='string'
 									id='addPoint'
 									className={clsx(
 										'rounded-[8px] py-[7px] px-[15px] flex-1 placeholder:text-[#848484] text-[#408A7E] text-[12px] font-[400] outline-none border bg-transparent',
@@ -480,19 +670,25 @@ function CreateEvent({ dispatch, location }) {
 									placeholder='Điểm rèn luyện'
 									value={payload.addPoint}
 									onChange={text => {
-										setPayload(prev => ({
-											...prev,
-											addPoint: Number(text.target.value),
-										}))
-										if (Number(text.target.value) === 0)
+										if (!isNaN(Number(text.target.value))) {
+											setPayload(prev => ({
+												...prev,
+												addPoint: Number(text.target.value),
+											}))
+											if (Number(text.target.value) <= 0)
+												setError(prev => ({
+													...prev,
+													addPointErr: 'Vui lòng điền số điểm khác 0',
+												}))
+											else
+												setError(prev => ({
+													...prev,
+													addPointErr: null,
+												}))
+										} else
 											setError(prev => ({
 												...prev,
 												addPointErr: 'Vui lòng điền số điểm',
-											}))
-										else
-											setError(prev => ({
-												...prev,
-												addPointErr: null,
 											}))
 									}}
 								/>
@@ -514,7 +710,7 @@ function CreateEvent({ dispatch, location }) {
 									Số lượng người tham gia
 								</label>
 								<input
-									type='number'
+									type='string'
 									id='limitParticipantErr'
 									className={clsx(
 										'rounded-[8px] py-[7px] px-[15px] flex-1 placeholder:text-[#848484] text-[#408A7E] text-[12px] font-[400] outline-none border bg-transparent',
@@ -525,20 +721,27 @@ function CreateEvent({ dispatch, location }) {
 									placeholder='Số lượng người tham gia'
 									value={payload.limitParticipant}
 									onChange={text => {
-										setPayload(prev => ({
-											...prev,
-											limitParticipant: Number(text.target.value),
-										}))
-										if (Number(text.target.value) === 0)
+										if (!isNaN(Number(text.target.value))) {
+											setPayload(prev => ({
+												...prev,
+												limitParticipant: Number(text.target.value),
+											}))
+											if (Number(text.target.value) === 0)
+												setError(prev => ({
+													...prev,
+													limitParticipantErr:
+														'Vui lòng nhập số lượng người tham gia khác 0',
+												}))
+											else
+												setError(prev => ({
+													...prev,
+													limitParticipantErr: null,
+												}))
+										} else
 											setError(prev => ({
 												...prev,
 												limitParticipantErr:
 													'Vui lòng nhập số lượng người tham gia',
-											}))
-										else
-											setError(prev => ({
-												...prev,
-												limitParticipantErr: null,
 											}))
 									}}
 								/>
@@ -739,7 +942,7 @@ function CreateEvent({ dispatch, location }) {
 							room.length === 0 && 'h-[164px]',
 						)}>
 						{room.length > 0 &&
-							room.map((el, id) => (
+							room?.map((el, id) => (
 								<div
 									key={id}
 									className={`w-[calc(25%-16px)] h-full rounded-[8px] p-2 flex flex-col gap-2 justify-center border border-[#B3B3B3]`}>

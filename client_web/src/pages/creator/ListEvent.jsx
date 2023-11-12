@@ -5,14 +5,11 @@ import moment from 'moment/moment'
 import { status } from '../../utils/contants'
 import clsx from 'clsx'
 import withBaseComponent from '../../hocs/withBaseComponent'
-import {
-	createSearchParams,
-	useParams,
-	useSearchParams,
-} from 'react-router-dom'
+import { createSearchParams, useSearchParams } from 'react-router-dom'
 import { pathCreator, common } from '../../utils/path'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
+import { Pagination } from '../../components'
 
 const {
 	AiOutlineSearch,
@@ -55,6 +52,7 @@ function ListEvent({ navigate, location }) {
 	const [checkChoose, setCheckChoose] = useState(false)
 	const [update, setUpdate] = useState(false)
 	const [filter, setFilter] = useState([])
+	const [count, setCount] = useState(0)
 
 	const fetchData = async queries => {
 		const response = await apiGetEventOfAuthor({
@@ -64,6 +62,7 @@ function ListEvent({ navigate, location }) {
 		})
 		if (response.success) {
 			setdata(response.response)
+			setCount(response.count)
 		}
 	}
 
@@ -105,16 +104,19 @@ function ListEvent({ navigate, location }) {
 		}
 	}, [search, filter])
 
-	const handleChoose = flag => {
+	const handleChoose = async flag => {
 		if (flag === 'addAll') {
-			setChoose(
-				data.map(el =>
-					!choose.some(e => e === el.id.toString())
-						? el.id.toString()
-						: choose.find(e => e === el.id.toString()),
-				),
-			)
-			setCheckCheckboxALl(true)
+			const response = await apiGetEventOfAuthor()
+			if (response.success) {
+				setChoose(
+					response?.response?.map(el =>
+						!choose.some(e => e === el.id.toString())
+							? el.id.toString()
+							: choose.find(e => e === el.id.toString()),
+					),
+				)
+				setCheckCheckboxALl(true)
+			}
 		} else if (flag === 'removeAll') {
 			setCheckCheckboxALl(false)
 			setChoose([])
@@ -132,7 +134,10 @@ function ListEvent({ navigate, location }) {
 		}).then(rs => {
 			if (rs.isConfirmed) {
 				navigate(`/${pathCreator.CREATOR}/${pathCreator.CREATE_EVENT}`, {
-					state: data,
+					state: {
+						data: data,
+						type: 'create',
+					},
 				})
 			}
 		})
@@ -331,7 +336,7 @@ function ListEvent({ navigate, location }) {
 							Chọn
 						</span>
 					)}
-					<p className='text-[#9D9D9D] text-[14px] font-[400]'>{`${data?.length} sự kiện`}</p>
+					<p className='text-[#9D9D9D] text-[14px] font-[400]'>{`${count} sự kiện`}</p>
 					{checkChoose && (
 						<span
 							onClick={() => {
@@ -549,6 +554,12 @@ function ListEvent({ navigate, location }) {
 									onClick={() =>
 										navigate(
 											`/${pathCreator.CREATOR}/${pathCreator.UPDATE}/${el.id}`,
+											{
+												state: {
+													type: 'update',
+													pathname: location.pathname,
+												},
+											},
 										)
 									}
 									className='cursor-pointer flex items-center justify-center text-[#B3B3B3] hover:text-[#408A7E]'>
@@ -566,6 +577,10 @@ function ListEvent({ navigate, location }) {
 					))}
 				</tbody>
 			</table>
+
+			<div className='w-full my-3'>
+				<Pagination totalCount={count} />
+			</div>
 		</div>
 	)
 }

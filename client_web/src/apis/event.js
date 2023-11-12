@@ -16,7 +16,7 @@ export const apiGetEvents = (params) =>
 
 export const apiGetDetailEvent = (eid) =>
   axios({
-    url: "/post//detail-event/" + eid,
+    url: "/post/detail-event/" + eid,
     method: "get",
   });
 
@@ -46,10 +46,4 @@ export const apiDeleteEvent = (data) =>
     url: "post/delete-event",
     method: "delete",
     data,
-  });
-export const apiGetChartfaculty = (params) =>
-  axios({
-    url: "/statistic/by-faculty/:eventId",
-    method: "get",
-    params,
   });

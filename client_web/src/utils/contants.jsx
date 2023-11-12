@@ -11,20 +11,21 @@ const {
 	TbRun,
 	BiBadgeCheck,
 	MdCancelScheduleSend,
+	VscCalendar,
 } = icons
 
 export const adminSidebar = [
 	{
 		id: 1,
 		type: 'SINGLE',
-		text: 'Calendar',
+		text: 'Lịch sự kiện',
 		path: `/${pathAdmin.ADMIN}/${pathAdmin.CALENDAR}`,
-		icon: <AiOutlineDashboard size={20} />,
+		icon: <VscCalendar size={20} />,
 	},
 	{
 		id: 2,
 		type: 'SINGLE',
-		text: 'Dashboard',
+		text: 'Thống kê',
 		path: `/${pathAdmin.ADMIN}/${common.DASHBOARD}`,
 		icon: <AiOutlineDashboard size={20} />,
 	},
@@ -32,14 +33,14 @@ export const adminSidebar = [
 	{
 		id: 3,
 		type: 'SINGLE',
-		text: 'Manage users',
+		text: 'Quản lý người dùng',
 		path: `/${pathAdmin.ADMIN}/${pathAdmin.MANAGE_USERS}`,
 		icon: <MdGroups size={20} />,
 	},
 	{
 		id: 4,
 		type: 'SINGLE',
-		text: 'Manage events',
+		text: 'Quản lý sự kiện',
 		path: `/${pathAdmin.ADMIN}/${pathAdmin.MANAGE_EVENT}`,
 		icon: <MdGroups size={20} />,
 	},
@@ -58,16 +59,17 @@ export const creatorSidebar = [
 		type: 'SINGLE',
 		text: 'Tạo sự kiện',
 		path: `/${pathCreator.CREATOR}/${pathCreator.CREATE_EVENT}`,
-		icon: <IoMdCreate size={20} />,
+		icon: <IoMdCreate size={19} />,
 	},
 	{
 		id: 3,
 		type: 'SINGLE',
 		text: 'Danh sách sự kiện của tôi',
 		path: `/${pathCreator.CREATOR}/${pathCreator.LIST_EVENT}`,
-		icon: <AiOutlineUnorderedList size={20} />,
+		icon: <AiOutlineUnorderedList size={19} />,
 	},
 ]
+
 export const status = [
 	{
 		id: 1,
@@ -94,4 +96,9 @@ export const status = [
 		text: 'Đã hủy',
 		icon: <MdCancelScheduleSend size='21' />,
 	},
+]
+
+export const optionsGender = [
+	{ value: false, label: 'Nam' },
+	{ value: true, label: 'Nữ' },
 ]

@@ -40,6 +40,8 @@ import {
 	AiOutlineUnorderedList,
 	AiOutlineSearch,
 	AiOutlineRollback,
+	AiOutlineCloudUpload,
+	AiOutlineCamera,
 } from 'react-icons/ai'
 import {
 	IoIosArrowForward,
@@ -59,6 +61,7 @@ import { TbBrandProducthunt, TbDoorExit, TbRun } from 'react-icons/tb'
 import { ImBin } from 'react-icons/im'
 import { GrFormAdd, GrCompliance } from 'react-icons/gr'
 import { TfiImport } from 'react-icons/tfi'
+import { VscCalendar } from 'react-icons/vsc'
 
 const icons = {
 	RiPhoneFill,
@@ -114,6 +117,9 @@ const icons = {
 	GrCompliance,
 	MdCancelScheduleSend,
 	BiBadgeCheck,
+	AiOutlineCloudUpload,
+	AiOutlineCamera,
+	VscCalendar,
 }
 
 export default icons

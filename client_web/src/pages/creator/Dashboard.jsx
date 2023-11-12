@@ -1,42 +1,58 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { status } from '../../utils/contants'
 import { BarChart } from '../../components'
 import avatarDefault from '../../assets/img/avatarDefault.jpg'
+import { apiGetEventOfAuthor, apiGetFivePeopleHot } from '../../apis'
 
 function dashboard() {
-	const [chartData, setChartData] = useState([10, 2, 3, 4, 5])
-	const [dataUser, setDataUser] = useState([
-		{
-			avatar: null,
-			name: 'abc',
-			addPoint: 10,
-			numberJoin: 10,
-		},
-		{
-			avatar: null,
-			name: 'abc',
-			addPoint: 10,
-			numberJoin: 10,
-		},
-		{
-			avatar: null,
-			name: 'abc',
-			addPoint: 10,
-			numberJoin: 10,
-		},
-		{
-			avatar: null,
-			name: 'abc',
-			addPoint: 10,
-			numberJoin: 10,
-		},
-		{
-			avatar: null,
-			name: 'abc',
-			addPoint: 10,
-			numberJoin: 10,
-		},
-	])
+	const [chartData, setChartData] = useState([0, 0, 0, 0, 0])
+	const [dataUser, setDataUser] = useState([])
+	const [overView, setoverView] = useState({
+		pending: 0,
+		apply: 0,
+		process: 0,
+		success: 0,
+		close: 0,
+	})
+
+	const fetch5PeopleHot = async () => {
+		const response = await apiGetFivePeopleHot()
+		if (response.success) setDataUser(response.response)
+	}
+
+	const fetchEvent = async () => {
+		const response = await apiGetEventOfAuthor()
+		if (response.success) {
+			console.log(response?.response)
+
+			let pending = 0
+			let apply = 0
+			let process = 0
+			let success = 0
+			let close = 0
+
+			response?.response?.forEach(el => {
+				if (el.status === 1) pending = pending + 1
+				else if (el.status === 2) apply = apply + 1
+				else if (el.status === 3) process = process + 1
+				else if (el.status === 4) success = success + 1
+				else if (el.status === 5) close = close + 1
+			})
+
+			setoverView({
+				pending: pending,
+				apply: apply,
+				process: process,
+				success: success,
+				close: close,
+			})
+		}
+	}
+
+	useEffect(() => {
+		fetch5PeopleHot()
+		fetchEvent()
+	}, [])
 
 	return (
 		<div className='px-[48px] py-[35px] flex flex-col gap-[35px]'>
@@ -50,7 +66,15 @@ function dashboard() {
 							<p className='text-[14px] font-[400] text-[#7A7A7A]'>{el.text}</p>
 							<div className='flex items-center justify-between'>
 								<span className='text-[#000] text-[18px] font-[600] pl-[19px]'>
-									0
+									{el.id === 1
+										? overView.pending
+										: el.id === 2
+										? overView.apply
+										: el.id === 3
+										? overView.process
+										: el.id === 4
+										? overView.success
+										: overView.close}
 								</span>
 								<span className='w-[36px] h-[36px] mr-[16px] flex items-center justify-center bg-[#408A7E] rounded-full text-white'>
 									{el.icon}
