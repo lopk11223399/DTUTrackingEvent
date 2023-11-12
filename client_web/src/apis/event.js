@@ -47,3 +47,9 @@ export const apiDeleteEvent = (data) =>
     method: "delete",
     data,
   });
+export const apiGetChartfaculty = (params) =>
+  axios({
+    url: "/statistic/by-faculty/:eventId",
+    method: "get",
+    params,
+  });
