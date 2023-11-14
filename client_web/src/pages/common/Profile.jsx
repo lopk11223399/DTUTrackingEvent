@@ -1,6 +1,5 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, Fragment } from 'react'
 import { useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import icons from '../../utils/icons'
 import avatarDefault from '../../assets/img/avatarDefault.jpg'
@@ -22,9 +21,10 @@ const {
 	AiOutlineCamera,
 } = icons
 
-function Profile({ navigate, dispatch }) {
+function Profile({ navigate, dispatch, location }) {
 	const { current } = useSelector(state => state.user)
 	const [checkUpdate, setCheckUpdate] = useState(false)
+	const [profile, setProfile] = useState(false)
 	const [preview, setPreview] = useState({
 		image: null,
 		imageWeb: null,
@@ -37,7 +37,53 @@ function Profile({ navigate, dispatch }) {
 		gender: '',
 		birthDate: '',
 	})
+	const [data, setData] = useState({
+		avatar: '',
+		name: '',
+		phone: '',
+		roleId: '',
+		address: '',
+		birthDate: '',
+		email: '',
+		gender: '',
+		studentCode: '',
+		classCode: '',
+		program: '',
+	})
 	const inpFile = useRef()
+
+	useEffect(() => {
+		if (location.state.type === 'userDetail') {
+			setData({
+				avatar: location.state.data.avatar,
+				name: location.state.data.name,
+				phone: location.state.data.phone,
+				roleId: location.state.data.roleId,
+				address: location.state.data.address,
+				birthDate: location.state.data.birthDate,
+				email: location.state.data.email,
+				gender: location.state.data.gender,
+				studentCode: location.state.data.studentData.studentCode,
+				classCode: location.state.data.studentData.classCode,
+				program: location.state.data.studentData.program,
+			})
+		} else if (location.state.type === 'profile') {
+			setData({
+				avatar: current.avatar,
+				name: current.name,
+				phone: current.phone,
+				roleId: current.roleId,
+				address: current.address,
+				birthDate: current.birthDate,
+				email: current.email,
+				gender: current.gender,
+				studentCode: current.studentData.studentCode,
+				classCode: current.studentData.classCode,
+				program: current.studentData.program,
+			})
+			setProfile(true)
+		}
+	}, [location.state])
 
 	const handleCheckUpdate = () => {
 		if (checkUpdate) {
@@ -114,13 +160,18 @@ function Profile({ navigate, dispatch }) {
 					</span>
 					<span className='text-[18px] font-[600]'>Quay lại</span>
 				</div>
-				<span className='text-[18px] font-[600] text-[#B2B2B2]'>/</span>
-				<div className='flex items-center gap-[21px] text-[#418A7E]'>
-					<span>
-						<FaUserCircle size={21} />
-					</span>
-					<span className='text-[18px] font-[600]'>Trang cá nhân</span>
-				</div>
+
+				{profile && (
+					<Fragment>
+						<span className='text-[18px] font-[600] text-[#B2B2B2]'>/</span>
+						<div className='flex items-center gap-[21px] text-[#418A7E]'>
+							<span>
+								<FaUserCircle size={21} />
+							</span>
+							<span className='text-[18px] font-[600]'>Trang cá nhân</span>
+						</div>
+					</Fragment>
+				)}
 			</div>
 			<div className='flex items-center gap-[37px]'>
 				<div className='border-[3px] border-[#418A7E] rounded-full relative'>
@@ -132,7 +183,7 @@ function Profile({ navigate, dispatch }) {
 						/>
 					) : (
 						<img
-							src={current.avatar || avatarDefault}
+							src={data.avatar || avatarDefault}
 							alt='avatar'
 							className='w-[169px] h-[169px] object-cover rounded-full'
 						/>
@@ -161,40 +212,43 @@ function Profile({ navigate, dispatch }) {
 					/>
 				</div>
 				<div className='flex-1 flex flex-col gap-[14px]'>
-					<p className='text-[#000] text-[24px] font-[600]'>{current.name}</p>
+					<p className='text-[#000] text-[24px] font-[600]'>{data.name}</p>
 					<p className='text-[#999] text-[14px] font-[400]'>
-						Số điện thoại: {current.phone || '(trống)'}
+						Số điện thoại: {data.phone || '(trống)'}
 					</p>
 				</div>
 			</div>
-			<div className='mt-[-45px] self-end flex gap-[12px] items-center'>
-				{checkUpdate && (
+			{profile && (
+				<div className='mt-[-45px] self-end flex gap-[12px] items-center'>
+					{checkUpdate && (
+						<div
+							onClick={handleSubmit}
+							className={clsx(
+								'flex px-[40px] border border-[#418A7E] bg-[#408A7E] text-white items-center justify-center py-[11px] rounded-[8px] cursor-pointer gap-[12px]',
+							)}>
+							<span>
+								<AiOutlineCloudUpload size={18} />
+							</span>
+							<span className='text-[18px] font-[600]'>Cập nhật</span>
+						</div>
+					)}
 					<div
-						onClick={handleSubmit}
+						onClick={handleCheckUpdate}
 						className={clsx(
-							'flex px-[40px] border border-[#418A7E] bg-[#408A7E] text-white items-center justify-center py-[11px] rounded-[8px] cursor-pointer gap-[12px]',
+							'flex px-[40px] border border-[#418A7E] text-[#418A7E] items-center justify-center py-[11px] rounded-[8px] cursor-pointer gap-[12px]',
+							!checkUpdate && 'hover:bg-[#408A7E] hover:text-white',
+							checkUpdate && 'bg-[#408A7E] text-white',
 						)}>
 						<span>
-							<AiOutlineCloudUpload size={18} />
+							<BiSolidPencil size={18} />
 						</span>
-						<span className='text-[18px] font-[600]'>Cập nhật</span>
+						<span className='text-[18px] font-[600]'>
+							{checkUpdate ? 'Thoát chỉnh sửa' : 'Chỉnh sửa'}
+						</span>
 					</div>
-				)}
-				<div
-					onClick={handleCheckUpdate}
-					className={clsx(
-						'flex px-[40px] border border-[#418A7E] text-[#418A7E] items-center justify-center py-[11px] rounded-[8px] cursor-pointer gap-[12px]',
-						!checkUpdate && 'hover:bg-[#408A7E] hover:text-white',
-						checkUpdate && 'bg-[#408A7E] text-white',
-					)}>
-					<span>
-						<BiSolidPencil size={18} />
-					</span>
-					<span className='text-[18px] font-[600]'>
-						{checkUpdate ? 'Thoát chỉnh sửa' : 'Chỉnh sửa'}
-					</span>
 				</div>
-			</div>
+			)}
+
 			<div className='w-full bg-white shadow-table px-[50px] py-[38px] rounded-[8px] flex flex-col gap-[27px]'>
 				<p className='text-[18px] text-[#418A7E] font-[600]'>
 					Thông tin cá nhân
@@ -213,7 +267,7 @@ function Profile({ navigate, dispatch }) {
 						/>
 					) : (
 						<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400]'>
-							{current.name}
+							{data.name}
 						</p>
 					)}
 				</div>
@@ -235,7 +289,7 @@ function Profile({ navigate, dispatch }) {
 						/>
 					) : (
 						<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400]'>
-							{current.phone || '(trống)'}
+							{data.phone || '(trống)'}
 						</p>
 					)}
 				</div>
@@ -244,7 +298,11 @@ function Profile({ navigate, dispatch }) {
 						Vai trò
 					</p>
 					<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400]'>
-						{current.roleId === 2 ? 'Người tổ chức sự kiện' : 'Admin'}
+						{+data.roleId === 2
+							? 'Người tổ chức sự kiện'
+							: +data.roleId === 1
+							? 'Admin'
+							: 'Học sinh'}
 					</p>
 				</div>
 				<div className='flex items-center'>
@@ -263,7 +321,7 @@ function Profile({ navigate, dispatch }) {
 						/>
 					) : (
 						<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400]'>
-							{current.address || '(trống)'}
+							{data.address || '(trống)'}
 						</p>
 					)}
 				</div>
@@ -286,7 +344,7 @@ function Profile({ navigate, dispatch }) {
 						/>
 					) : (
 						<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400]'>
-							{moment(current.birthDate).format('DD/MM/YYYY') || '(trống)'}
+							{moment(data.birthDate).format('DD/MM/YYYY') || '(trống)'}
 						</p>
 					)}
 				</div>
@@ -309,7 +367,7 @@ function Profile({ navigate, dispatch }) {
 						/>
 					) : (
 						<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400]'>
-							{current.email || '(trống)'}
+							{data.email || '(trống)'}
 						</p>
 					)}
 				</div>
@@ -319,7 +377,9 @@ function Profile({ navigate, dispatch }) {
 					</p>
 					{checkUpdate ? (
 						<Select
-							defaultValue={payload.gender}
+							defaultValue={optionsGender.filter(
+								e => e.value === payload.gender,
+							)}
 							onChange={value =>
 								setPayload(prev => ({ ...prev, gender: value.value }))
 							}
@@ -343,7 +403,7 @@ function Profile({ navigate, dispatch }) {
 						/>
 					) : (
 						<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400]'>
-							{current.gender ? 'Nữ' : 'Nam'}
+							{data.gender ? 'Nữ' : 'Nam'}
 						</p>
 					)}
 				</div>
@@ -355,7 +415,7 @@ function Profile({ navigate, dispatch }) {
 						Mã số sinh viên
 					</p>
 					<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400]'>
-						{current.studentData.studentCode}
+						{data.studentCode}
 					</p>
 				</div>
 				<div className='flex items-center'>
@@ -363,7 +423,7 @@ function Profile({ navigate, dispatch }) {
 						Mã lớp
 					</p>
 					<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400]'>
-						{current.studentData.classCode}
+						{data.classCode}
 					</p>
 				</div>
 				<div className='flex items-center'>
@@ -371,7 +431,7 @@ function Profile({ navigate, dispatch }) {
 						Khoa
 					</p>
 					<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400]'>
-						{current.studentData.program}
+						{data.program}
 					</p>
 				</div>
 			</div>

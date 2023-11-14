@@ -6,8 +6,6 @@ import {
 	ManageEvent,
 	ManageUser,
 	Calendar,
-	UserDetail,
-	EventDetail,
 	Chart,
 } from './pages/admin'
 import {
@@ -40,6 +38,7 @@ function App() {
 					<Route path={pathAdmin.MANAGE_USERS} element={<ManageUser />} />
 					<Route path={common.DETAILEVENT_EID} element={<DetailEvent />} />
 					<Route path={common.PROFILE_UID} element={<Profile />} />
+					<Route path={pathAdmin.USERDETAIL_UID} element={<Profile />} />
 				</Route>
 				<Route path={pathCreator.CREATOR} element={<CreatorLayout />}>
 					<Route path={pathCreator.CREATE_EVENT} element={<CreateEvent />} />

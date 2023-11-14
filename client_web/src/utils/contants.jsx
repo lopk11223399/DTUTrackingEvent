@@ -102,3 +102,8 @@ export const optionsGender = [
 	{ value: false, label: 'Nam' },
 	{ value: true, label: 'Nữ' },
 ]
+
+export const optionsRoles = [
+	{ value: 3, label: 'Học sinh' },
+	{ value: 2, label: 'Người tạo sự kiện' },
+]
