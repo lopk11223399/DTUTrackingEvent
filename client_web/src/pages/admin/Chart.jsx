@@ -80,7 +80,15 @@ const Chart = () => {
       },
     ],
   };
-  console.log(userData);
+  //console.log(userData);
+  const options = {
+    plugins: {
+      legend: {
+        display: false,
+        maintainAspectRatio: false, // Tắt hiển thị legend (header)
+      },
+    },
+  };
   return (
     <div>
       <h1 className="m-2 ml-4 uppercase text-zinc-500 text-3xl">Thống kê</h1>
@@ -94,11 +102,11 @@ const Chart = () => {
           </div>
         </div>
         <div className="basis-[55%] mr-4 bg-[#fff]   shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-[20px] h-[300px] ">
+          <h1 className="pl-2 pt-1 font-[500] text-[#408A7E]">
+            Tổng sự kiện theo tháng
+          </h1>
           <div className="w-full h-full">
-            <Bar
-              data={dataChart}
-              options={{ maintainAspectRatio: false }}
-            ></Bar>
+            <Bar data={dataChart} options={options}></Bar>
           </div>
         </div>
       </div>
