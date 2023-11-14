@@ -428,7 +428,7 @@ function Profile({ navigate, dispatch, location }) {
 				</div>
 				<div className='flex items-center'>
 					<p className='w-[160px] text-[#828282] text-[16px] font-[600]'>
-						Khoa
+						Chương trình
 					</p>
 					<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400]'>
 						{data.program}

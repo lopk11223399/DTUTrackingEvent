@@ -43,60 +43,6 @@ function ManageEvent({ navigate }) {
 		}
 	}
 
-	// useEffect(() => {
-	// 	// Hàm kiểm tra khoảng thời gian
-	// 	const checkTimeDifference = async () => {
-	// 		// Lấy danh sách createdAt từ mảng và chuyển đổi thành đối tượng Date
-	// 		const dateTimes = data.map(item => ({
-	// 			time: new Date(item.createdAt),
-	// 			eid: item.id,
-	// 			status: item.status,
-	// 		}))
-	// 		// Tìm DateTime nhỏ nhất
-	// 		const minDateTime = dateTimes.reduce((min, current) => {
-	// 			const currentDate = new Date(current.time)
-	// 			return currentDate < min
-	// 				? {
-	// 						time: currentDate,
-	// 						eid: current.eid,
-	// 						status: current.status,
-	// 				  }
-	// 				: min
-	// 		}, new Date())
-	// 		// Lấy thời gian hiện tại
-	// 		const currentTime = new Date()
-	// 		// Tính toán khoảng thời gian
-	// 		const timeDifference = currentTime - minDateTime.time
-	// 		// So sánh với 2 phút (2 * 60 * 1000 milliseconds)
-	// 		const twoMinutesInMillis = 2 * 60 * 1000
-	// 		// Kiểm tra nếu khoảng thời gian nhỏ hơn 2 phút
-	// 		const isWithinTwoMinutes = timeDifference < twoMinutesInMillis
-
-	// 		// Nếu thời gian nhỏ nhất nhỏ hơn 2 phút, thì bạn có thể thực hiện các hành động cần thiết ở đây
-	// 		if (isWithinTwoMinutes) {
-	// 			if (minDateTime.status === 1) {
-	// 				await apiUpdateStatus(minDateTime.eid, { status: 2 })
-	// 				render()
-	// 				clearInterval(intervalId) // Dừng kiểm tra khi điều kiện được đáp ứng
-	// 			} else if (minDateTime.status === 2) {
-	// 				await apiUpdateStatus(minDateTime.eid, { status: 3 })
-	// 				render()
-	// 				clearInterval(intervalId) // Dừng kiểm tra khi điều kiện được đáp ứng
-	// 			} else if (minDateTime.status === 3) {
-	// 				await apiUpdateStatus(minDateTime.eid, { status: 4 })
-	// 				render()
-	// 				clearInterval(intervalId) // Dừng kiểm tra khi điều kiện được đáp ứng
-	// 			}
-	// 		}
-	// 	}
-
-	// 	// Lặp kiểm tra mỗi 10 giây (có thể điều chỉnh thời gian theo ý muốn)
-	// 	const intervalId = setInterval(checkTimeDifference, 1000)
-
-	// 	// Hủy bỏ interval khi component unmount
-	// 	return () => clearInterval(intervalId)
-	// }, [data])
-
 	useEffect(() => {
 		const queries = Object.fromEntries([...params])
 		fetchData({ ...queries })

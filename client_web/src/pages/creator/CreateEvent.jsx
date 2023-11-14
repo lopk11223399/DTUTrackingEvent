@@ -29,9 +29,9 @@ function CreateEvent({ dispatch, location, navigate }) {
 	})
 	const [payload, setPayload] = useState({
 		title: '',
-		startDate: moment(Date.now() + 15 * (60 * 1000)).format('YYYY-DD-MM hh:mm'),
+		startDate: moment(Date.now() + 15 * (60 * 1000)).format('YYYY-MM-DDTkk:mm'),
 		finishDate: moment(Date.now() + 1 * (60 * 60 * 1000)).format(
-			'YYYY-DD-MM hh:mm',
+			'YYYY-MM-DDTkk:mm',
 		),
 		location: '',
 		typeEvent: null,
@@ -52,15 +52,14 @@ function CreateEvent({ dispatch, location, navigate }) {
 
 	useEffect(() => {
 		if (location.state?.type === 'create') {
-			console.log(true)
 			setPayload({
 				title: location.state?.data.title,
 				startDate: moment(
 					location.state?.data.startDate || Date.now() + 15 * (60 * 1000),
-				).format('YYYY-DD-MM hh:mm'),
+				).format('YYYY-MM-DDTkk:mm'),
 				finishDate: moment(
 					location.state?.data.finishDate || Date.now() + 1 * (60 * 60 * 1000),
-				).format('YYYY-DD-MM hh:mm'),
+				).format('YYYY-MM-DDTkk:mm'),
 				location:
 					location.state?.data.typeEvent === false
 						? location.state?.data.location
