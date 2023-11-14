@@ -11,7 +11,7 @@ import {
 import { CategoryScale, LinearScale, BarElement, Title } from "chart.js";
 
 import { PolarArea, Bar } from "react-chartjs-2";
-import { apiGetChart, apiUser } from "../../apis";
+import { apiGetChart, apiGetChartfaculty, apiUser } from "../../apis";
 import { FaRegCalendarMinus } from "react-icons/fa";
 import { Link, useSearchParams } from "react-router-dom";
 
@@ -26,6 +26,7 @@ ChartJS.register(
 );
 const Chart = () => {
   const [data, setData] = useState([]);
+  const [data1, setData1] = useState([]);
   const [params] = useSearchParams();
   useEffect(() => {
     const fetchData = async () => {
@@ -37,6 +38,17 @@ const Chart = () => {
 
     fetchData();
   }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await apiGetChartfaculty({ eventId: "157" });
+      if (response.success) {
+        setData1(response.response);
+      }
+    };
+
+    fetchData();
+  }, []);
+  console.log("data1", data1);
   //console.log(data);
   const [userData, setUserData] = useState([]);
   const fetchData = async (queries) => {
@@ -80,6 +92,30 @@ const Chart = () => {
       },
     ],
   };
+  const dataChart1 = {
+    labels: data1.map((month) => `Tháng ${month.month}`),
+    datasets: [
+      {
+        label: "Số lượng sự kiện theo tháng",
+        data: data1.map((total) => total.totalEvent),
+        backgroundColor: [
+          "rgba(75, 192, 192)",
+          "rgba(255, 99, 132)",
+          "rgba(255, 159, 64)",
+          "rgba(255, 205, 86)",
+          "rgba(54, 162, 235)",
+          "rgba(153, 102, 255)",
+          "rgba(201, 203, 207)",
+          "rgba(200, 100, 255)",
+          "rgba(100, 50, 200)",
+          "rgba(100, 150, 100)",
+          "rgba(220, 100, 0)",
+          "rgba(0, 100, 220)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
   //console.log(userData);
   const options = {
     plugins: {
@@ -96,7 +132,7 @@ const Chart = () => {
         <div className="basis-[45%] ml-4 mr-4 bg-[#fff]   shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-[20px] h-[300px]">
           <div className="w-full h-full">
             <PolarArea
-              data={dataChart}
+              data={dataChart1}
               options={{ maintainAspectRatio: false }}
             ></PolarArea>
           </div>
