@@ -47,15 +47,13 @@ export const apiDeleteEvent = (data) =>
     method: "delete",
     data,
   });
-
 export const apiUpdateEvent = (eid, data) =>
   axios({
     url: "post/update-event/" + eid,
     method: "put",
     data,
   });
-
-export const apiGetChartFaculty = (params) =>
+export const apiGetChartfaculty = (params) =>
   axios({
     url: "/statistic/by-faculty/:eventId",
     method: "get",

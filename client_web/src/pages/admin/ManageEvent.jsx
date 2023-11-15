@@ -2,7 +2,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import { apiGetEvents, apiUpdateStatus } from "../../apis/event";
 import moment from "moment/moment";
 import { Pagination } from "../../components";
-import { createSearchParams, useSearchParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { status } from "../../utils/contants";
 import Swal from "sweetalert2";
 import icons from "../../utils/icons";
@@ -234,10 +238,10 @@ function ManageEvent({ navigate }) {
           Quản lý sự kiện
         </h1>
         <div className="flex gap-[17px] py-[15px]">
-          <div className="w-[292px]  flex items-center gap-3 rounded-[7px] border border-[#408A7E]">
+          <div className="w-[292px]  flex items-center gap-3 rounded-tr-[5px] rounded-br-[5px] rounded-tl-[7px] rounded-bl-[7px] border border-[#408A7E]">
             <label
               htmlFor="search-event"
-              className="bg-[#408A7E] h-[40px] px-[14px] flex items-center justify-center cursor-pointer rounded-tl-[5px] rounded-bl-[5px]"
+              className="bg-[#408A7E] h-[34px] px-[14px] flex items-center justify-center cursor-pointer rounded-tl-[5px] rounded-bl-[5px]"
             >
               <FaSearch color="white" />
             </label>
@@ -246,7 +250,7 @@ function ManageEvent({ navigate }) {
               autoComplete="off"
               value={searchText}
               onChange={(text) => setSearchText(text.target.value)}
-              placeholder="Tìm kiếm"
+              placeholder="Tìm kiếm sự kiện"
               type="text"
               className="bg-transparent flex-1 outline-none text-[14px] font-[400] text-[#408A7E] placeholder:text-[#868686]"
             />
@@ -263,8 +267,8 @@ function ManageEvent({ navigate }) {
       </div>
       <div className="rounded-[8px]">
         <table className="w-full">
-          <thead className="h-[50px] rounded-t-[8px] text-[#408A7E] border border-b-[#408A7E] shadow-table">
-            <tr className=" ">
+          <thead className="h-[50px] rounded-t-xl shadow-table">
+            <tr className=" text-[#408A7E] border-b border-[#408A7E]">
               <td className="w-[5%] text-[14px] font-[700]  text-center py-2">
                 #
               </td>

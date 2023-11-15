@@ -11,7 +11,7 @@ import {
 import { CategoryScale, LinearScale, BarElement, Title } from "chart.js";
 
 import { PolarArea, Bar } from "react-chartjs-2";
-import { apiGetChart, apiGetChartFaculty, apiUser } from "../../apis";
+import { apiGetChart, apiUser } from "../../apis";
 import { FaRegCalendarMinus } from "react-icons/fa";
 import { Link, useSearchParams } from "react-router-dom";
 
@@ -38,17 +38,7 @@ const Chart = () => {
 
     fetchData();
   }, []);
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await apiGetChartFaculty({ eventId: "157" });
-      if (response.success) {
-        setData1(response.response);
-      }
-    };
-
-    fetchData();
-  }, []);
-  console.log(data1);
+  //console.log(data);
   const [userData, setUserData] = useState([]);
   const fetchData = async (queries) => {
     //console.log(queries);
@@ -91,39 +81,7 @@ const Chart = () => {
       },
     ],
   };
-  const dataChart1 = {
-    labels: data1.map((code) => `Mã ${code.code}`),
-    datasets: [
-      {
-        label: "Số lượng sự kiện theo tháng",
-        data: data1.map((total) => total.totalFaculty),
-        backgroundColor: [
-          "rgba(75, 192, 192)",
-          "rgba(255, 99, 132)",
-          "rgba(255, 159, 64)",
-          "rgba(255, 205, 86)",
-          "rgba(54, 162, 235)",
-          "rgba(153, 102, 255)",
-          "rgba(201, 203, 207)",
-          "rgba(200, 100, 255)",
-          "rgba(100, 50, 200)",
-          "rgba(100, 150, 100)",
-          "rgba(220, 100, 0)",
-          "rgba(0, 100, 220)",
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
-  const options = {
-    plugins: {
-      legend: {
-        display: false,
-        maintainAspectRatio: false, // Tắt hiển thị legend (header)
-      },
-    },
-  };
-  //console.log(userData);
+  console.log(userData);
   return (
     <div>
       <h1 className="m-2 ml-4 uppercase text-zinc-500 text-3xl">Thống kê</h1>
