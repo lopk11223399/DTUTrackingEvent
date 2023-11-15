@@ -14,7 +14,7 @@ function Calendar() {
   const [data, setData] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      const response = await apiGetEvents({ limit: 100, page: 1 });
+      const response = await apiGetEvents({ limit: 1000, page: 1 });
       if (response.success) {
         console.log(response.response);
         setData(response.response);

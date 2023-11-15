@@ -26,6 +26,7 @@ ChartJS.register(
 );
 const Chart = () => {
   const [data, setData] = useState([]);
+  const [data1, setData1] = useState([]);
   const [params] = useSearchParams();
   useEffect(() => {
     const fetchData = async () => {
@@ -80,7 +81,15 @@ const Chart = () => {
       },
     ],
   };
-  console.log(userData);
+  const options = {
+    plugins: {
+      legend: {
+        display: false, // Tắt hiển thị legend (header)
+        maintainAspectRatio: false,
+      },
+    },
+  };
+  //console.log(userData);
   return (
     <div>
       <h1 className="m-2 ml-4 uppercase text-zinc-500 text-3xl">Thống kê</h1>
@@ -94,23 +103,23 @@ const Chart = () => {
           </div>
         </div>
         <div className="basis-[55%] mr-4 bg-[#fff]   shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-[20px] h-[300px] ">
+          <h1 className="pl-2 pt-1 font-[500] text-[#408A7E]">
+            Tổng sự kiện theo tháng
+          </h1>
           <div className="w-full h-full">
-            <Bar
-              data={dataChart}
-              options={{ maintainAspectRatio: false }}
-            ></Bar>
+            <Bar data={dataChart} options={options}></Bar>
           </div>
         </div>
       </div>
       <div className="flex mt-4">
         <div className="basis-[60%] ml-4 mr-4 ">
           <div className="flex justify-between ">
-            <h2 className=" font-bold text-[20px] text-[#4E73DF]">
+            <h2 className=" font-bold text-[20px] text-[#408A7E]">
               Danh sách sinh viên
             </h2>
             <Link
               to="/admin/manage-users"
-              className="bg-[#4E73DF] text-[#fff] items-center pt-[5px] pr-[10px] pb-[5px] pl-[10px] rounded-md"
+              className="bg-[#408A7E] text-[#fff] items-center pt-[5px] pr-[10px] pb-[5px] pl-[10px] rounded-md"
             >
               Xem tất cả
             </Link>
@@ -118,7 +127,7 @@ const Chart = () => {
           <div className="w-full bg-[#fff] shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-[20px] p-4 ">
             <div className=" overflow-x-auto max-h-[460px]">
               <table className="w-full  ">
-                <thead className="text-center text-[#4E73DF]">
+                <thead className="text-center text-[#408A7E]">
                   <tr>
                     <td className="pr-9">ID</td>
                     <td>Ảnh</td>
@@ -157,12 +166,12 @@ const Chart = () => {
         </div>
         <div className="basis-[40%] mr-4  ">
           <div className="flex justify-between ">
-            <h2 className=" font-bold text-[20px] text-[#4E73DF] ml-4 mb-1">
+            <h2 className=" font-bold text-[20px] text-[#408A7E] ml-4 mb-1">
               Chi tiết
             </h2>
           </div>
           <div className=" bg-[#fff] grid gap-5 max-h-[500px] shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-[20px] p-4 ">
-            <div className="h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#4E73DF] flex items-center justify-between px-[30px] cursor-pointer hover:shadow-2xl transform hover:scale-[103%] transition duration-300 ease-out">
+            <div className="h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#408A7E] flex items-center justify-between px-[30px] cursor-pointer hover:shadow-2xl transform hover:scale-[103%] transition duration-300 ease-out">
               <div>
                 <h2 className="text-[#B589DF] text-[11px] leading-[17px] font-bold">
                   TỔNG PHẢN HỒI
