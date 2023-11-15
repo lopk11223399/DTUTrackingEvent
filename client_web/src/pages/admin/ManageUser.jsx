@@ -75,8 +75,7 @@ const ManageUser = ({ navigate }) => {
             { id: uid },
             { roleId: Number(value.value) }
           );
-
-          if (response.success) {
+          if (response.sucess) {
             toast.success(response.mess);
             render();
           } else {
@@ -85,6 +84,7 @@ const ManageUser = ({ navigate }) => {
           }
         }
         if (rs.isDenied) {
+          window.location.reload();
         }
       });
   };

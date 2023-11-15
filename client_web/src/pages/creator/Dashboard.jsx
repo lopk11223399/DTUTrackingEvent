@@ -20,11 +20,11 @@ function dashboard() {
 		if (response.success) setDataUser(response.response)
 	}
 
+	console.log(dataUser)
+
 	const fetchEvent = async () => {
 		const response = await apiGetEventOfAuthor()
 		if (response.success) {
-			console.log(response?.response)
-
 			let pending = 0
 			let apply = 0
 			let process = 0

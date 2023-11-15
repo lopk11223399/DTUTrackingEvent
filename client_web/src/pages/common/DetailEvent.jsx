@@ -7,6 +7,7 @@ import withBaseComponent from '../../hocs/withBaseComponent'
 import { showModal } from '../../store/app/appSlice'
 import { CommentModal } from '../../components'
 import { useSelector } from 'react-redux'
+import { CSVLink } from 'react-csv'
 
 const { AiOutlineRollback, TfiImport, BsChatRightTextFill } = icons
 
@@ -14,6 +15,7 @@ function DetailEvent({ navigate, dispatch }) {
 	const { current } = useSelector(state => state.user)
 	const { eid } = useParams()
 	const [data, setData] = useState(null)
+	const [dataCSV, setDataCSV] = useState([])
 
 	const fetchDetailEvent = async eid => {
 		const response = await apiGetDetailEvent(eid)
@@ -27,7 +29,21 @@ function DetailEvent({ navigate, dispatch }) {
 		window.scrollTo(0, 0)
 	}, [eid])
 
-	console.log(data)
+	const handleDownloadCSV = e => {
+		const header = [['Mã số sinh viên', 'Họ và tên', 'Khoa', 'Trạng thái']]
+		const value = data.userJoined.map(e => [
+			e.studentCode,
+			e.name,
+			e.nameFaculty,
+			e.isJoined ? 'Đã tham gia' : 'Không tham gia',
+		])
+
+		const newArr = [...header, ...value]
+
+		setDataCSV(newArr)
+		const csv = document.getElementById('csv')
+		csv.click()
+	}
 
 	return (
 		<div className='my-[30px] mx-[56px] p-[43px] bg-white rounded-[8px] flex flex-col gap-[43px]'>
@@ -57,12 +73,21 @@ function DetailEvent({ navigate, dispatch }) {
 							</span>
 							<span className='text-[14px] font-[400]'>Bình luận</span>
 						</div>
-						<div className='flex items-center gap-[14px] py-[6px] px-[24px] text-[#408A7E] bg-white border border-[#408A7E] cursor-pointer rounded-[4px] hover:bg-[#408A7E] hover:text-white'>
+						<div
+							onClick={handleDownloadCSV}
+							className='flex items-center gap-[14px] py-[6px] px-[24px] text-[#408A7E] bg-white border border-[#408A7E] cursor-pointer rounded-[4px] hover:bg-[#408A7E] hover:text-white'>
 							<span className='text-[14px] font-[400]'>
 								Dach sách người tham gia
 							</span>
 							<span>
 								<TfiImport size={16} />
+							</span>
+							<span className='hidden'>
+								<CSVLink
+									id='csv'
+									filename={'DanhSachNguoiThamGia.csv'}
+									data={dataCSV}
+								/>
 							</span>
 						</div>
 					</div>
@@ -163,9 +188,9 @@ function DetailEvent({ navigate, dispatch }) {
 						Thời gian diễn ra
 					</p>
 					<p className='py-[9px] px-[27px] bg-[#FAFAFA] rounded-[8px] flex-1 text-[#B3B3B3] text-[20px] font-[400]'>
-						{`${moment(data?.startDate).format('DD/MM/YYYY hh:mm')} - ${moment(
-							data?.finishDate,
-						).format('DD/MM/YYYY hh:mm')}`}
+						{`${moment(data?.startDate).format(
+							'DD/MM/YYYY hh:mm a',
+						)} - ${moment(data?.finishDate).format('DD/MM/YYYY hh:mm a')}`}
 					</p>
 				</div>
 				<div className='flex items-center'>
