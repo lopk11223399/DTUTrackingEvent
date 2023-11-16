@@ -29,12 +29,25 @@ function DetailEvent({ navigate, dispatch }) {
 		window.scrollTo(0, 0)
 	}, [eid])
 
-	const handleDownloadCSV = e => {
-		const header = [['Mã số sinh viên', 'Họ và tên', 'Khoa', 'Trạng thái']]
+	console.log(data)
+
+	const handleDownloadCSV = () => {
+		const header = [
+			[
+				'Mã số sinh viên',
+				'Họ và tên',
+				'Ngày sinh',
+				'Khoa',
+				'Lớp',
+				'Trạng thái',
+			],
+		]
 		const value = data.userJoined.map(e => [
 			e.studentCode,
 			e.name,
+			e.birthDate,
 			e.nameFaculty,
+			e.classCode,
 			e.isJoined ? 'Đã tham gia' : 'Không tham gia',
 		])
 

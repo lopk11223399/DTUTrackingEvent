@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { status } from '../../utils/contants'
 import { BarChart } from '../../components'
 import avatarDefault from '../../assets/img/avatarDefault.jpg'
-import { apiGetEventOfAuthor, apiGetFivePeopleHot } from '../../apis'
+import {
+	apiGetEventOfAuthor,
+	apiGetFivePeopleHot,
+	apiGettotalRateOfAuthor,
+} from '../../apis'
 
 function dashboard() {
 	const [chartData, setChartData] = useState([0, 0, 0, 0, 0])
@@ -20,7 +24,26 @@ function dashboard() {
 		if (response.success) setDataUser(response.response)
 	}
 
-	console.log(dataUser)
+	const fetchTotalRating = async () => {
+		const response = await apiGettotalRateOfAuthor()
+		if (response.success) {
+			let perpect = 0
+			let good = 0
+			let medium = 0
+			let least = 0
+			let bad = 0
+
+			response?.response?.forEach(el => {
+				if (el.rate === 1) bad = el.totalRate
+				else if (el.rate === 2) least = el.totalRate
+				else if (el.rate === 3) medium = el.totalRate
+				else if (el.rate === 4) good = el.totalRate
+				else if (el.rate === 5) perpect = el.totalRate
+			})
+
+			setChartData([perpect, good, medium, least, bad])
+		}
+	}
 
 	const fetchEvent = async () => {
 		const response = await apiGetEventOfAuthor()
@@ -52,6 +75,7 @@ function dashboard() {
 	useEffect(() => {
 		fetch5PeopleHot()
 		fetchEvent()
+		fetchTotalRating()
 	}, [])
 
 	return (
@@ -149,20 +173,20 @@ function dashboard() {
 									<td className='flex items-center justify-center py-[12px]'>
 										<span className='flex items-center gap-[22px] px-2'>
 											<img
-												src={el.avatar || avatarDefault}
+												src={el.userData.avatar || avatarDefault}
 												alt='avatar'
 												className='w-[38px] h-[40px] rounded-full'
 											/>
 											<span className='w-[180px] text-start text-[16px] font-[600] text-[#408A7E] line-clamp-1'>
-												{el.name}
+												{el.userData.name}
 											</span>
 										</span>
 									</td>
 									<td className='text-[14px] font-[400] text-[#969696]'>
-										{el.numberJoin}
+										{el.eventCount}
 									</td>
 									<td className='text-[14px] font-[400] text-[#969696]'>
-										{el.addPoint}
+										{el.userData.studentData.point}
 									</td>
 								</tr>
 							))}

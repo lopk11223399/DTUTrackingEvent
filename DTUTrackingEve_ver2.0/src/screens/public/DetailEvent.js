@@ -45,6 +45,8 @@ const DetailEvent = ({
 	const fetchDetailEvent = async eid => {
 		const response = await apiGetDetailEvents(eid)
 
+		console.log(response)
+
 		if (response.success === true) {
 			setUpdate(false)
 			setData(response.response)
@@ -544,6 +546,43 @@ const DetailEvent = ({
 						<Text className='text-[22px] text-tColor_text font-bold capitalize'>
 							Room
 						</Text>
+						<View className='mt-2'>
+							{data?.typeEvent ? (
+								data.onlineEvent?.map((el, index) => (
+									<View
+										key={el.id}
+										className={clsx(
+											'mb-3 gap-1 bg-backgroundColor_secondary_light p-2 rounded-md',
+											data.onlineEvent.length - 1 === index && 'mb-0',
+										)}>
+										<View className='flex-row items-center'>
+											<Text className='text-[14px] font-bold text-lineTabColor'>
+												Topci:{' '}
+											</Text>
+											<Text className='textColor_main_light'>{el.topic}</Text>
+										</View>
+										<View className='flex-row items-center'>
+											<Text className='text-[14px] font-bold text-lineTabColor'>
+												Thời gian bắt đầu:{' '}
+											</Text>
+											<Text className='textColor_main_light'>
+												{el.timeRoom}
+											</Text>
+										</View>
+										<View className='flex-row items-center'>
+											<Text className='text-[14px] font-bold text-lineTabColor'>
+												Link tham gia room:{' '}
+											</Text>
+											<Text className='textColor_main_light'>
+												{el.linkRoomUrl}
+											</Text>
+										</View>
+									</View>
+								))
+							) : (
+								<Text>off</Text>
+							)}
+						</View>
 					</View>
 				</View>
 			</Animated.ScrollView>
@@ -559,7 +598,7 @@ const DetailEvent = ({
 					<Pressable className='items-center w-[33%]'>
 						<Entypo name='chat' size={30} color='#657ef8' />
 						<Text className='text-tColor_text text-[12px] font-[500] mt-1'>
-							{data?.commentEvent?.length}
+							{data?.commentEvent?.length || '0'}
 						</Text>
 					</Pressable>
 					<Pressable onPress={handleJoinEvent} className='items-center w-[33%]'>

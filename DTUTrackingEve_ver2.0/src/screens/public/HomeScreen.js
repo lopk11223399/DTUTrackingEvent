@@ -1,4 +1,4 @@
-import { Text, SafeAreaView, StatusBar, Platform } from 'react-native'
+import { Text, SafeAreaView, StatusBar, Platform, Modal } from 'react-native'
 import React, { useState, memo } from 'react'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import {

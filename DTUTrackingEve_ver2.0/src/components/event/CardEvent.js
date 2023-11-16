@@ -23,6 +23,8 @@ const CardEvent = ({
 	newEvent,
 	borderHiden = true,
 	dispatch,
+	isModalVisible,
+	setModalVisible,
 }) => {
 	const { theme } = useSelector(state => state.app)
 	const handleFollowEvent = () => {
@@ -181,129 +183,131 @@ const CardEvent = ({
 				return Alert.alert('Thông báo', 'Sự kiện này đã hết chỗ tham dự')
 			} else if (item?.status === 2 || item?.status === 3) {
 				// tham gia sk
-				if (item?.userJoined?.some(el => el.id === userId))
-					return Alert.alert(
-						'Thông báo',
-						`Bạn muốn hủy tham gia sự kiện ${item.title} phải không?`,
-						[
-							{
-								text: 'Hủy',
-								style: 'cancel',
-							},
-							{
-								text: 'Hủy tham gia',
-								onPress: async () => {
-									const response = await apiJoinEvent(item.id)
+				// if (item?.userJoined?.some(el => el.id === userId))
+				// 	return Alert.alert(
+				// 		'Thông báo',
+				// 		`Bạn muốn hủy tham gia sự kiện ${item.title} phải không?`,
+				// 		[
+				// 			{
+				// 				text: 'Hủy',
+				// 				style: 'cancel',
+				// 			},
+				// 			{
+				// 				text: 'Hủy tham gia',
+				// 				onPress: async () => {
+				// 					const response = await apiJoinEvent(item.id)
 
-									if (response.success === true) {
-										dispatch(
-											getEventsToday({
-												limit: 10,
-												page: 1,
-												date: moment().format('YYYY-MM-DD'),
-											}),
-										)
-										dispatch(
-											getEventsNew({
-												limit: 10,
-												page: 1,
-												order: ['createdAt', 'DESC'],
-											}),
-										)
+				// 					if (response.success === true) {
+				// 						dispatch(
+				// 							getEventsToday({
+				// 								limit: 10,
+				// 								page: 1,
+				// 								date: moment().format('YYYY-MM-DD'),
+				// 							}),
+				// 						)
+				// 						dispatch(
+				// 							getEventsNew({
+				// 								limit: 10,
+				// 								page: 1,
+				// 								order: ['createdAt', 'DESC'],
+				// 							}),
+				// 						)
 
-										dispatch(
-											getEventsHot({
-												limit: 5,
-												page: 1,
-												hot: true,
-											}),
-										)
+				// 						dispatch(
+				// 							getEventsHot({
+				// 								limit: 5,
+				// 								page: 1,
+				// 								hot: true,
+				// 							}),
+				// 						)
 
-										if (userId !== 0)
-											dispatch(
-												getJoinEvent({
-													limit: 5,
-													page: 1,
-													order: ['createdAt', 'DESC'],
-												}),
-											)
+				// 						if (userId !== 0)
+				// 							dispatch(
+				// 								getJoinEvent({
+				// 									limit: 5,
+				// 									page: 1,
+				// 									order: ['createdAt', 'DESC'],
+				// 								}),
+				// 							)
 
-										return Alert.alert('Thành Công', response.mess, [
-											{
-												text: 'Hủy',
-												style: 'cancel',
-											},
-											{
-												text: 'Đi đến danh sách sự kiện',
-												onPress: () => navigate('ListEventFollowCurrent'),
-											},
-										])
-									}
-								},
-							},
-						],
-					)
+				// 						return Alert.alert('Thành Công', response.mess, [
+				// 							{
+				// 								text: 'Hủy',
+				// 								style: 'cancel',
+				// 							},
+				// 							{
+				// 								text: 'Đi đến danh sách sự kiện',
+				// 								onPress: () => navigate('ListEventFollowCurrent'),
+				// 							},
+				// 						])
+				// 					}
+				// 				},
+				// 			},
+				// 		],
+				// 	)
 
-				return Alert.alert(
-					'Thông báo',
-					`Bạn muốn tham gia sự kiện ${item.title} phải không?`,
-					[
-						{
-							text: 'Hủy',
-							style: 'cancel',
-						},
-						{
-							text: 'Tham gia',
-							onPress: async () => {
-								const response = await apiJoinEvent(item.id)
+				// return Alert.alert(
+				// 	'Thông báo',
+				// 	`Bạn muốn tham gia sự kiện ${item.title} phải không?`,
+				// 	[
+				// 		{
+				// 			text: 'Hủy',
+				// 			style: 'cancel',
+				// 		},
+				// 		{
+				// 			text: 'Tham gia',
+				// 			onPress: async () => {
+				// 				const response = await apiJoinEvent(item.id)
 
-								if (response.success === true) {
-									dispatch(
-										getEventsToday({
-											limit: 10,
-											page: 1,
-											date: moment().format('YYYY-MM-DD'),
-										}),
-									)
-									dispatch(
-										getEventsNew({
-											limit: 10,
-											page: 1,
-											order: ['createdAt', 'DESC'],
-										}),
-									)
-									dispatch(
-										getEventsHot({
-											limit: 5,
-											page: 1,
-											hot: true,
-										}),
-									)
+				// 				if (response.success === true) {
+				// 					dispatch(
+				// 						getEventsToday({
+				// 							limit: 10,
+				// 							page: 1,
+				// 							date: moment().format('YYYY-MM-DD'),
+				// 						}),
+				// 					)
+				// 					dispatch(
+				// 						getEventsNew({
+				// 							limit: 10,
+				// 							page: 1,
+				// 							order: ['createdAt', 'DESC'],
+				// 						}),
+				// 					)
+				// 					dispatch(
+				// 						getEventsHot({
+				// 							limit: 5,
+				// 							page: 1,
+				// 							hot: true,
+				// 						}),
+				// 					)
 
-									if (userId !== 0)
-										dispatch(
-											getJoinEvent({
-												limit: 5,
-												page: 1,
-												order: ['createdAt', 'DESC'],
-											}),
-										)
+				// 					if (userId !== 0)
+				// 						dispatch(
+				// 							getJoinEvent({
+				// 								limit: 5,
+				// 								page: 1,
+				// 								order: ['createdAt', 'DESC'],
+				// 							}),
+				// 						)
 
-									return Alert.alert('Thành Công', response.mess, [
-										{
-											text: 'Hủy',
-											style: 'cancel',
-										},
-										{
-											text: 'Đi đến danh sách sự kiện',
-											onPress: () => navigate('ListEventFollowCurrent'),
-										},
-									])
-								}
-							},
-						},
-					],
-				)
+				// 					return Alert.alert('Thành Công', response.mess, [
+				// 						{
+				// 							text: 'Hủy',
+				// 							style: 'cancel',
+				// 						},
+				// 						{
+				// 							text: 'Đi đến danh sách sự kiện',
+				// 							onPress: () => navigate('ListEventFollowCurrent'),
+				// 						},
+				// 					])
+				// 				}
+				// 			},
+				// 		},
+				// 	],
+				// )
+
+				setModalVisible(!isModalVisible)
 			} else if (item?.status === 1) {
 				return Alert.alert(
 					'Thông báo',

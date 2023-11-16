@@ -5,3 +5,9 @@ export const apiGetFivePeopleHot = () =>
 		url: '/statistic/5-people-hot',
 		method: 'get',
 	})
+
+export const apiGettotalRateOfAuthor = () =>
+	axios({
+		url: '/statistic/total-rate-author',
+		method: 'get',
+	})

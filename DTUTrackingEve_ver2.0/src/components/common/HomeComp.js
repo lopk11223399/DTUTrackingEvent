@@ -28,6 +28,7 @@ const HomeComp = ({ navigation: { navigate }, layout, dispatch }) => {
 				limit: 10,
 				page: 1,
 				date: moment().format('YYYY-MM-DD'),
+				status: [2, 3, 4, 5],
 			}),
 		)
 		dispatch(
@@ -35,6 +36,7 @@ const HomeComp = ({ navigation: { navigate }, layout, dispatch }) => {
 				limit: 5,
 				page: 1,
 				hot: true,
+				// status: [2, 3, 4, 5],
 			}),
 		)
 	}, [dispatch, isLoggedIn])
