@@ -8,6 +8,7 @@ import moment from 'moment'
 import { apiFollowEvent } from '../../apis'
 import { getFollowEvent } from '../../store/user/asyncActions'
 import { getEventsNew, getEventsToday } from '../../store/event/asyncActions'
+import { useSelector } from 'react-redux'
 
 const CardEventFollowed = ({
 	item,
@@ -18,6 +19,8 @@ const CardEventFollowed = ({
 	borderHiden = true,
 	dispatch,
 }) => {
+	const { theme } = useSelector(state => state.app)
+
 	const handleFollowEvent = async () => {
 		return Alert.alert(
 			'Thông báo',
@@ -90,38 +93,75 @@ const CardEventFollowed = ({
 
 			<Text
 				numberOfLines={2}
-				className='text-[16px] text-text-white--dark font-bold mt-2 leading-6'>
+				className={clsx(
+					'text-[16px] text-text-white--dark font-bold mt-2 leading-6',
+					theme === 'light' && 'text-textColor_main_light',
+					(theme === 'dark' || theme === 'dark-default') &&
+						'text-textColor_main_dark',
+				)}>
 				{item?.title}
 			</Text>
 			<Text
 				numberOfLines={2}
-				className='text-[14px] text-text-gray--dark font-bold mt-1 leading-5'>
+				className={clsx(
+					'text-[14px] text-text-gray--dark font-bold mt-1 leading-5',
+					theme === 'light' && 'text-textColor_secondary_light',
+					(theme === 'dark' || theme === 'dark-default') &&
+						'text-textColor_secondary_dark',
+				)}>
 				{item?.description}
 			</Text>
 			<View
 				className={clsx(
 					'mt-2 rounded-md flex-row items-center justify-between',
-
-					item?.status === 1 && 'bg-background--gray--dark',
-					item?.status === 2 && 'bg-background--red--dark',
-					item?.status === 3 && 'bg-background--green--dark',
-					item?.status === 4 && 'bg-background--gray--dark',
-					item?.status === 5 && 'bg-background--gray--dark',
+					item?.status === 3 && 'bg-statusColor_bg_green',
+					theme === 'light' &&
+						(item?.status === 1 || item?.status === 4 || item?.status === 5) &&
+						'bg-statusColor_bg_gray_light',
+					theme === 'light' &&
+						item?.status === 2 &&
+						'bg-statusColor_bg_red_light',
+					theme === 'dark' &&
+						(item?.status === 1 || item?.status === 4 || item?.status === 5) &&
+						'bg-statusColor_bg_gray_dark',
+					theme === 'dark' &&
+						item?.status === 2 &&
+						'bg-statusColor_bg_red_dark',
 				)}>
 				<View className='ml-[12px] mr-[6px]'>
-					<AntDesign
-						name='clockcircleo'
-						size={12}
-						color={
-							(item?.status === 1 && '#586860') ||
-							(item?.status === 2 && '#89323e') ||
-							(item?.status === 3 && '#41d4a0') ||
-							(item?.status === 4 && '#586860') ||
-							(item?.status === 5 && '#586860')
-						}
-					/>
+					{theme === 'light' ? (
+						<AntDesign
+							name='clockcircleo'
+							size={12}
+							color={
+								(item?.status === 1 && '#8592a3') ||
+								(item?.status === 2 && '#ff8296') ||
+								(item?.status === 3 && '#41d4a0') ||
+								(item?.status === 4 && '#8592a3') ||
+								(item?.status === 5 && '#8592a3')
+							}
+						/>
+					) : (
+						<AntDesign
+							name='clockcircleo'
+							size={12}
+							color={
+								(item?.status === 1 && '#76777f') ||
+								(item?.status === 2 && '#b43e4b') ||
+								(item?.status === 3 && '#41d4a0') ||
+								(item?.status === 4 && '#76777f') ||
+								(item?.status === 5 && '#76777f')
+							}
+						/>
+					)}
 				</View>
-				<Text className='text-text-white--dark font-bold py-3 flex-1'>
+				<Text
+					className={clsx(
+						'text-text-white--dark font-bold py-3 flex-1',
+						theme === 'light' && 'text-textColor_main_light',
+						(theme === 'dark' || theme === 'dark-default') &&
+							'text-textColor_main_dark',
+					)}>
 					{`${moment(item?.startDate).format('DD.MM.YYYY')} - ${moment(
 						item?.finishDate,
 					).format('DD.MM.YYYY')}`}

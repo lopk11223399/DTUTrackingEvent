@@ -43,15 +43,17 @@ const ListEventScreen = ({
 		) : null
 	}
 
-	// () => fetchUsers(users.length, FETCH_USERS_COUNT, page)
-
 	const loadMoreItem = async () => {
-		if (tabList === 'today' && countTodayEvents >= 10 * currentPage)
-			setCurrentPage(currentPage + 1)
-		else if (tabList === 'hot' && countHotEvents >= 10 * currentPage)
-			setCurrentPage(currentPage + 1)
-		else if (tabList === 'new' && countNewEvent >= 10 * currentPage)
-			setCurrentPage(currentPage + 1)
+		return (
+			isLoading &&
+			(tabList === 'today' && countTodayEvents >= 10 * currentPage
+				? setCurrentPage(currentPage + 1)
+				: tabList === 'hot' && countHotEvents >= 10 * currentPage
+				? setCurrentPage(currentPage + 1)
+				: tabList === 'new' && countNewEvent >= 10 * currentPage
+				? setCurrentPage(currentPage + 1)
+				: null)
+		)
 	}
 
 	useEffect(() => {
@@ -86,35 +88,6 @@ const ListEventScreen = ({
 
 		fetchEvent()
 	}, [tabList, currentPage])
-
-	const fetchEvent = async () => {
-		setIsLoading(true)
-		let response
-		if (tabList === 'today') {
-			response = await apiGetEvents({
-				limit: 10,
-				page: currentPage,
-				date: moment().format('YYYY-MM-DD'),
-			})
-		} else if (tabList === 'hot') {
-			response = await apiGetEvents({
-				limit: 10,
-				page: currentPage,
-				hot: true,
-			})
-		} else if (tabList === 'new') {
-			response = await apiGetEvents({
-				limit: 10,
-				page: currentPage,
-				order: ['createdAt', 'DESC'],
-			})
-		}
-
-		if (response?.success === true) {
-			setData([...data, ...response.response])
-			setIsLoading(false)
-		}
-	}
 
 	useLayoutEffect(() => {
 		setOptions({

@@ -5,14 +5,16 @@ import {
 	StatusBar,
 	SafeAreaView,
 	TouchableOpacity,
+	Alert,
 } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import { BarCodeScanner } from 'expo-barcode-scanner'
+import { apiGetDetailEvents } from '../../apis'
 
 const QRScreen = ({ navigation: { goBack }, Ionicons }) => {
 	const [hasPermission, setHasPermission] = useState(null)
-	const [scanned, setScanned] = useState(false)
+	const [scanned, setScanned] = useState(true)
 
 	const getBarCodeScannerPermissions = async () => {
 		const { status } = await BarCodeScanner.requestPermissionsAsync()
@@ -23,9 +25,29 @@ const QRScreen = ({ navigation: { goBack }, Ionicons }) => {
 		getBarCodeScannerPermissions()
 	}, [])
 
-	const handleBarCodeScanned = ({ type, data }) => {
+	const fetchDetailEvent = async eid => {
+		const response = await apiGetDetailEvents(eid)
+
+		if (response.success === true) {
+			return response.response
+		}
+	}
+
+	const handleBarCodeScanned = async ({ type, data }) => {
 		setScanned(true)
-		alert(`Bar code with type ${type} and data ${data} has been scanned!`)
+
+		if (data) {
+			const response = await fetchDetailEvent(JSON.parse(data).eventId)
+
+			console.log(response)
+
+			// return Alert.alert('Thông báo', `Cảm ơn bạn bạn đã tham gia sự kiện!`, [
+			// 	{
+			// 		text: 'Ok',
+			// 		style: 'cancel',
+			// 	},
+			// ])
+		}
 	}
 
 	if (hasPermission === null) {
@@ -68,7 +90,7 @@ const QRScreen = ({ navigation: { goBack }, Ionicons }) => {
 	}
 
 	return (
-		<View className='flex-1 relative bg-black items-center'>
+		<View className='flex-1 relative'>
 			<StatusBar barStyle={'light-content'} />
 
 			<View className='absolute top-[10%] left-6 z-50'>
@@ -77,11 +99,23 @@ const QRScreen = ({ navigation: { goBack }, Ionicons }) => {
 				</Pressable>
 			</View>
 
-			<View className='flex-1 items-center justify-center'>
+			<View className='flex-1 items-center justify-center relative'>
 				<BarCodeScanner
 					onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-					className='w-[300px] h-[300px]'
+					className='w-full h-full'
 				/>
+				<View className='border-l-4 border-t-4 border-white absolute top-[30%] left-[15%] w-[50px] h-[50px]'></View>
+				<View className='border-r-4 border-t-4 border-white absolute top-[30%] right-[15%] w-[50px] h-[50px]'></View>
+				<View className='border-r-4 border-b-4 border-white absolute top-[55%] right-[15%] w-[50px] h-[50px]'></View>
+				<View className='border-l-4 border-b-4 border-white absolute top-[55%] left-[15%] w-[50px] h-[50px]'></View>
+			</View>
+			<View className='absolute bottom-[15%] z-50 w-full'>
+				<Pressable
+					onPress={() => setScanned(false)}
+					className='w-[50%] bg-lineTabColor mx-auto items-center py-3 rounded-md flex-row justify-center'>
+					<Ionicons name='scan' size={24} color='white' />
+					<Text className='text-[20px] font-[500] pl-4 text-white'>Quét</Text>
+				</Pressable>
 			</View>
 		</View>
 	)

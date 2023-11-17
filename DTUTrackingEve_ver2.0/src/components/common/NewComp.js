@@ -1,17 +1,26 @@
-import { View, FlatList, SafeAreaView, Text } from 'react-native'
+import { View, FlatList, SafeAreaView, Alert } from 'react-native'
 import React, { memo, useEffect, useState } from 'react'
 import CardEvent from '../event/CardEvent'
-import { apiGetEvents } from '../../apis'
+import { apiGetDetailEvents, apiGetEvents, apiJoinEvent } from '../../apis'
 import { useSelector } from 'react-redux'
 import EmptyData from './EmptyData'
 import withBaseComponent from '../../hocs/withBaseComponent'
-import { getEventsNew } from '../../store/event/asyncActions'
+import {
+	getEventsHot,
+	getEventsNew,
+	getEventsToday,
+} from '../../store/event/asyncActions'
 import Modal from 'react-native-modal'
+import RoomChoose from './RoomChoose'
+import { getJoinEvent } from '../../store/user/asyncActions'
+import moment from 'moment'
 
 const NewComp = ({ dispatch }) => {
 	const { current, isLoggedIn } = useSelector(state => state.user)
 	const { newEvents } = useSelector(state => state.event)
 	const [isModalVisible, setModalVisible] = useState(false)
+	const [eventChoose, setEventChoose] = useState(null)
+	const [data, setData] = useState(null)
 
 	useEffect(() => {
 		dispatch(
@@ -24,6 +33,82 @@ const NewComp = ({ dispatch }) => {
 		)
 	}, [dispatch, isLoggedIn])
 
+	const fetchDetailEvent = async eid => {
+		const response = await apiGetDetailEvents(eid)
+
+		if (response.success === true) {
+			setData(response.response)
+		}
+	}
+
+	useEffect(() => {
+		if (eventChoose) fetchDetailEvent(eventChoose)
+	}, [eventChoose])
+
+	const handleJoinEvent = (event, item) => {
+		return Alert.alert(
+			'Thông báo',
+			`Bạn muốn tham gia sự kiện ${event.title} với chủ đề ${item.topic} phải không?`,
+			[
+				{
+					text: 'Hủy',
+					style: 'cancel',
+				},
+				{
+					text: 'Tham gia',
+					onPress: async () => {
+						const response = await apiJoinEvent(event.id, { roomId: item.id })
+
+						if (response.success) {
+							setModalVisible(false)
+							dispatch(
+								getEventsToday({
+									limit: 10,
+									page: 1,
+									date: moment().format('YYYY-MM-DD'),
+								}),
+							)
+							dispatch(
+								getEventsNew({
+									limit: 10,
+									page: 1,
+									order: ['createdAt', 'DESC'],
+								}),
+							)
+							dispatch(
+								getEventsHot({
+									limit: 5,
+									page: 1,
+									hot: true,
+								}),
+							)
+
+							if (current)
+								dispatch(
+									getJoinEvent({
+										limit: 5,
+										page: 1,
+										order: ['createdAt', 'DESC'],
+									}),
+								)
+
+							return Alert.alert('Thành Công', response.mess, [
+								{
+									text: 'Hủy',
+									style: 'cancel',
+								},
+								{
+									text: 'Đi đến danh sách sự kiện',
+									onPress: () => navigate('ListEventFollowCurrent'),
+								},
+							])
+						}
+					},
+				},
+			],
+		)
+	}
+
 	return (
 		<SafeAreaView>
 			<View className='background--primary--dark px-3 py-1'>
@@ -35,6 +120,7 @@ const NewComp = ({ dispatch }) => {
 							<CardEvent
 								isModalVisible={isModalVisible}
 								setModalVisible={setModalVisible}
+								setEventChoose={setEventChoose}
 								newEvent
 								item={item}
 								key={index}
@@ -54,7 +140,11 @@ const NewComp = ({ dispatch }) => {
 				onBackdropPress={() => setModalVisible(false)}
 				animationIn={'fadeInUp'}
 				animationOut={'fadeOutDown'}>
-				<Text>ád</Text>
+				<RoomChoose
+					item={data}
+					setModalVisible={setModalVisible}
+					handleJoinEvent={handleJoinEvent}
+				/>
 			</Modal>
 		</SafeAreaView>
 	)

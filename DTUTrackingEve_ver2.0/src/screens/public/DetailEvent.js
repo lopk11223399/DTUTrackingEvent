@@ -7,11 +7,17 @@ import {
 	SafeAreaView,
 	Animated,
 	Alert,
+	Clipboard,
 } from 'react-native'
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import clsx from 'clsx'
-import { apiFollowEvent, apiGetDetailEvents, apiJoinEvent } from '../../apis'
+import {
+	apiFeedbackEvent,
+	apiFollowEvent,
+	apiGetDetailEvents,
+	apiJoinEvent,
+} from '../../apis'
 import moment from 'moment'
 import avatarDefault from '../../assets/avatarDefault.png'
 import {
@@ -21,6 +27,9 @@ import {
 } from '../../store/event/asyncActions'
 import { getFollowEvent, getJoinEvent } from '../../store/user/asyncActions'
 import { useSelector } from 'react-redux'
+import Modal from 'react-native-modal'
+import RoomChoose from '../../components/common/RoomChoose'
+import { Feedback } from '../../components'
 
 const DetailEvent = ({
 	route,
@@ -34,6 +43,7 @@ const DetailEvent = ({
 }) => {
 	const { eventId, userId } = route.params
 	const { theme } = useSelector(state => state.app)
+	const { current } = useSelector(state => state.user)
 	const [data, setData] = useState({})
 	const [update, setUpdate] = useState(false)
 	const animatedValue = useRef(new Animated.Value(0)).current
@@ -42,14 +52,22 @@ const DetailEvent = ({
 		outputRange: [0, 1],
 		extrapolate: 'clamp',
 	})
+	const [userJoined, setUserJoined] = useState(null)
+	const [isModalVisible, setModalVisible] = useState(false)
+	const [feedback, setFeedback] = useState(false)
+	const [starFeedback, setStarFeedback] = useState(5)
+	const [comementText, setComementText] = useState('')
+
 	const fetchDetailEvent = async eid => {
 		const response = await apiGetDetailEvents(eid)
-
-		console.log(response)
 
 		if (response.success === true) {
 			setUpdate(false)
 			setData(response.response)
+
+			const user = response.response.userJoined.find(el => el.id === userId)
+			if (user) setUserJoined(user)
+			else setUserJoined(null)
 		}
 	}
 
@@ -57,8 +75,8 @@ const DetailEvent = ({
 		fetchDetailEvent(eventId)
 	}, [eventId, update])
 
-	useEffect(() => {
-		fetchDetailEvent(eventId)
+	const render = useCallback(() => {
+		setUpdate(!update)
 	}, [update])
 
 	const handleFollow = async () => {
@@ -114,7 +132,7 @@ const DetailEvent = ({
 											}),
 										)
 
-									setUpdate(true)
+									render()
 
 									return Alert.alert('Thành Công', reponse.mess, [
 										{
@@ -174,7 +192,7 @@ const DetailEvent = ({
 										}),
 									)
 
-								setUpdate(true)
+								render()
 
 								return Alert.alert('Thành Công', reponse.mess, [
 									{
@@ -192,6 +210,72 @@ const DetailEvent = ({
 				],
 			)
 		}
+	}
+
+	const handleJoinEventDetail = (data, item) => {
+		return Alert.alert(
+			'Thông báo',
+			`Bạn muốn tham gia sự kiện ${data.title} với chủ đề ${item.topic} phải không?`,
+			[
+				{
+					text: 'Hủy',
+					style: 'cancel',
+				},
+				{
+					text: 'Tham gia',
+					onPress: async () => {
+						const response = await apiJoinEvent(data.id, { roomId: item.id })
+
+						if (response.success) {
+							setModalVisible(false)
+							dispatch(
+								getEventsToday({
+									limit: 10,
+									page: 1,
+									date: moment().format('YYYY-MM-DD'),
+								}),
+							)
+							dispatch(
+								getEventsNew({
+									limit: 10,
+									page: 1,
+									order: ['createdAt', 'DESC'],
+								}),
+							)
+							dispatch(
+								getEventsHot({
+									limit: 5,
+									page: 1,
+									hot: true,
+								}),
+							)
+
+							render()
+
+							if (!current)
+								dispatch(
+									getJoinEvent({
+										limit: 5,
+										page: 1,
+										order: ['createdAt', 'DESC'],
+									}),
+								)
+
+							return Alert.alert('Thành Công', response.mess, [
+								{
+									text: 'Hủy',
+									style: 'cancel',
+								},
+								{
+									text: 'Đi đến danh sách sự kiện',
+									onPress: () => navigate('ListEventFollowCurrent'),
+								},
+							])
+						}
+					},
+				},
+			],
+		)
 	}
 
 	const handleJoinEvent = () => {
@@ -261,7 +345,7 @@ const DetailEvent = ({
 												}),
 											)
 
-										setUpdate(true)
+										render()
 
 										return Alert.alert('Thành Công', reponse.mess, [
 											{
@@ -280,70 +364,7 @@ const DetailEvent = ({
 					)
 				}
 
-				return Alert.alert(
-					'Thông báo',
-					`Bạn muốn tham gia sự kiện ${data.title} phải không?`,
-					[
-						{
-							text: 'Hủy',
-							style: 'cancel',
-						},
-						{
-							text: 'Tham gia',
-							onPress: async () => {
-								const reponse = await apiJoinEvent(data.id)
-
-								if (reponse.success) {
-									dispatch(
-										getEventsToday({
-											limit: 10,
-											page: 1,
-											date: moment().format('YYYY-MM-DD'),
-										}),
-									)
-
-									dispatch(
-										getEventsNew({
-											limit: 10,
-											page: 1,
-											order: ['createdAt', 'DESC'],
-										}),
-									)
-
-									dispatch(
-										getEventsHot({
-											limit: 5,
-											page: 1,
-											hot: true,
-										}),
-									)
-
-									if (userId !== 0)
-										dispatch(
-											getJoinEvent({
-												limit: 5,
-												page: 1,
-												order: ['createdAt', 'DESC'],
-											}),
-										)
-
-									setUpdate(true)
-
-									return Alert.alert('Thành Công', reponse.mess, [
-										{
-											text: 'Hủy',
-											style: 'cancel',
-										},
-										{
-											text: 'Sự kiện tham gia',
-											onPress: () => navigate('ListEventFollowCurrent'),
-										},
-									])
-								}
-							},
-						},
-					],
-				)
+				return setModalVisible(!isModalVisible)
 			} else if (data?.statusEvent?.id === 1) {
 				return Alert.alert(
 					'Thông báo',
@@ -366,6 +387,15 @@ const DetailEvent = ({
 
 	//door-open
 	//door-closed
+
+	const handleSubmit = async () => {
+		const response = await apiFeedbackEvent(eventId, {
+			rate: starFeedback,
+			feedback: comementText,
+		})
+
+		return Alert.alert('Thông báo', response.mess)
+	}
 
 	return (
 		<View
@@ -508,23 +538,34 @@ const DetailEvent = ({
 								(theme === 'dark' || theme === 'dark-default') &&
 									'text-textColor_main_dark',
 							)}>{`${moment(data?.startDate).format(
-							'hh:mm DD/MM/YYYY',
-						)} - ${moment(data?.finishDate).format('hh:mm DD/MM/YYYY')}`}</Text>
+							'hh:mm DD/MM/YYYY a',
+						)} - ${moment(data?.finishDate).format(
+							'hh:mm DD/MM/YYYY a',
+						)}`}</Text>
 					</View>
 
 					<View className='mt-3'>
 						<Text className='text-[22px] text-tColor_text font-bold capitalize'>
-							địa điểm tổ chức
+							{data?.typeEvent ? 'Link tham gia' : 'địa điểm tổ chức'}
 						</Text>
-						<Text
-							className={clsx(
-								'text-[14px] mt-1',
-								theme === 'light' && 'text-textColor_main_light',
-								(theme === 'dark' || theme === 'dark-default') &&
-									'text-textColor_main_dark',
-							)}>
-							{data?.location}
-						</Text>
+						<Pressable
+							onPress={() => {
+								Alert.alert('Đã copy thành công')
+								return Clipboard.setString(
+									data?.typeEvent ? data?.linkUrl : data?.location,
+								)
+							}}>
+							<Text
+								className={clsx(
+									'text-[14px] mt-1',
+									data?.typeEvent && 'underline',
+									theme === 'light' && 'text-textColor_main_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-textColor_main_dark',
+								)}>
+								{data?.typeEvent ? data?.linkUrl : data?.location}
+							</Text>
+						</Pressable>
 					</View>
 
 					<View className='mt-3'>
@@ -547,41 +588,83 @@ const DetailEvent = ({
 							Room
 						</Text>
 						<View className='mt-2'>
-							{data?.typeEvent ? (
-								data.onlineEvent?.map((el, index) => (
-									<View
-										key={el.id}
-										className={clsx(
-											'mb-3 gap-1 bg-backgroundColor_secondary_light p-2 rounded-md',
-											data.onlineEvent.length - 1 === index && 'mb-0',
-										)}>
-										<View className='flex-row items-center'>
-											<Text className='text-[14px] font-bold text-lineTabColor'>
-												Topci:{' '}
-											</Text>
-											<Text className='textColor_main_light'>{el.topic}</Text>
+							{data?.typeEvent
+								? data.onlineEvent?.map((el, index) => (
+										<View
+											key={el.id}
+											className={clsx(
+												'mb-3 gap-1 bg-backgroundColor_secondary_light p-2 rounded-md',
+												data.onlineEvent.length - 1 === index && 'mb-0',
+												theme === 'light' &&
+													'bg-backgroundColor_secondary_light',
+												(theme === 'dark' || theme === 'dark-default') &&
+													'bg-backgroundColor_secondary_dark',
+												userJoined &&
+													userJoined?.roomId === el.id &&
+													'bg-statusColor_icon_green',
+											)}>
+											<View className='flex-row items-center'>
+												<Text className='text-[14px] font-bold text-lineTabColor'>
+													Topci:{' '}
+												</Text>
+												<Text className='textColor_main_light'>{el.topic}</Text>
+											</View>
+											<View className='flex-row items-center'>
+												<Text className='text-[14px] font-bold text-lineTabColor'>
+													Thời gian bắt đầu:{' '}
+												</Text>
+												<Text className='textColor_main_light'>
+													{el.timeRoom}
+												</Text>
+											</View>
+											<View className='flex-row items-center'>
+												<Text className='text-[14px] font-bold text-lineTabColor'>
+													Link tham gia room:{' '}
+												</Text>
+												<Text className='textColor_main_light'>
+													{el.linkRoomUrl}
+												</Text>
+											</View>
 										</View>
-										<View className='flex-row items-center'>
-											<Text className='text-[14px] font-bold text-lineTabColor'>
-												Thời gian bắt đầu:{' '}
-											</Text>
-											<Text className='textColor_main_light'>
-												{el.timeRoom}
-											</Text>
+								  ))
+								: data.offlineEvent?.map((el, index) => (
+										<View
+											key={el.id}
+											className={clsx(
+												'mb-3 gap-1 bg-backgroundColor_secondary_light p-2 rounded-md',
+												data.onlineEvent.length - 1 === index && 'mb-0',
+												theme === 'light' &&
+													'bg-backgroundColor_secondary_light',
+												(theme === 'dark' || theme === 'dark-default') &&
+													'bg-backgroundColor_secondary_dark',
+												userJoined &&
+													userJoined?.roomId === el.id &&
+													'bg-statusColor_icon_green',
+											)}>
+											<View className='flex-row items-center'>
+												<Text className='text-[14px] font-bold text-lineTabColor'>
+													Topci:{' '}
+												</Text>
+												<Text className='textColor_main_light'>{el.topic}</Text>
+											</View>
+											<View className='flex-row items-center'>
+												<Text className='text-[14px] font-bold text-lineTabColor'>
+													Thời gian bắt đầu:{' '}
+												</Text>
+												<Text className='textColor_main_light'>
+													{el.timeRoom}
+												</Text>
+											</View>
+											<View className='flex-row items-center'>
+												<Text className='text-[14px] font-bold text-lineTabColor'>
+													Địa điểm phòng:{' '}
+												</Text>
+												<Text className='textColor_main_light'>
+													{el.numberRoom}
+												</Text>
+											</View>
 										</View>
-										<View className='flex-row items-center'>
-											<Text className='text-[14px] font-bold text-lineTabColor'>
-												Link tham gia room:{' '}
-											</Text>
-											<Text className='textColor_main_light'>
-												{el.linkRoomUrl}
-											</Text>
-										</View>
-									</View>
-								))
-							) : (
-								<Text>off</Text>
-							)}
+								  ))}
 						</View>
 					</View>
 				</View>
@@ -642,12 +725,17 @@ const DetailEvent = ({
 							</>
 						) : data?.statusEvent?.id === 4 &&
 						  data?.userJoined?.some(el => el.id === userId) ? (
-							<>
+							<Pressable
+								className='items-center'
+								onPress={() => {
+									setFeedback(true)
+									setModalVisible(true)
+								}}>
 								<MaterialIcons name='rate-review' size={30} color='#41d4a0' />
 								<Text className='text-color--green--dark text-[12px] font-[500] mt-1 capitalize'>
 									đánh giá
 								</Text>
-							</>
+							</Pressable>
 						) : (
 							<>
 								<FontAwesome5 name='door-open' size={30} color='#62a2f8' />
@@ -676,6 +764,29 @@ const DetailEvent = ({
 					</Pressable>
 				</View>
 			</View>
+
+			<Modal
+				isVisible={isModalVisible}
+				onBackdropPress={() => setModalVisible(false)}
+				animationIn={'fadeInUp'}
+				animationOut={'fadeOutDown'}>
+				{feedback ? (
+					<Feedback
+						setModalVisible={setModalVisible}
+						starFeedback={starFeedback}
+						setStarFeedback={setStarFeedback}
+						comementText={comementText}
+						setComementText={setComementText}
+						handleSubmit={handleSubmit}
+					/>
+				) : (
+					<RoomChoose
+						item={data}
+						setModalVisible={setModalVisible}
+						handleJoinEvent={handleJoinEventDetail}
+					/>
+				)}
+			</Modal>
 		</View>
 	)
 }

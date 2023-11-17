@@ -40,10 +40,11 @@ export const apiGetFollowEvent = params =>
 		params,
 	})
 
-export const apiJoinEvent = eid =>
+export const apiJoinEvent = (eid, data) =>
 	axios({
 		url: '/joinEvent/' + eid,
 		method: 'post',
+		data,
 	})
 
 export const apiGetJoinEvent = params =>

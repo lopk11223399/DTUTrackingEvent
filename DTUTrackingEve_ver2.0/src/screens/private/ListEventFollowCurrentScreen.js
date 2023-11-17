@@ -11,12 +11,14 @@ import withBaseComponent from '../../hocs/withBaseComponent'
 import { CardEventFollowed, EmptyData, Search } from '../../components'
 import { useSelector } from 'react-redux'
 import { getFollowEvent } from '../../store/user/asyncActions'
+import clsx from 'clsx'
 
 const ListEventFollowCurrentScreen = ({
 	navigation: { setOptions, goBack },
 	Ionicons,
 	dispatch,
 }) => {
+	const { theme } = useSelector(state => state.app)
 	const { current, followEvent } = useSelector(state => state.user)
 	const [isSearch, setIsSearch] = useState(false)
 	const [valueSearch, setValueSearch] = useState(null)
@@ -34,30 +36,46 @@ const ListEventFollowCurrentScreen = ({
 	useLayoutEffect(() => {
 		setOptions({
 			headerStyle: {
-				backgroundColor: '#161722',
+				backgroundColor: theme === 'light' ? '#f5f6fb' : '#0c0f1d',
 			},
 			headerTitleAlign: 'center',
 			headerTitleStyle: {
-				color: '#e8e6e3',
+				color: theme === 'light' ? '#000000d9' : '#ffffffd9',
 			},
 			headerShown: true,
 			headerLeft: () => (
 				<Pressable onPress={() => goBack()}>
-					<Ionicons name='md-chevron-back' size={24} color='white' />
+					<Ionicons
+						name='md-chevron-back'
+						size={24}
+						color={theme === 'light' ? '#000000d9' : '#ffffffd9'}
+					/>
 				</Pressable>
 			),
 			headerRight: () => (
 				<Pressable onPress={() => setIsSearch(!isSearch)}>
-					<Ionicons name='search' size={24} color='white' />
+					<Ionicons
+						name='search'
+						size={24}
+						color={theme === 'light' ? '#000000d9' : '#ffffffd9'}
+					/>
 				</Pressable>
 			),
 			headerTitle: 'Danh Sách Sự Kiện Theo Dõi',
 		})
-	}, [isSearch])
+	}, [isSearch, theme])
 
 	return (
-		<SafeAreaView className='flex-1 bg-background--primary--dark'>
-			<StatusBar barStyle={'light-content'} />
+		<SafeAreaView
+			className={clsx(
+				'flex-1',
+				theme === 'light' && 'bg-backgroundColor_main_light',
+				(theme === 'dark' || theme === 'dark-default') &&
+					'bg-backgroundColor_main_dark',
+			)}>
+			<StatusBar
+				barStyle={theme === 'light' ? 'dark-content' : 'light-content'}
+			/>
 
 			{isSearch && (
 				<View className='px-3 mt-2'>

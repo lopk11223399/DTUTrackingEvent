@@ -49,24 +49,6 @@ const ProfileScreen = ({
 	} = useSelector(state => state.user)
 	const { theme } = useSelector(state => state.app)
 	const animatedValue = useRef(new Animated.Value(0)).current
-	// const [eventFollowed, setEventFollowed] = useState([])
-	// const [eventJoined, setEventJoined] = useState([])
-
-	// const fetchEventFollowed = async () => {
-	// 	const response = await apiGetJoinEvent({
-	// 		limit: 5,
-	// 		page: 1,
-	// 	})
-
-	// 	console.log(response)
-	// }
-
-	// useEffect(() => {
-	// 	fetchEventFollowed({
-	// 		limit: 5,
-	// 		page: 1,
-	// 	})
-	// }, [])
 
 	const avatarAnimation = {
 		opacity: animatedValue.interpolate({
@@ -93,15 +75,6 @@ const ProfileScreen = ({
 	}
 
 	useEffect(() => {
-		// const fetchFollowEvent = setInterval(() => {
-		// 	dispatch(
-		// 		getFollowEvent({
-		// 			limit: 5,
-		// 			page: 1,
-		// 		}),
-		// 	)
-		// }, 500)
-		// return () => clearInterval(fetchFollowEvent)
 		dispatch(
 			getFollowEvent({
 				limit: 5,
@@ -245,8 +218,8 @@ const ProfileScreen = ({
 						</AnimatedAvatarHeader>
 						<AnimatedButtonUpdate
 							style={[buttonUpdateAnimation]}
-							className='mt-2 items-end'>
-							<Pressable
+							className='mt-2 items-end h-[28px]'>
+							{/* <Pressable
 								onPress={() =>
 									navigate('UpdateProfile', { userId: current?.id })
 								}
@@ -255,7 +228,7 @@ const ProfileScreen = ({
 								<Text className='capitalize text-[16px] font-[400] text-text-main--dark ml-[2px]'>
 									Chỉnh sửa
 								</Text>
-							</Pressable>
+							</Pressable> */}
 						</AnimatedButtonUpdate>
 						<View className='mt-2'>
 							<View className='flex-row items-center mt-1'>

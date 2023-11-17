@@ -12,3 +12,10 @@ export const apiGetDetailEvents = eid =>
 		url: '/post/detail-event/' + eid,
 		method: 'get',
 	})
+
+export const apiFeedbackEvent = (eid, data) =>
+	axios({
+		url: '/feedback/' + eid,
+		method: 'post',
+		data,
+	})
