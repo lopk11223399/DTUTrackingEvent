@@ -19,3 +19,10 @@ export const apiFeedbackEvent = (eid, data) =>
 		method: 'post',
 		data,
 	})
+
+export const apiScanQREvent = data =>
+	axios({
+		url: '/post/scanQr/',
+		method: 'put',
+		data,
+	})

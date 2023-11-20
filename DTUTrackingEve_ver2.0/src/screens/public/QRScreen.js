@@ -10,9 +10,11 @@ import {
 import React, { useEffect, useState } from 'react'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import { BarCodeScanner } from 'expo-barcode-scanner'
-import { apiGetDetailEvents } from '../../apis'
+import { apiGetDetailEvents, apiScanQREvent } from '../../apis'
+import { useSelector } from 'react-redux'
 
-const QRScreen = ({ navigation: { goBack }, Ionicons }) => {
+const QRScreen = ({ navigation: { goBack, navigate }, Ionicons }) => {
+	const { current } = useSelector(state => state.user)
 	const [hasPermission, setHasPermission] = useState(null)
 	const [scanned, setScanned] = useState(true)
 
@@ -33,13 +35,42 @@ const QRScreen = ({ navigation: { goBack }, Ionicons }) => {
 		}
 	}
 
+	const scanQREvent = async eid => {
+		const response = await apiScanQREvent(eid)
+
+		// if (response.success === true) {
+		// 	return response.response
+		// }
+
+		return response
+	}
+
 	const handleBarCodeScanned = async ({ type, data }) => {
 		setScanned(true)
 
+		if (!current) {
+			console.log(true)
+			return Alert.alert(
+				'Thông báo',
+				'Bạn chưa đăng nhập. Vui lòng đăng nhập để quét mã',
+				[
+					{
+						text: 'Hủy',
+						style: 'cancel',
+					},
+					{
+						text: 'Đi đến Login',
+						onPress: () => navigate('Login'),
+					},
+				],
+			)
+		}
+
 		if (data) {
 			const response = await fetchDetailEvent(JSON.parse(data).eventId)
+			const joinEvent = await scanQREvent({ eventId: JSON.parse(data).eventId })
 
-			console.log(response)
+			console.log(joinEvent)
 
 			// return Alert.alert('Thông báo', `Cảm ơn bạn bạn đã tham gia sự kiện!`, [
 			// 	{
