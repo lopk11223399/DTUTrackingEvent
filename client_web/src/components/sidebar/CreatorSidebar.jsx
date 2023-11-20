@@ -30,7 +30,11 @@ const CreatorSidebar = ({ dispatch, navigate }) => {
     <div className=" bg-[#408A7E] text-white h-full py-4 ">
       <div
         onClick={() =>
-          navigate(`/${pathCreator.CREATOR}/${common.PROFILE}/${current.id}`)
+          navigate(`/${pathCreator.CREATOR}/${common.PROFILE}/${current.id}`, {
+            state: {
+              type: "profile",
+            },
+          })
         }
         className="px-4 py-2 flex items-center gap-[12px] border-b mb-2 cursor-pointer"
       >
