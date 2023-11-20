@@ -4,6 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import viLocale from "@fullcalendar/core/locales/vi";
 import { apiGetEvents } from "../../apis";
+import { Colors } from "chart.js";
 //import eventsData from "../eventsData";
 
 function Calendar() {
@@ -14,7 +15,7 @@ function Calendar() {
   const [data, setData] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      const response = await apiGetEvents({ limit: 1000, page: 1 });
+      const response = await apiGetEvents();
       if (response.success) {
         console.log(response.response);
         setData(response.response);
@@ -37,6 +38,7 @@ function Calendar() {
           title: event.title,
           start: event.startDate,
           id: index,
+          backgroundColor: "#408A7E",
         }))}
         locale="vi"
         locales={[viLocale]}

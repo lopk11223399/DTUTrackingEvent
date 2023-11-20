@@ -233,7 +233,7 @@ function ManageEvent({ navigate }) {
 
   return (
     <div className="px-[12px] pt-[70px]">
-      <div className="z-10 flex justify-between items-center bg-white fixed top-0 right-0 left-[327px] px-[12px] shadow-table">
+      <div className="z-10 flex justify-between items-center bg-white fixed top-0 right-0 left-[22%] px-[12px] shadow-table">
         <h1 className="text-[24px] font-[700] text-[#408A7E]">
           Quản lý sự kiện
         </h1>
