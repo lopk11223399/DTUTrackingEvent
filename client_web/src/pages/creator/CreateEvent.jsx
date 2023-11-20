@@ -13,7 +13,6 @@ import Swal from 'sweetalert2'
 import { useParams } from 'react-router-dom'
 
 const { AiOutlineDown } = icons
-//
 
 function CreateEvent({ dispatch, location, navigate }) {
 	const [error, setError] = useState({
