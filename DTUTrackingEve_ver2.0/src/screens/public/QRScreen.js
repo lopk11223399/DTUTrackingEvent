@@ -67,10 +67,10 @@ const QRScreen = ({ navigation: { goBack, navigate }, Ionicons }) => {
 		}
 
 		if (data) {
-			const response = await fetchDetailEvent(JSON.parse(data).eventId)
-			const joinEvent = await scanQREvent({ eventId: JSON.parse(data).eventId })
+			// const response = await fetchDetailEvent(JSON.parse(data).eventId)
+			// const joinEvent = await scanQREvent({ eventId: JSON.parse(data).eventId })
 
-			console.log(joinEvent)
+			console.log(data)
 
 			// return Alert.alert('Thông báo', `Cảm ơn bạn bạn đã tham gia sự kiện!`, [
 			// 	{
