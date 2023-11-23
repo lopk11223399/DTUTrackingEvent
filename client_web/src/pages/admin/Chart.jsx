@@ -121,31 +121,33 @@ const Chart = () => {
   };
   const options = {
     plugins: {
-      legend: {
-        display: false, // Tắt hiển thị legend (header)
-        maintainAspectRatio: false,
+      legend: false,
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
       },
     },
   };
   //console.log(userData);
   return (
     <div>
-      <h1 className="m-2 ml-4 uppercase text-zinc-500 text-3xl">Thống kê</h1>
       <div className="flex">
         <div className="basis-[45%] flex">
-          <h1 className="pl-4 pt-1 font-[500] text-[#408A7E] ">
-            Tổng số sinh viên:
+          <h1 className="pl-4 pt-4 font-bold text-[20px] text-[#408A7E] mb-2">
+            Tổng số sinh viên
           </h1>
-          <span className="pt-1">5</span>
         </div>
         <div className="basis-[55%]">
-          <h1 className="pl-2 pt-1 font-[500] text-[#408A7E] ">
+          <h1 className="pl-2 pt-4 font-bold text-[20px] text-[#408A7E] mb-2">
             Tổng sự kiện theo tháng
           </h1>
         </div>
       </div>
       <div className="flex ">
-        <div className="basis-[45%] ml-4 mr-4 bg-[#fff]   shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-[20px] h-[300px]">
+        <div className="basis-[45%] ml-4 mr-4 bg-[#fff]   shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-lg h-[300px]">
           <div className="w-full h-full">
             <PolarArea
               data={dataChart}
@@ -153,8 +155,8 @@ const Chart = () => {
             ></PolarArea>
           </div>
         </div>
-        <div className="basis-[55%] mr-4 bg-[#fff]   shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-[20px] h-[300px] ">
-          <div className="w-full h-full pl-1">
+        <div className="basis-[55%] flex justify-center items-center mr-4 bg-[#fff]    shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-lg h-[300px] ">
+          <div className="w-full px-4">
             <Bar className="" data={dataChart} options={options}></Bar>
           </div>
         </div>
@@ -162,24 +164,13 @@ const Chart = () => {
       <div className="flex mt-4">
         <div className="basis-[60%] ml-4 mr-4 ">
           <div className="flex justify-between ">
-            <h2 className=" font-bold text-[20px] text-[#408A7E]">
+            <h2 className=" font-bold text-[20px] text-[#408A7E] mb-2">
               Trạng thái sự kiện
             </h2>
-            <Link
-              to="/admin/manage-event"
-              className="bg-[#408A7E] text-[#fff] items-center pt-[5px] pr-[10px] pb-[5px] pl-[10px] rounded-md mb-2"
-            >
-              Xem tất cả
-            </Link>
           </div>
-          <div className="w-full bg-[#fff] shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-[20px] p-4 ">
-            <div className=" overflow-x-auto h-[570px]">
-              <div className="w-full h-full">
-                <Doughnut
-                  data={dataChart1}
-                  options={{ maintainAspectRatio: false }}
-                ></Doughnut>
-              </div>
+          <div className="flex justify-center items-center bg-[#fff] shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-lg p-4 ">
+            <div className="w-full h-full">
+              <Bar data={dataChart1} options={options}></Bar>
             </div>
           </div>
         </div>
@@ -189,8 +180,8 @@ const Chart = () => {
               Chi tiết
             </h2>
           </div>
-          <div className=" bg-[#fff] grid gap-5 max-h-[610px] shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-[20px] p-4 ">
-            <div className="h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#408A7E] flex items-center justify-between px-[30px] cursor-pointer hover:shadow-2xl transform hover:scale-[103%] transition duration-300 ease-out">
+          <div className=" bg-[#fff] grid gap-5 max-h-[610px] shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-lg p-4 ">
+            <div className="h-[100px] rounded-[8px] bg-slate-100 border-l-[4px] border-[#408A7E] flex items-center justify-between px-[30px] cursor-pointer hover:shadow-2xl transform hover:scale-[103%] transition duration-300 ease-out">
               <div>
                 <h2 className="text-[#B589DF] text-[11px] leading-[17px] font-bold">
                   TỔNG SỰ KIỆN CHỜ DUYỆT
@@ -201,7 +192,7 @@ const Chart = () => {
               </div>
               <FaRegCalendarMinus fontSize={28} color="" />
             </div>
-            <div className=" h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#1CC88A] flex items-center justify-between px-[30px] cursor-pointer hover:shadow-2xl transform hover:scale-[103%] transition duration-300 ease-out">
+            <div className=" h-[100px] rounded-[8px] bg-slate-100 border-l-[4px] border-[#1CC88A] flex items-center justify-between px-[30px] cursor-pointer hover:shadow-2xl transform hover:scale-[103%] transition duration-300 ease-out">
               <div>
                 <h2 className="text-[#1cc88a] text-[11px] leading-[17px] font-bold">
                   TỔNG SỰ KIỆN ĐÃ DUYỆT
@@ -212,7 +203,7 @@ const Chart = () => {
               </div>
               <FaRegCalendarMinus fontSize={28} />
             </div>
-            <div className=" h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#36B9CC] flex items-center justify-between px-[30px] cursor-pointer hover:shadow-2xl transform hover:scale-[103%] transition duration-300 ease-out">
+            <div className=" h-[100px] rounded-[8px] bg-slate-100 border-l-[4px] border-[#36B9CC] flex items-center justify-between px-[30px] cursor-pointer hover:shadow-2xl transform hover:scale-[103%] transition duration-300 ease-out">
               <div>
                 <h2 className="text-[#36B9CC] text-[11px] leading-[17px] font-bold">
                   TỔNG SỰ KIỆN ĐÃ HỦY
@@ -223,7 +214,7 @@ const Chart = () => {
               </div>
               <FaRegCalendarMinus fontSize={28} />
             </div>
-            <div className=" h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#F6C23E] flex items-center justify-between px-[30px] cursor-pointer hover:shadow-2xl transform hover:scale-[103%] transition duration-300 ease-out">
+            <div className=" h-[100px] rounded-[8px] bg-slate-100 border-l-[4px] border-[#F6C23E] flex items-center justify-between px-[30px] cursor-pointer hover:shadow-2xl transform hover:scale-[103%] transition duration-300 ease-out">
               <div>
                 <h2 className="text-[#F6C23E] text-[11px] leading-[17px] font-bold">
                   TỔNG SỰ KIỆN ĐANG DIỄN RA
@@ -234,7 +225,7 @@ const Chart = () => {
               </div>
               <FaRegCalendarMinus fontSize={28} />
             </div>
-            <div className=" h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#f63e47] flex items-center justify-between px-[30px] cursor-pointer hover:shadow-2xl transform hover:scale-[103%] transition duration-300 ease-out">
+            <div className=" h-[100px] rounded-[8px] bg-slate-100 border-l-[4px] border-[#f63e47] flex items-center justify-between px-[30px] cursor-pointer hover:shadow-2xl transform hover:scale-[103%] transition duration-300 ease-out">
               <div>
                 <h2 className="text-[#413ef6] text-[11px] leading-[17px] font-bold">
                   TỔNG SỰ KIỆN ĐÃ KẾT THÚC
