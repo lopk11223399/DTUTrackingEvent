@@ -26,6 +26,7 @@ const CardEvent = ({
 	isModalVisible,
 	setModalVisible,
 	setEventChoose,
+	setTypeEvent,
 }) => {
 	const { theme } = useSelector(state => state.app)
 	const handleFollowEvent = () => {
@@ -246,7 +247,7 @@ const CardEvent = ({
 							},
 						],
 					)
-
+				setTypeEvent('joined')
 				setEventChoose(eid)
 				return setModalVisible(!isModalVisible)
 			} else if (item?.status === 1) {
@@ -261,7 +262,9 @@ const CardEvent = ({
 				)
 			} else if (item?.status === 4) {
 				if (item?.userJoined?.some(el => el.id === userId)) {
-					// đánh giá sự kiện
+					setEventChoose(eid)
+					setTypeEvent('review')
+					return setModalVisible(!isModalVisible)
 				} else {
 					return Alert.alert('Thông báo', 'Sự kiện đã kết thúc')
 				}

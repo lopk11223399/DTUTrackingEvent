@@ -7,7 +7,7 @@ import {
 	StatusBar,
 	Alert,
 } from 'react-native'
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo, useCallback, useEffect, useState } from 'react'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import { SliderBox } from 'react-native-image-slider-box'
 import CardEvent from '../event/CardEvent'
@@ -24,6 +24,7 @@ import {
 import RoomChoose from './RoomChoose'
 import Modal from 'react-native-modal'
 import { getJoinEvent } from '../../store/user/asyncActions'
+import Feedback from './Feedback'
 
 const HomeComp = ({ navigation: { navigate }, layout, dispatch }) => {
 	const { current, isLoggedIn } = useSelector(state => state.user)
@@ -32,6 +33,14 @@ const HomeComp = ({ navigation: { navigate }, layout, dispatch }) => {
 	const [eventChoose, setEventChoose] = useState(null)
 	const [data, setData] = useState(null)
 	const [isModalVisible, setModalVisible] = useState(false)
+	const [typeEvent, setTypeEvent] = useState('joined')
+	const [starFeedback, setStarFeedback] = useState(5)
+	const [comementText, setComementText] = useState('')
+	const [update, setUpdate] = useState(false)
+
+	const render = useCallback(() => {
+		setUpdate(!update)
+	}, [update])
 
 	const fetchDetailEvent = async eid => {
 		const response = await apiGetDetailEvents(eid)
@@ -61,6 +70,7 @@ const HomeComp = ({ navigation: { navigate }, layout, dispatch }) => {
 
 						if (response.success) {
 							setModalVisible(false)
+							render()
 							dispatch(
 								getEventsToday({
 									limit: 10,
@@ -126,7 +136,16 @@ const HomeComp = ({ navigation: { navigate }, layout, dispatch }) => {
 				// status: [2, 3, 4, 5],
 			}),
 		)
-	}, [dispatch, isLoggedIn])
+	}, [dispatch, isLoggedIn, update])
+
+	const handleSubmit = async () => {
+		const response = await apiFeedbackEvent(eventChoose, {
+			rate: starFeedback,
+			feedback: comementText,
+		})
+
+		return Alert.alert('Thông báo', response.mess)
+	}
 
 	return (
 		<SafeAreaView className='flex-1'>
@@ -203,6 +222,7 @@ const HomeComp = ({ navigation: { navigate }, layout, dispatch }) => {
 									isModalVisible={isModalVisible}
 									setModalVisible={setModalVisible}
 									setEventChoose={setEventChoose}
+									setTypeEvent={setTypeEvent}
 									item={item}
 									key={item.id}
 									userId={current?.id || 0}
@@ -222,11 +242,23 @@ const HomeComp = ({ navigation: { navigate }, layout, dispatch }) => {
 				onBackdropPress={() => setModalVisible(false)}
 				animationIn={'fadeInUp'}
 				animationOut={'fadeOutDown'}>
-				<RoomChoose
-					item={data}
-					setModalVisible={setModalVisible}
-					handleJoinEvent={handleJoinEvent}
-				/>
+				{typeEvent === 'joined' && (
+					<RoomChoose
+						item={data}
+						setModalVisible={setModalVisible}
+						handleJoinEvent={handleJoinEvent}
+					/>
+				)}
+				{typeEvent === 'review' && (
+					<Feedback
+						setModalVisible={setModalVisible}
+						starFeedback={starFeedback}
+						setStarFeedback={setStarFeedback}
+						comementText={comementText}
+						setComementText={setComementText}
+						handleSubmit={handleSubmit}
+					/>
+				)}
 			</Modal>
 		</SafeAreaView>
 	)

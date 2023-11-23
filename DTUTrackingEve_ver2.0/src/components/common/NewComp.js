@@ -1,7 +1,12 @@
 import { View, FlatList, SafeAreaView, Alert } from 'react-native'
 import React, { memo, useEffect, useState } from 'react'
 import CardEvent from '../event/CardEvent'
-import { apiGetDetailEvents, apiGetEvents, apiJoinEvent } from '../../apis'
+import {
+	apiFeedbackEvent,
+	apiGetDetailEvents,
+	apiGetEvents,
+	apiJoinEvent,
+} from '../../apis'
 import { useSelector } from 'react-redux'
 import EmptyData from './EmptyData'
 import withBaseComponent from '../../hocs/withBaseComponent'
@@ -14,6 +19,7 @@ import Modal from 'react-native-modal'
 import RoomChoose from './RoomChoose'
 import { getJoinEvent } from '../../store/user/asyncActions'
 import moment from 'moment'
+import Feedback from './Feedback'
 
 const NewComp = ({ dispatch }) => {
 	const { current, isLoggedIn } = useSelector(state => state.user)
@@ -21,6 +27,9 @@ const NewComp = ({ dispatch }) => {
 	const [isModalVisible, setModalVisible] = useState(false)
 	const [eventChoose, setEventChoose] = useState(null)
 	const [data, setData] = useState(null)
+	const [typeEvent, setTypeEvent] = useState('joined')
+	const [starFeedback, setStarFeedback] = useState(5)
+	const [comementText, setComementText] = useState('')
 
 	useEffect(() => {
 		dispatch(
@@ -109,6 +118,15 @@ const NewComp = ({ dispatch }) => {
 		)
 	}
 
+	const handleSubmit = async () => {
+		const response = await apiFeedbackEvent(eventChoose, {
+			rate: starFeedback,
+			feedback: comementText,
+		})
+
+		return Alert.alert('Thông báo', response.mess)
+	}
+
 	return (
 		<SafeAreaView>
 			<View className='background--primary--dark px-3 py-1'>
@@ -121,6 +139,7 @@ const NewComp = ({ dispatch }) => {
 								isModalVisible={isModalVisible}
 								setModalVisible={setModalVisible}
 								setEventChoose={setEventChoose}
+								setTypeEvent={setTypeEvent}
 								newEvent
 								item={item}
 								key={index}
@@ -140,11 +159,23 @@ const NewComp = ({ dispatch }) => {
 				onBackdropPress={() => setModalVisible(false)}
 				animationIn={'fadeInUp'}
 				animationOut={'fadeOutDown'}>
-				<RoomChoose
-					item={data}
-					setModalVisible={setModalVisible}
-					handleJoinEvent={handleJoinEvent}
-				/>
+				{typeEvent === 'joined' && (
+					<RoomChoose
+						item={data}
+						setModalVisible={setModalVisible}
+						handleJoinEvent={handleJoinEvent}
+					/>
+				)}
+				{typeEvent === 'review' && (
+					<Feedback
+						setModalVisible={setModalVisible}
+						starFeedback={starFeedback}
+						setStarFeedback={setStarFeedback}
+						comementText={comementText}
+						setComementText={setComementText}
+						handleSubmit={handleSubmit}
+					/>
+				)}
 			</Modal>
 		</SafeAreaView>
 	)

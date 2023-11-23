@@ -6,19 +6,32 @@ import {
 	StatusBar,
 	FlatList,
 	ActivityIndicator,
+	Alert,
 } from 'react-native'
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import { tabListEvent } from '../../utils/contants'
 import clsx from 'clsx'
-import { CardEvent, Search } from '../../components'
+import { CardEvent, Feedback, RoomChoose, Search } from '../../components'
 import Modal from 'react-native-modal'
-import { apiGetEvents } from '../../apis'
+import {
+	apiFeedbackEvent,
+	apiGetDetailEvents,
+	apiGetEvents,
+	apiJoinEvent,
+} from '../../apis'
 import { useSelector } from 'react-redux'
 import moment from 'moment'
+import {
+	getEventsHot,
+	getEventsNew,
+	getEventsToday,
+} from '../../store/event/asyncActions'
+import { getJoinEvent } from '../../store/user/asyncActions'
 
 const ListEventScreen = ({
-	navigation: { setOptions, goBack },
+	navigation: { setOptions, goBack, navigate },
+	dispatch,
 	Ionicons,
 	route,
 }) => {
@@ -34,6 +47,16 @@ const ListEventScreen = ({
 	const [data, setData] = useState([])
 	const [currentPage, setCurrentPage] = useState(1)
 	const [isLoading, setIsLoading] = useState(false)
+	const [typeEvent, setTypeEvent] = useState('joined')
+	const [starFeedback, setStarFeedback] = useState(5)
+	const [comementText, setComementText] = useState('')
+	const [eventChoose, setEventChoose] = useState(null)
+	const [detailData, setDetailData] = useState(null)
+	const [update, setUpdate] = useState(false)
+
+	const render = useCallback(() => {
+		setUpdate(!update)
+	}, [update])
 
 	const renderLoader = () => {
 		return isLoading ? (
@@ -87,7 +110,7 @@ const ListEventScreen = ({
 		}
 
 		fetchEvent()
-	}, [tabList, currentPage])
+	}, [tabList, currentPage, update])
 
 	useLayoutEffect(() => {
 		setOptions({
@@ -120,6 +143,93 @@ const ListEventScreen = ({
 			headerTitle: 'Danh Sách Sự Kiện',
 		})
 	}, [isSearch, theme])
+
+	const handleJoinEvent = (event, item) => {
+		return Alert.alert(
+			'Thông báo',
+			`Bạn muốn tham gia sự kiện ${event.title} với chủ đề ${item.topic} phải không?`,
+			[
+				{
+					text: 'Hủy',
+					style: 'cancel',
+				},
+				{
+					text: 'Tham gia',
+					onPress: async () => {
+						const response = await apiJoinEvent(event.id, { roomId: item.id })
+
+						if (response.success) {
+							setModalVisible(false)
+							dispatch(
+								getEventsToday({
+									limit: 10,
+									page: 1,
+									date: moment().format('YYYY-MM-DD'),
+								}),
+							)
+							dispatch(
+								getEventsNew({
+									limit: 10,
+									page: 1,
+									order: ['createdAt', 'DESC'],
+								}),
+							)
+							dispatch(
+								getEventsHot({
+									limit: 5,
+									page: 1,
+									hot: true,
+								}),
+							)
+
+							if (current)
+								dispatch(
+									getJoinEvent({
+										limit: 5,
+										page: 1,
+										order: ['createdAt', 'DESC'],
+									}),
+								)
+
+							render()
+
+							return Alert.alert('Thành Công', response.mess, [
+								{
+									text: 'Hủy',
+									style: 'cancel',
+								},
+								{
+									text: 'Đi đến danh sách sự kiện',
+									onPress: () => navigate('ListEventFollowCurrent'),
+								},
+							])
+						}
+					},
+				},
+			],
+		)
+	}
+
+	const handleSubmit = async () => {
+		const response = await apiFeedbackEvent(eventChoose, {
+			rate: starFeedback,
+			feedback: comementText,
+		})
+
+		return Alert.alert('Thông báo', response.mess)
+	}
+
+	const fetchDetailEvent = async eid => {
+		const response = await apiGetDetailEvents(eid)
+
+		if (response.success === true) {
+			setDetailData(response.response)
+		}
+	}
+
+	useEffect(() => {
+		if (eventChoose) fetchDetailEvent(eventChoose)
+	}, [eventChoose])
 
 	// console.log('Số lượng dữ liệu hiện có: ', data.length)
 	// console.log('Tổng dữ liệu trên database: ', countNewEvent)
@@ -213,6 +323,10 @@ const ListEventScreen = ({
 					data={data}
 					renderItem={({ item, index }) => (
 						<CardEvent
+							isModalVisible={isModalVisible}
+							setModalVisible={setModalVisible}
+							setEventChoose={setEventChoose}
+							setTypeEvent={setTypeEvent}
 							item={item}
 							key={index}
 							userId={current?.id || 0}
@@ -224,23 +338,6 @@ const ListEventScreen = ({
 					onEndReached={loadMoreItem}
 					onEndReachedThreshold={0}
 				/>
-
-				{/* <FlatList
-					showsVerticalScrollIndicator={false}
-					data={data}
-					renderItem={({ item, index }) => (
-						<CardEvent
-							item={item}
-							key={index}
-							userId={current?.id || 0}
-							borderHiden={index === data.length - 1 ? false : true}
-						/>
-					)}
-					keyExtractor={(item, index) => index.toString()}
-					ListFooterComponent={renderLoader}
-					onEndReached={() => fetchEvent(users.length, FETCH_USERS_COUNT, page)}
-					onEndReachedThreshold={0}
-				/> */}
 			</View>
 
 			<Modal
@@ -248,77 +345,95 @@ const ListEventScreen = ({
 				onBackdropPress={() => setModalVisible(false)}
 				animationIn={'fadeInUp'}
 				animationOut={'fadeOutDown'}>
-				<View
-					className={clsx(
-						'w-full h-[300px] p-3 rounded-md',
-						theme === 'light' && 'bg-backgroundColor_secondary_light',
-						(theme === 'dark' || theme === 'dark-default') &&
-							'bg-backgroundColor_secondary_dark',
-					)}>
-					<View className='flex-row w-full items-center'>
-						<Text
-							className={clsx(
-								'text-[16px] flex-1 text-center ml-[24px] text-text-gray--dark font-bold',
-								theme === 'light' && 'text-textColor_secondary_light',
-								(theme === 'dark' || theme === 'dark-default') &&
-									'text-textColor_secondary_dark',
-							)}>
-							Chọn
-						</Text>
-						<Pressable
-							onPress={() => setModalVisible(false)}
-							className='self-end'>
-							<Ionicons name='close' size={24} color='#737377' />
-						</Pressable>
-					</View>
-					<View className='flex-row flex-1 flex-wrap mt-3'>
-						{tabListEvent.map((el, index) => {
-							return (
-								<Pressable
-									onPress={() => {
-										setModalVisible(false)
-										setTabList(el.value)
-										if (tabList === 'today') {
-											if (countTodayEvents >= 10 * currentPage)
-												setCurrentPage(1)
-											else setCurrentPage(0)
-										}
+				{typeEvent === 'joined' ? (
+					<RoomChoose
+						item={detailData}
+						setModalVisible={setModalVisible}
+						handleJoinEvent={handleJoinEvent}
+					/>
+				) : typeEvent === 'review' ? (
+					<Feedback
+						setModalVisible={setModalVisible}
+						starFeedback={starFeedback}
+						setStarFeedback={setStarFeedback}
+						comementText={comementText}
+						setComementText={setComementText}
+						handleSubmit={handleSubmit}
+					/>
+				) : (
+					<View
+						className={clsx(
+							'w-full h-[300px] p-3 rounded-md',
+							theme === 'light' && 'bg-backgroundColor_secondary_light',
+							(theme === 'dark' || theme === 'dark-default') &&
+								'bg-backgroundColor_secondary_dark',
+						)}>
+						<View className='flex-row w-full items-center'>
+							<Text
+								className={clsx(
+									'text-[16px] flex-1 text-center ml-[24px] text-text-gray--dark font-bold',
+									theme === 'light' && 'text-textColor_secondary_light',
+									(theme === 'dark' || theme === 'dark-default') &&
+										'text-textColor_secondary_dark',
+								)}>
+								Chọn
+							</Text>
+							<Pressable
+								onPress={() => setModalVisible(false)}
+								className='self-end'>
+								<Ionicons name='close' size={24} color='#737377' />
+							</Pressable>
+						</View>
+						<View className='flex-row flex-1 flex-wrap mt-3'>
+							{tabListEvent.map((el, index) => {
+								return (
+									<Pressable
+										onPress={() => {
+											setModalVisible(false)
+											setTabList(el.value)
+											if (tabList === 'today') {
+												if (countTodayEvents >= 10 * currentPage)
+													setCurrentPage(1)
+												else setCurrentPage(0)
+											}
 
-										if (tabList === 'hot') {
-											if (countHotEvents >= 10 * currentPage) setCurrentPage(1)
-											else setCurrentPage(0)
-										}
+											if (tabList === 'hot') {
+												if (countHotEvents >= 10 * currentPage)
+													setCurrentPage(1)
+												else setCurrentPage(0)
+											}
 
-										if (tabList === 'new') {
-											if (countNewEvent >= 10 * currentPage) setCurrentPage(1)
-											else setCurrentPage(0)
-										}
-										setData([])
-									}}
-									key={el.id}
-									className={clsx(
-										'justify-center px-2 py-2 rounded-[4px] my-1',
-										tabListEvent.length - 1 === index ? '' : 'mr-3',
-										tabList === el.value
-											? 'bg-tColor_bg_active'
-											: theme === 'light'
-											? 'bg-tColor_bg_light'
-											: 'bg-tColor_bg_dark',
-									)}>
-									<Text
+											if (tabList === 'new') {
+												if (countNewEvent >= 10 * currentPage) setCurrentPage(1)
+												else setCurrentPage(0)
+											}
+											setData([])
+										}}
+										key={el.id}
 										className={clsx(
-											'text-[14px] font-bold',
+											'justify-center px-2 py-2 rounded-[4px] my-1',
+											tabListEvent.length - 1 === index ? '' : 'mr-3',
 											tabList === el.value
-												? 'text-tColor_text_active'
-												: 'text-tColor_text',
+												? 'bg-tColor_bg_active'
+												: theme === 'light'
+												? 'bg-tColor_bg_light'
+												: 'bg-tColor_bg_dark',
 										)}>
-										{el.text}
-									</Text>
-								</Pressable>
-							)
-						})}
+										<Text
+											className={clsx(
+												'text-[14px] font-bold',
+												tabList === el.value
+													? 'text-tColor_text_active'
+													: 'text-tColor_text',
+											)}>
+											{el.text}
+										</Text>
+									</Pressable>
+								)
+							})}
+						</View>
 					</View>
-				</View>
+				)}
 			</Modal>
 		</SafeAreaView>
 	)
