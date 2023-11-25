@@ -94,27 +94,13 @@ const CalenderScreen = ({ navigation: { setOptions, navigate }, layout }) => {
 	const [isLoading, setIsLoading] = useState(false)
 	const [count, setCount] = useState(0)
 
-	const fetchEventDay = async () => {
-		setIsLoading(true)
-
-		const response = await apiGetEvents({
-			limit: 50,
-			page: currentPage,
-			date: selected,
-		})
-
-		if (response.success === true) {
-			setCount(response.count)
-			setEventDay([...eventDay, ...response.response])
-		}
-	}
-
 	useEffect(() => {
 		const fetchFirst = async () => {
 			const response = await apiGetEvents({
-				limit: 5,
+				limit: 50,
 				page: 1,
 				date: selected,
+				status: [2, 3, 4, 5],
 			})
 
 			if (response.success === true) {
@@ -125,10 +111,6 @@ const CalenderScreen = ({ navigation: { setOptions, navigate }, layout }) => {
 
 		fetchFirst()
 	}, [])
-
-	useEffect(() => {
-		fetchEventDay()
-	}, [selected, currentPage])
 
 	useLayoutEffect(() => {
 		setOptions({

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { apiGetDetailEvent } from '../../apis/event'
 import moment from 'moment/moment'
@@ -16,6 +16,11 @@ function DetailEvent({ navigate, dispatch }) {
 	const { eid } = useParams()
 	const [data, setData] = useState(null)
 	const [dataCSV, setDataCSV] = useState([])
+	const [update, setUpdate] = useState(false)
+
+	const render = useCallback(() => {
+		setUpdate(!update)
+	}, [update])
 
 	const fetchDetailEvent = async eid => {
 		const response = await apiGetDetailEvent(eid)
@@ -27,9 +32,11 @@ function DetailEvent({ navigate, dispatch }) {
 	useEffect(() => {
 		fetchDetailEvent(eid)
 		window.scrollTo(0, 0)
-	}, [eid])
+	}, [eid, update])
 
-	console.log(data)
+	useEffect(() => {
+		fetchDetailEvent(eid)
+	}, [update])
 
 	const handleDownloadCSV = () => {
 		const header = [
@@ -76,7 +83,9 @@ function DetailEvent({ navigate, dispatch }) {
 								dispatch(
 									showModal({
 										isShowModal: true,
-										modalChildren: <CommentModal />,
+										modalChildren: (
+											<CommentModal data={data} eid={eid} render={render} />
+										),
 									}),
 								)
 							}

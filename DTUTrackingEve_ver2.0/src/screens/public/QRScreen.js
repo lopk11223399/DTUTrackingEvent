@@ -49,7 +49,6 @@ const QRScreen = ({ navigation: { goBack, navigate }, Ionicons }) => {
 		setScanned(true)
 
 		if (!current) {
-			console.log(true)
 			return Alert.alert(
 				'Thông báo',
 				'Bạn chưa đăng nhập. Vui lòng đăng nhập để quét mã',
@@ -67,17 +66,40 @@ const QRScreen = ({ navigation: { goBack, navigate }, Ionicons }) => {
 		}
 
 		if (data) {
-			// const response = await fetchDetailEvent(JSON.parse(data).eventId)
-			// const joinEvent = await scanQREvent({ eventId: JSON.parse(data).eventId })
+			const { eventId, roomId } = JSON.parse(data)
+			const response = await apiGetDetailEvents(eventId)
 
-			console.log(data)
+			console.log(response)
 
-			// return Alert.alert('Thông báo', `Cảm ơn bạn bạn đã tham gia sự kiện!`, [
-			// 	{
-			// 		text: 'Ok',
-			// 		style: 'cancel',
-			// 	},
-			// ])
+			if (response.success) {
+				if (response.response.userJoined.some(el => +el.id === +current.id)) {
+					const joinEvent = await scanQREvent({ eventId, roomId })
+					if (joinEvent.success) {
+						console.log(joinEvent)
+						// return Alert.alert('Thông báo', `Cảm ơn bạn bạn đã tham gia sự kiện!`, [
+						// 	{
+						// 		text: 'Ok',
+						// 		style: 'cancel',
+						// 	},
+						// ])
+					} else return Alert.alert('Thông báo', joinEvent.mess)
+				} else
+					return Alert.alert('Thông báo', 'Bạn chưa tham gia sự kiện', [
+						{
+							text: 'Hủy',
+							style: 'cancel',
+						},
+						{
+							text: 'Đi đến sự kiện',
+							onPress: () =>
+								navigate('DetailEvent', {
+									eventId: eventId,
+									userId: current.id,
+								}),
+						},
+					])
+			} else
+				return Alert.alert('Thông báo', 'Không thể nhận dạng vui lòng quét lại')
 		}
 	}
 
