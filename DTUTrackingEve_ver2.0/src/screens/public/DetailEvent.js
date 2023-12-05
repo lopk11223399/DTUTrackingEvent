@@ -79,6 +79,7 @@ const DetailEvent = ({
 		idComment: null,
 		value: null,
 	})
+	const [MoreDescription, setMoreDescription] = useState(false)
 
 	const fetchDetailEvent = async eid => {
 		const response = await apiGetDetailEvents(eid)
@@ -723,6 +724,7 @@ const DetailEvent = ({
 							Mô tả
 						</Text>
 						<Text
+							numberOfLines={MoreDescription ? undefined : 3}
 							className={clsx(
 								'text-[14px] mt-1  text-justify',
 								theme === 'light' && 'text-textColor_main_light',
@@ -731,6 +733,15 @@ const DetailEvent = ({
 							)}>
 							{data?.description}
 						</Text>
+						{MoreDescription ? (
+							<Pressable onPress={() => setMoreDescription(false)}>
+								<Text className='text-tColor_text'>Rút gọn</Text>
+							</Pressable>
+						) : (
+							<Pressable onPress={() => setMoreDescription(true)}>
+								<Text className='text-tColor_text'>Xem thêm</Text>
+							</Pressable>
+						)}
 					</View>
 
 					<View className='mt-3'>
