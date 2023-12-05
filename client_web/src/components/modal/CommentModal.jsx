@@ -37,8 +37,6 @@ function CommentModal({ dispatch, eid }) {
 	const [update, setUpdate] = useState(false)
 	const [data, setData] = useState(null)
 
-	console.log(data)
-
 	const render = useCallback(() => {
 		setUpdate(!update)
 	}, [update])
@@ -297,7 +295,7 @@ function CommentModal({ dispatch, eid }) {
 								{checkResponse.idComment === el.id && (
 									<div className='flex items-center gap-2 bg-gray-100 text-[#408A7E] rounded-md py-1 px-2'>
 										<input
-											value={checkResponse.content}
+											value={checkResponse.value}
 											onChange={text =>
 												setCheckResponse(prev => ({
 													...prev,

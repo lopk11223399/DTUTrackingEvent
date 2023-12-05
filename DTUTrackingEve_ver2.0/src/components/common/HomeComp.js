@@ -124,8 +124,8 @@ const HomeComp = ({ navigation: { navigate }, layout, dispatch }) => {
 			getEventsToday({
 				limit: 10,
 				page: 1,
-				date: moment().format('YYYY-MM-DD 00:00:00'),
-				status: [2, 3, 4, 5],
+				date: moment().format('YYYY-MM-DD'),
+				status: [2, 3],
 			}),
 		)
 		dispatch(
@@ -133,7 +133,7 @@ const HomeComp = ({ navigation: { navigate }, layout, dispatch }) => {
 				limit: 5,
 				page: 1,
 				hot: true,
-				// status: [2, 3, 4, 5],
+				status: [2, 3],
 			}),
 		)
 	}, [dispatch, isLoggedIn, update])

@@ -253,7 +253,8 @@ function DetailEvent({ navigate, dispatch }) {
 									<p className='text-[16px] font-[600] text-[#000] self-start'>
 										Thời gian:{' '}
 										<span className='text-[#408A7E] font-[400]'>
-											{el.timeRoom}
+											{moment(el.timeRoom).format('hh:mm a')} -{' '}
+											{moment(el.finishRoom).format('hh:mm a')}
 										</span>
 									</p>
 								</div>
@@ -285,7 +286,8 @@ function DetailEvent({ navigate, dispatch }) {
 									<p className='text-[16px] font-[600] text-[#000] self-start'>
 										Thời gian:{' '}
 										<span className='text-[#408A7E] font-[400]'>
-											{el.timeRoom}
+											{moment(el.timeRoom).format('hh:mm a')} -{' '}
+											{moment(el.finishRoom).format('hh:mm a')}
 										</span>
 									</p>
 								</div>
