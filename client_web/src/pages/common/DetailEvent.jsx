@@ -49,11 +49,12 @@ function DetailEvent({ navigate, dispatch }) {
 				'Trạng thái',
 			],
 		]
+
 		const value = data.userJoined.map(e => [
 			e.studentCode,
 			e.name,
 			e.birthDate,
-			e.nameFaculty,
+			e.nameFaculty ? e.nameFaculty : 'Công nghệ thông tin',
 			e.classCode,
 			e.isJoined ? 'Đã tham gia' : 'Không tham gia',
 		])

@@ -29,7 +29,11 @@ import {
 	getEventsNew,
 	getEventsToday,
 } from '../../store/event/asyncActions'
-import { getFollowEvent, getJoinEvent } from '../../store/user/asyncActions'
+import {
+	getCurrent,
+	getFollowEvent,
+	getJoinEvent,
+} from '../../store/user/asyncActions'
 import { useSelector } from 'react-redux'
 import Modal from 'react-native-modal'
 import RoomChoose from '../../components/common/RoomChoose'
@@ -354,7 +358,9 @@ const DetailEvent = ({
 											}),
 										)
 
-										if (userId !== 0)
+										if (userId !== 0) {
+											dispatch(getCurrent())
+
 											dispatch(
 												getJoinEvent({
 													limit: 5,
@@ -362,6 +368,7 @@ const DetailEvent = ({
 													order: ['createdAt', 'DESC'],
 												}),
 											)
+										}
 
 										render()
 
@@ -411,6 +418,11 @@ const DetailEvent = ({
 			rate: starFeedback,
 			feedback: comementText,
 		})
+
+		if (response.scucess) {
+			setModalVisible(false)
+			return Alert.alert('Thông báo', response.mess)
+		}
 
 		return Alert.alert('Thông báo', response.mess)
 	}

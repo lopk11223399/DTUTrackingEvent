@@ -17,7 +17,7 @@ import {
 } from '../../store/event/asyncActions'
 import Modal from 'react-native-modal'
 import RoomChoose from './RoomChoose'
-import { getJoinEvent } from '../../store/user/asyncActions'
+import { getCurrent, getJoinEvent } from '../../store/user/asyncActions'
 import moment from 'moment'
 import Feedback from './Feedback'
 
@@ -37,7 +37,7 @@ const NewComp = ({ dispatch }) => {
 				limit: 10,
 				page: 1,
 				order: ['createdAt', 'DESC'],
-				status: [2, 3, 4, 5],
+				status: [2, 3],
 			}),
 		)
 	}, [dispatch, isLoggedIn])
@@ -75,6 +75,7 @@ const NewComp = ({ dispatch }) => {
 									limit: 10,
 									page: 1,
 									date: moment().format('YYYY-MM-DD'),
+									status: [2, 3],
 								}),
 							)
 							dispatch(
@@ -82,6 +83,7 @@ const NewComp = ({ dispatch }) => {
 									limit: 10,
 									page: 1,
 									order: ['createdAt', 'DESC'],
+									status: [2, 3],
 								}),
 							)
 							dispatch(
@@ -89,10 +91,13 @@ const NewComp = ({ dispatch }) => {
 									limit: 5,
 									page: 1,
 									hot: true,
+									status: [2, 3],
 								}),
 							)
 
-							if (current)
+							if (current) {
+								dispatch(getCurrent())
+
 								dispatch(
 									getJoinEvent({
 										limit: 5,
@@ -100,6 +105,7 @@ const NewComp = ({ dispatch }) => {
 										order: ['createdAt', 'DESC'],
 									}),
 								)
+							}
 
 							return Alert.alert('Thành Công', response.mess, [
 								{

@@ -88,18 +88,21 @@ const ListEventScreen = ({
 					limit: 10,
 					page: currentPage,
 					date: moment().format('YYYY-MM-DD'),
+					status: [2, 3],
 				})
 			} else if (tabList === 'hot') {
 				response = await apiGetEvents({
 					limit: 10,
 					page: currentPage,
 					hot: true,
+					status: [2, 3],
 				})
 			} else if (tabList === 'new') {
 				response = await apiGetEvents({
 					limit: 10,
 					page: currentPage,
 					order: ['createdAt', 'DESC'],
+					status: [2, 3],
 				})
 			}
 
@@ -165,6 +168,7 @@ const ListEventScreen = ({
 									limit: 10,
 									page: 1,
 									date: moment().format('YYYY-MM-DD'),
+									status: [2, 3],
 								}),
 							)
 							dispatch(
@@ -172,6 +176,7 @@ const ListEventScreen = ({
 									limit: 10,
 									page: 1,
 									order: ['createdAt', 'DESC'],
+									status: [2, 3],
 								}),
 							)
 							dispatch(
@@ -179,6 +184,7 @@ const ListEventScreen = ({
 									limit: 5,
 									page: 1,
 									hot: true,
+									status: [2, 3],
 								}),
 							)
 
