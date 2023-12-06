@@ -8,15 +8,19 @@ import {
 	Animated,
 	Alert,
 	Clipboard,
+	TextInput,
 } from 'react-native'
 import React, { useEffect, useState, useRef, useCallback } from 'react'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import clsx from 'clsx'
 import {
+	apiCreateComment,
+	apiDeleteComment,
 	apiFeedbackEvent,
 	apiFollowEvent,
 	apiGetDetailEvents,
 	apiJoinEvent,
+	apiUpdateComment,
 } from '../../apis'
 import moment from 'moment'
 import avatarDefault from '../../assets/avatarDefault.png'
@@ -25,11 +29,16 @@ import {
 	getEventsNew,
 	getEventsToday,
 } from '../../store/event/asyncActions'
-import { getFollowEvent, getJoinEvent } from '../../store/user/asyncActions'
+import {
+	getCurrent,
+	getFollowEvent,
+	getJoinEvent,
+} from '../../store/user/asyncActions'
 import { useSelector } from 'react-redux'
 import Modal from 'react-native-modal'
 import RoomChoose from '../../components/common/RoomChoose'
 import { Feedback } from '../../components'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 const DetailEvent = ({
 	route,
@@ -57,6 +66,20 @@ const DetailEvent = ({
 	const [feedback, setFeedback] = useState(false)
 	const [starFeedback, setStarFeedback] = useState(5)
 	const [comementText, setComementText] = useState('')
+	const [content, setContent] = useState('')
+	const [checkUpdate, setCheckUpdate] = useState({
+		idComment: null,
+		value: null,
+	})
+	const [checkResponse, setCheckResponse] = useState({
+		idComment: null,
+		value: null,
+	})
+	const [checkUpdateResponse, setCheckUpdateResponse] = useState({
+		idComment: null,
+		value: null,
+	})
+	const [MoreDescription, setMoreDescription] = useState(false)
 
 	const fetchDetailEvent = async eid => {
 		const response = await apiGetDetailEvents(eid)
@@ -336,7 +359,9 @@ const DetailEvent = ({
 											}),
 										)
 
-										if (userId !== 0)
+										if (userId !== 0) {
+											dispatch(getCurrent())
+
 											dispatch(
 												getJoinEvent({
 													limit: 5,
@@ -344,6 +369,7 @@ const DetailEvent = ({
 													order: ['createdAt', 'DESC'],
 												}),
 											)
+										}
 
 										render()
 
@@ -364,7 +390,7 @@ const DetailEvent = ({
 					)
 				}
 
-				return setModalVisible(!isModalVisible)
+				return setModalVisible(true)
 			} else if (data?.statusEvent?.id === 1) {
 				return Alert.alert(
 					'Thông báo',
@@ -394,7 +420,143 @@ const DetailEvent = ({
 			feedback: comementText,
 		})
 
+		if (response.scucess) {
+			setModalVisible(false)
+			return Alert.alert('Thông báo', response.mess)
+		}
+
 		return Alert.alert('Thông báo', response.mess)
+	}
+
+	const handleSend = async () => {
+		if (userId === 0) {
+			return Alert.alert('Bạn chưa đăng nhập', 'Đi đến trang đăng nhập', [
+				{
+					text: 'Hủy',
+					style: 'cancel',
+				},
+				{
+					text: 'Đi đến Login',
+					onPress: () => navigate('Login', { eventId: eventId }),
+				},
+			])
+		} else {
+			if (content.length > 0) {
+				const response = await apiCreateComment({
+					comment: content,
+					eventId: eventId,
+				})
+				if (response.success) {
+					setContent('')
+					render()
+				}
+			} else {
+				return Alert.alert('Thông báo', 'Vui lòng điền nội dung')
+			}
+		}
+	}
+
+	const handleDeleteComment = async commentId => {
+		return Alert.alert('Thông báo', 'Bạn muốn xóa bình luận của bạn?', [
+			{
+				text: 'Không',
+				style: 'cancel',
+			},
+			{
+				text: 'Có',
+				onPress: async () => {
+					const response = await apiDeleteComment({ commentId })
+
+					if (response.success) {
+						render()
+					}
+				},
+			},
+		])
+	}
+
+	const handleUpdateComment = async () => {
+		return Alert.alert(
+			'Thông báo',
+			'Bạn muốn cập nhật lại nội dung bình luận của bạn',
+			[
+				{
+					text: 'Không',
+					style: 'cancel',
+				},
+				{
+					text: 'Có',
+					onPress: async () => {
+						const response = await apiUpdateComment({
+							commentId: checkUpdate.idComment,
+							comment: checkUpdate.value,
+						})
+
+						if (response.success) {
+							setCheckUpdate({ idComment: null, value: null })
+							render()
+						}
+					},
+				},
+			],
+		)
+	}
+
+	const handleDeleteResponse = async responseId => {
+		return Alert.alert('Thông báo', 'Bạn muốn xóa bình luận của bạn?', [
+			{
+				text: 'Không',
+				style: 'cancel',
+			},
+			{
+				text: 'Có',
+				onPress: async () => {
+					const response = await apiDeleteComment({ responseId })
+
+					if (response.success) {
+						render()
+					}
+				},
+			},
+		])
+	}
+
+	const handleResponse = async responseId => {
+		if (checkResponse.value.length <= 0)
+			return Alert.alert('Thông báo', 'Vui lòng nhập nội dung!')
+		else {
+			const response = await apiCreateComment({
+				comment: checkResponse.value,
+				responseId,
+			})
+			if (response.success) {
+				setCheckResponse({ idComment: null, value: null })
+				render()
+			}
+		}
+	}
+
+	const handleUpdateResponse = async () => {
+		return Alert.alert('Thông báo', 'Bạn muốn cập nhật bình luận của bạn?', [
+			{
+				text: 'Không',
+				style: 'cancel',
+			},
+			{
+				text: 'Có',
+				onPress: async () => {
+					const response = await apiUpdateComment({
+						responseId: checkUpdateResponse.idComment,
+						comment: checkUpdateResponse.value,
+					})
+
+					if (response.success) {
+						setCheckUpdateResponse({ idComment: null, value: null })
+						render()
+					}
+				},
+			},
+		])
 	}
 
 	return (
@@ -451,19 +613,8 @@ const DetailEvent = ({
 						style={{
 							transform: [
 								{
-									// translateY: animatedValue.interpolate({
-									// 	inputRange: [-200, 0, 200, 200 + 1],
-									// 	outputRange: [-200 / 2, 0, 200 * 0.75, 200 * 0.75],
-									// }),
-
 									translateY: animatedValue,
 								},
-								// {
-								// 	scale: animatedValue.interpolate({
-								// 		inputRange: [-200, 0, 200, 200 + 1],
-								// 		outputRange: [2, 1, 0.5, 0.5],
-								// 	}),
-								// },
 							],
 						}}
 						source={{ uri: data?.image }}
@@ -573,6 +724,7 @@ const DetailEvent = ({
 							Mô tả
 						</Text>
 						<Text
+							numberOfLines={MoreDescription ? undefined : 3}
 							className={clsx(
 								'text-[14px] mt-1  text-justify',
 								theme === 'light' && 'text-textColor_main_light',
@@ -581,6 +733,15 @@ const DetailEvent = ({
 							)}>
 							{data?.description}
 						</Text>
+						{MoreDescription ? (
+							<Pressable onPress={() => setMoreDescription(false)}>
+								<Text className='text-tColor_text'>Rút gọn</Text>
+							</Pressable>
+						) : (
+							<Pressable onPress={() => setMoreDescription(true)}>
+								<Text className='text-tColor_text'>Xem thêm</Text>
+							</Pressable>
+						)}
 					</View>
 
 					<View className='mt-3'>
@@ -594,7 +755,7 @@ const DetailEvent = ({
 											key={el.id}
 											className={clsx(
 												'mb-3 gap-1 bg-backgroundColor_secondary_light p-2 rounded-md',
-												data.onlineEvent.length - 1 === index && 'mb-0',
+												data.onlineEvent?.length - 1 === index && 'mb-0',
 												theme === 'light' &&
 													'bg-backgroundColor_secondary_light',
 												(theme === 'dark' || theme === 'dark-default') &&
@@ -632,7 +793,7 @@ const DetailEvent = ({
 											key={el.id}
 											className={clsx(
 												'mb-3 gap-1 bg-backgroundColor_secondary_light p-2 rounded-md',
-												data.onlineEvent.length - 1 === index && 'mb-0',
+												data.onlineEvent?.length - 1 === index && 'mb-0',
 												theme === 'light' &&
 													'bg-backgroundColor_secondary_light',
 												(theme === 'dark' || theme === 'dark-default') &&
@@ -652,7 +813,8 @@ const DetailEvent = ({
 													Thời gian bắt đầu:{' '}
 												</Text>
 												<Text className='textColor_main_light'>
-													{el.timeRoom}
+													{moment(el.timeRoom).format('hh:mm a')} -{' '}
+													{moment(el.finishRoom).format('hh:mm a')}
 												</Text>
 											</View>
 											<View className='flex-row items-center'>
@@ -667,6 +829,244 @@ const DetailEvent = ({
 								  ))}
 						</View>
 					</View>
+
+					<KeyboardAwareScrollView className='mt-3'>
+						<Text className='text-[22px] text-tColor_text font-bold capitalize'>
+							Bình luận ({data?.comments?.length || '0'})
+						</Text>
+						<View className='mt-2'>
+							{data.comments?.length > 0 &&
+								data.comments.map(el => (
+									<View key={el.id} className='mb-2'>
+										<View className='flex-row items-center'>
+											<View className='mr-2'>
+												<Image
+													source={
+														el.avatar === null
+															? avatarDefault
+															: { uri: el?.avatar }
+													}
+													className='w-[50px] h-[50px] rounded-full'
+												/>
+											</View>
+											<View className='flex-1 bg-white p-1 rounded-md'>
+												<View className='gap-1'>
+													<View className='flex-row'>
+														<Text className='font-bold pr-2'>{el.name}</Text>
+														{data.author.id === el.userId && (
+															<View className='flex-row items-center gap-1'>
+																<Entypo name='modern-mic' size={12} />
+																<Text>Tác giả</Text>
+															</View>
+														)}
+													</View>
+													{checkUpdate.idComment === el.id ? (
+														<View className='py-[2px] bg-white rounded-md flex-row items-center px-1'>
+															<TextInput
+																value={checkUpdate.value}
+																onChangeText={text =>
+																	setCheckUpdate(prev => ({
+																		...prev,
+																		value: text,
+																	}))
+																}
+																multiline
+																placeholder='Bình luận'
+																className='flex-1'
+															/>
+															<Pressable onPress={handleUpdateComment}>
+																<Ionicons name='send-sharp' size={10} />
+															</Pressable>
+														</View>
+													) : (
+														<Text>{el.comment}</Text>
+													)}
+												</View>
+											</View>
+										</View>
+										<View className='ml-[58px] flex-row'>
+											{checkResponse.idComment === el.id ? (
+												<Pressable
+													onPress={() =>
+														setCheckResponse({
+															idComment: null,
+															value: null,
+														})
+													}
+													className='mr-2'>
+													<Text className='text-[#408A7E]'>Hủy Phản hồi</Text>
+												</Pressable>
+											) : (
+												<Pressable
+													onPress={() =>
+														setCheckResponse({ idComment: el.id, value: null })
+													}
+													className='mr-2'>
+													<Text className='text-[#408A7E]'>Phản hồi</Text>
+												</Pressable>
+											)}
+
+											{+userId === +el.userId &&
+												(checkUpdate.idComment === el.id ? (
+													<Pressable
+														onPress={() =>
+															setCheckUpdate({ idComment: null, value: null })
+														}
+														className='mr-2'>
+														<Text className='text-blue-300'>Hủy Cập nhập</Text>
+													</Pressable>
+												) : (
+													<Pressable
+														onPress={() =>
+															setCheckUpdate({
+																idComment: el.id,
+																value: el.comment,
+															})
+														}
+														className='mr-2'>
+														<Text className='text-blue-300'>Cập nhập</Text>
+													</Pressable>
+												))}
+											{+userId === +el.userId && (
+												<Pressable
+													onPress={() => handleDeleteComment(el.id)}
+													className='mr-2'>
+													<Text className='text-red-300'>Xóa</Text>
+												</Pressable>
+											)}
+											<Text>{moment(el.createdAt).fromNow()}</Text>
+										</View>
+										{checkResponse.idComment === el.id && (
+											<View className='py-1 ml-[58px] mt-1 bg-white rounded-md flex-row items-center px-3'>
+												<TextInput
+													value={checkResponse.value}
+													onChangeText={text =>
+														setCheckResponse(prev => ({
+															...prev,
+															value: text,
+														}))
+													}
+													multiline
+													placeholder='Phản hồi bình luận'
+													className='flex-1'
+												/>
+												<Pressable
+													onPress={() =>
+														handleResponse(checkResponse.idComment)
+													}>
+													<Ionicons name='send-sharp' size={14} />
+												</Pressable>
+											</View>
+										)}
+										<View>
+											{el.responseComment.length > 0 &&
+												el.responseComment.map(e => (
+													<View key={e.id} className='mb-1 ml-[58px]'>
+														<View className='mt-2 flex-row items-center'>
+															<View className='mr-2'>
+																<Image
+																	source={
+																		e.avatar === null
+																			? avatarDefault
+																			: { uri: e?.avatar }
+																	}
+																	className='w-[50px] h-[50px] rounded-full'
+																/>
+															</View>
+															<View className='flex-1 bg-white p-1 rounded-md'>
+																<View className='gap-1'>
+																	<View className='flex-row'>
+																		<Text className='font-bold pr-2'>
+																			{e.name}
+																		</Text>
+																		{data.author.id === e.userId && (
+																			<View className='flex-row items-center gap-1'>
+																				<Entypo name='modern-mic' size={12} />
+																				<Text>Tác giả</Text>
+																			</View>
+																		)}
+																	</View>
+																	{checkUpdateResponse.idComment === e.id ? (
+																		<View className='py-[2px] bg-white rounded-md flex-row items-center px-1'>
+																			<TextInput
+																				value={checkUpdateResponse.value}
+																				onChangeText={text =>
+																					setCheckUpdateResponse(prev => ({
+																						...prev,
+																						value: text,
+																					}))
+																				}
+																				multiline
+																				placeholder='Cập nhật bình luận'
+																				className='flex-1'
+																			/>
+																			<Pressable onPress={handleUpdateResponse}>
+																				<Ionicons name='send-sharp' size={10} />
+																			</Pressable>
+																		</View>
+																	) : (
+																		<Text>{e.response}</Text>
+																	)}
+																</View>
+															</View>
+														</View>
+														<View className='ml-[58px] flex-row'>
+															{+userId === +e.userId &&
+																(checkUpdateResponse.idComment === e.id ? (
+																	<Pressable
+																		onPress={() =>
+																			setCheckUpdateResponse({
+																				idComment: null,
+																				value: null,
+																			})
+																		}
+																		className='mr-2'>
+																		<Text className='text-blue-300'>
+																			Hủy Cập nhập
+																		</Text>
+																	</Pressable>
+																) : (
+																	<Pressable
+																		onPress={() =>
+																			setCheckUpdateResponse({
+																				idComment: e.id,
+																				value: e.response,
+																			})
+																		}
+																		className='mr-2'>
+																		<Text className='text-blue-300'>
+																			Cập nhập
+																		</Text>
+																	</Pressable>
+																))}
+															{+userId === +e.userId && (
+																<Pressable
+																	onPress={() => handleDeleteResponse(e.id)}
+																	className='mr-2'>
+																	<Text className='text-red-300'>Xóa</Text>
+																</Pressable>
+															)}
+															<Text>{moment(e.createdAt).fromNow()}</Text>
+														</View>
+													</View>
+												))}
+										</View>
+									</View>
+								))}
+						</View>
+						<View className='py-2 bg-white rounded-md flex-row items-center px-3'>
+							<TextInput
+								value={content}
+								onChangeText={text => setContent(text)}
+								multiline
+								placeholder='Bình luận'
+								className='flex-1'
+							/>
+							<Pressable onPress={handleSend}>
+								<Ionicons name='send-sharp' size={14} />
+							</Pressable>
+						</View>
+					</KeyboardAwareScrollView>
 				</View>
 			</Animated.ScrollView>
 
@@ -681,7 +1081,7 @@ const DetailEvent = ({
 					<Pressable className='items-center w-[33%]'>
 						<Entypo name='chat' size={30} color='#657ef8' />
 						<Text className='text-tColor_text text-[12px] font-[500] mt-1'>
-							{data?.commentEvent?.length || '0'}
+							{data?.comments?.length || '0'}
 						</Text>
 					</Pressable>
 					<Pressable onPress={handleJoinEvent} className='items-center w-[33%]'>

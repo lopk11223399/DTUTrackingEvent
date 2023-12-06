@@ -5,3 +5,7 @@
 * {
     user-select: none;
 }
+
+#comment::-webkit-scrollbar {
+    display: none;
+}

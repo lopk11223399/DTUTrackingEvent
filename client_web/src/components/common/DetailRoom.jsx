@@ -2,6 +2,7 @@ import React, { memo, useState, useEffect, useRef } from 'react'
 import withBaseComponent from '../../hocs/withBaseComponent'
 import icons from '../../utils/icons'
 import { showModal } from '../../store/app/appSlice'
+import moment from 'moment'
 
 const { AiOutlineCloseCircle } = icons
 
@@ -58,12 +59,31 @@ function DetailRoom({ data, room, setRoom, rid, typeEvent, dispatch }) {
 						Thời gian bắt đầu:
 					</label>
 					<input
-						value={roomCurrent.timeRoom}
+						value={moment(roomCurrent.timeRoom).format('hh:mm')}
 						type='time'
 						placeholder='Topic'
 						className='text-[12px] text-[#408A7E] outline-none py-[7px] px-[15px] border border-[#408A7E] flex-1 rounded-[8px]'
 						onChange={text => {
 							setRoomCurrent(prev => ({ ...prev, timeRoom: text.target.value }))
+						}}
+					/>
+				</div>
+				<div className='flex items-center gap-[15px] w-full'>
+					<label
+						htmlFor='topic'
+						className='text-[#B3B3B3] text-[14px] font-[600] w-[120px]'>
+						Thời gian kết thúc:
+					</label>
+					<input
+						value={moment(roomCurrent.finishRoom).format('hh:mm')}
+						type='time'
+						placeholder='Topic'
+						className='text-[12px] text-[#408A7E] outline-none py-[7px] px-[15px] border border-[#408A7E] flex-1 rounded-[8px]'
+						onChange={text => {
+							setRoomCurrent(prev => ({
+								...prev,
+								finishRoom: text.target.value,
+							}))
 						}}
 					/>
 				</div>

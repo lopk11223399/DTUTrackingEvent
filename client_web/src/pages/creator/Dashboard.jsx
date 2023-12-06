@@ -111,7 +111,7 @@ function dashboard() {
 			<div className='w-full flex gap-[30px]'>
 				<div className='w-[50%] flex flex-col gap-[10px] h-[400px]'>
 					<h2 className='text-[#000] font-[600] text-[16px]'>
-						Thống kê sự kiện
+						Thống kê sự kiện theo phản hồi
 					</h2>
 					<div className='bg-white rounded-[8px] p-[30px] flex flex-col justify-center shadow-table_1 flex-1'>
 						<BarChart chartData={chartData} />
@@ -153,7 +153,7 @@ function dashboard() {
 					<h2 className='text-[#000] font-[600] text-[16px]'>
 						Danh sách thành viên tiêu biểu
 					</h2>
-					<table className='w-full bg-white rounded-[8px] flex-1 shadow-table_1'>
+					<table className='w-full bg-white rounded-[8px] shadow-table_1'>
 						<thead>
 							<tr className='text-center bg-white shadow-table_1'>
 								<td className='rounded-l-[8px] text-[14px] font-[600] text-[#B6B6B6] w-[60%] text-start pl-[15%]'>
@@ -169,8 +169,8 @@ function dashboard() {
 						</thead>
 						<tbody>
 							{dataUser?.map((el, index) => (
-								<tr className='text-center' key={index}>
-									<td className='flex items-center justify-center py-[12px]'>
+								<tr key={index}>
+									<td className='py-[12px]'>
 										<span className='flex items-center gap-[22px] px-2'>
 											<img
 												src={el.userData.avatar || avatarDefault}
@@ -182,10 +182,10 @@ function dashboard() {
 											</span>
 										</span>
 									</td>
-									<td className='text-[14px] font-[400] text-[#969696]'>
+									<td className='text-[14px] text-center font-[400] text-[#969696]'>
 										{el.eventCount}
 									</td>
-									<td className='text-[14px] font-[400] text-[#969696]'>
+									<td className='text-[14px] text-center font-[400] text-[#969696]'>
 										{el.userData.studentData.point}
 									</td>
 								</tr>

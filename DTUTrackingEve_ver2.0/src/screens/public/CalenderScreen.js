@@ -90,45 +90,28 @@ const CalenderScreen = ({ navigation: { setOptions, navigate }, layout }) => {
 	const { current } = useSelector(state => state.user)
 	const [selected, setSelected] = useState(moment().format('YYYY-MM-DD'))
 	const [eventDay, setEventDay] = useState([])
-	const [currentPage, setCurrentPage] = useState(1)
-	const [isLoading, setIsLoading] = useState(false)
-	const [count, setCount] = useState(0)
+	// const [currentPage, setCurrentPage] = useState(1)
+	// const [isLoading, setIsLoading] = useState(false)
+	// const [count, setCount] = useState(0)
 
 	const fetchEventDay = async () => {
-		setIsLoading(true)
+		// setIsLoading(true)
 
 		const response = await apiGetEvents({
 			limit: 50,
-			page: currentPage,
+			page: 1,
 			date: selected,
 		})
 
 		if (response.success === true) {
-			setCount(response.count)
-			setEventDay([...eventDay, ...response.response])
+			// setCount(response.count)
+			setEventDay(response.response)
 		}
 	}
 
 	useEffect(() => {
-		const fetchFirst = async () => {
-			const response = await apiGetEvents({
-				limit: 5,
-				page: 1,
-				date: selected,
-			})
-
-			if (response.success === true) {
-				setCount(response.count)
-				setEventDay(response.response)
-			}
-		}
-
-		fetchFirst()
-	}, [])
-
-	useEffect(() => {
 		fetchEventDay()
-	}, [selected, currentPage])
+	}, [selected])
 
 	useLayoutEffect(() => {
 		setOptions({
@@ -142,18 +125,6 @@ const CalenderScreen = ({ navigation: { setOptions, navigate }, layout }) => {
 			headerTitle: 'Lịch Sự Kiện',
 		})
 	}, [theme])
-
-	const renderLoader = () => {
-		return isLoading ? (
-			<View className='mt-1'>
-				<ActivityIndicator size={'small'} color={'#62a2f8'} />
-			</View>
-		) : null
-	}
-
-	const loadMoreItem = () => {
-		setCurrentPage(currentPage + 1)
-	}
 
 	return (
 		<SafeAreaView
@@ -200,9 +171,6 @@ const CalenderScreen = ({ navigation: { setOptions, navigate }, layout }) => {
 						/>
 					)}
 					keyExtractor={(item, index) => index.toString()}
-					// ListFooterComponent={renderLoader}
-					// onEndReached={loadMoreItem}
-					// onEndReachedThreshold={0}
 				/>
 			) : (
 				<View

@@ -3,6 +3,7 @@ import React from 'react'
 import clsx from 'clsx'
 import { useSelector } from 'react-redux'
 import withBaseComponent from '../../hocs/withBaseComponent'
+import moment from 'moment/moment'
 
 const RoomChoose = ({ item, handleJoinEvent, Ionicons, setModalVisible }) => {
 	const { theme } = useSelector(state => state.app)
@@ -34,7 +35,7 @@ const RoomChoose = ({ item, handleJoinEvent, Ionicons, setModalVisible }) => {
 									key={el.id}
 									className={clsx(
 										'mb-3 gap-1 bg-backgroundColor_secondary_light p-2 rounded-md flex-row items-center justify-between',
-										item.onlineEvent.length - 1 === index && 'mb-0',
+										item.onlineEvent?.length - 1 === index && 'mb-0',
 										theme === 'light' && 'bg-backgroundColor_secondary_light',
 										(theme === 'dark' || theme === 'dark-default') &&
 											'bg-backgroundColor_secondary_dark',
@@ -75,8 +76,8 @@ const RoomChoose = ({ item, handleJoinEvent, Ionicons, setModalVisible }) => {
 									onPress={() => handleJoinEvent(item, el)}
 									key={el.id}
 									className={clsx(
-										'mb-3 gap-1 bg-backgroundColor_secondary_light p-2 rounded-md',
-										item.onlineEvent.length - 1 === index && 'mb-0',
+										'mb-3 gap-1 bg-backgroundColor_secondary_light p-2 rounded-md flex-row items-center justify-between',
+										item.onlineEvent?.length - 1 === index && 'mb-0',
 										theme === 'light' && 'bg-backgroundColor_secondary_light',
 										(theme === 'dark' || theme === 'dark-default') &&
 											'bg-backgroundColor_secondary_dark',
@@ -93,7 +94,8 @@ const RoomChoose = ({ item, handleJoinEvent, Ionicons, setModalVisible }) => {
 												Thời gian bắt đầu:{' '}
 											</Text>
 											<Text className='textColor_main_light'>
-												{el.timeRoom}
+												{moment(el.timeRoom).format('hh:mm a')} -{' '}
+												{moment(el.finishRoom).format('hh:mm a')}
 											</Text>
 										</View>
 										<View className='flex-row items-center'>
