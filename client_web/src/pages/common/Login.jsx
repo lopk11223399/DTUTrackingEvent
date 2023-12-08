@@ -7,7 +7,12 @@ import Swal from "sweetalert2";
 import { BiShow, BiHide } from "react-icons/bi";
 import rightSide from "../../assets/img/right_side.png";
 import clsx from "clsx";
-
+import img from "../../assets/img/img-01.png";
+import { Tilt } from "react-tilt";
+import { MdEmail } from "react-icons/md";
+import { FaLock, FaUser } from "react-icons/fa";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 function Login({ navigate, dispatch }) {
   const [error, setError] = useState({
     usernameErr: null,
@@ -59,90 +64,100 @@ function Login({ navigate, dispatch }) {
   };
 
   return (
-    <div className="w-screen h-screen relative bg-[#F5F5F5] flex">
-      <div className="w-[50%] flex items-center justify-center">
-        <div className="w-[477px] flex flex-col items-center">
-          <div>
-            <h1 className="text-[#09090B] text-[40px] font-[400]">
-              Đăng nhập vào tài khoản của bạn
-            </h1>
-            <p className="text-[#71717A] text-[20px] font-[400]">
-              Chào mừng trở lại!{" "}
-              <span className="text-red-600 font-bold">DTU</span>{" "}
-              <span className="text-main font-[400]">
-                Event Tracking Application
-              </span>
-            </p>
-          </div>
-
-          <div className="flex flex-col w-full mt-[25px]">
-            <input
-              value={payload.username}
-              id="username"
-              onChange={(text) => {
-                setError((prev) => ({ ...prev, usernameErr: null }));
-                setPayload((prev) => ({
-                  ...prev,
-                  username: text.target.value,
-                }));
-              }}
-              placeholder="Tên tài khoản"
-              type="text"
-              className={clsx(
-                "rounded-[10px] border-2 border-[#8098f9] px-[10px] py-[17px] text-[#2d31a6] text-[18px] font-[400] placeholder:text-gray-400 outline-none",
-                error?.usernameErr && "border-red-400"
-              )}
-            />
-            {error?.usernameErr !== null && (
-              <small className="mt-[2px] text-red-400 text-[16px]">
-                {error?.usernameErr}
-              </small>
-            )}
-          </div>
-
-          <div className="flex flex-col w-full mt-[25px]">
-            <div
-              className={clsx(
-                "rounded-[10px] border-2 border-[#8098f9] px-[10px] py-[17px] flex items-center",
-                error?.passwordErr && "border-red-400"
-              )}
-            >
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                value={payload.password}
-                onChange={(text) => {
-                  setError((prev) => ({ ...prev, passwordErr: null }));
-                  setPayload((prev) => ({
-                    ...prev,
-                    password: text.target.value,
-                  }));
-                }}
-                placeholder="Mật khẩu"
-                className="text-[#2d31a6] text-[18px] font-[400] placeholder:text-gray-400 flex-1 bg-transparent outline-none"
-              />
-              <div onClick={toggleShowPassword} className="cursor-pointer">
-                {showPassword ? <BiShow size={24} /> : <BiHide size={24} />}
-              </div>
+    <div className="w-full my-0 mx-auto">
+      <div className="w-full min-h-screen flex flex-wrap justify-center items-center p-[15px] bg-gradient-to-tl from-green-600 to-indigo-600">
+        <div className="w-[960px] bg-white rounded-lg overflow-hidden flex flex-wrap justify-between pt-[100px] pr-[130px] pb-[33px] pl-[95px]">
+          <Tilt options={{ scale: 1.2 }}>
+            <div className="w-[316px] h-[400px]">
+              <img className="max-w-full" src={img} alt="IMG" />
             </div>
-            {error?.passwordErr !== null && (
-              <small className="mt-[2px] text-red-400 text-[16px]">
-                {error?.passwordErr}
-              </small>
-            )}
-          </div>
+          </Tilt>
 
-          <div
-            onClick={handleLogin}
-            className="mt-[25px] cursor-pointer p-[20px] w-full flex justify-center items-center bg-[#8098F9] rounded-[10px] text-[#fff] text-[20px] font-[700]"
-          >
-            ĐĂNG NHẬP
-          </div>
+          <form className="w-[294px] pt-[20px]">
+            <span className="font-bold uppercase text-[24px] text-gray-800 leading-6 text-center w-full block pb-54">
+              Đăng nhập
+            </span>
+            <div className="flex flex-col w-full mt-[25px] ">
+              <div
+                className={clsx(
+                  "rounded-[10px] flex items-center border-2 border-[#408A7E] px-[6px] py-[6px] text-[#2e6b61] text-[18px] font-[400] placeholder:text-gray-400 outline-none",
+                  error?.usernameErr && "border-red-400"
+                )}
+              >
+                <FaUser className=" mr-2"></FaUser>
+                <input
+                  value={payload.username}
+                  id="username"
+                  onChange={(text) => {
+                    setError((prev) => ({ ...prev, usernameErr: null }));
+                    setPayload((prev) => ({
+                      ...prev,
+                      username: text.target.value,
+                    }));
+                  }}
+                  placeholder="Tên tài khoản..."
+                  type="text"
+                  className=" outline-none bg-white"
+                />
+              </div>
+              {error?.usernameErr !== null && (
+                <small className="mt-[2px] text-red-400 text-[16px]">
+                  {error?.usernameErr}
+                </small>
+              )}
+            </div>
+            <div className="flex flex-col w-full mt-[25px]">
+              <div
+                className={clsx(
+                  "rounded-[10px] border-2 border-[#408A7E] text-[#2e6b61] px-[6px] py-[6px] flex items-center",
+                  error?.passwordErr && "border-red-400"
+                )}
+              >
+                <FaLock className="mr-2 "></FaLock>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  value={payload.password}
+                  onChange={(text) => {
+                    setError((prev) => ({ ...prev, passwordErr: null }));
+                    setPayload((prev) => ({
+                      ...prev,
+                      password: text.target.value,
+                    }));
+                  }}
+                  placeholder="Mật khẩu..."
+                  className="text-[#2e6b61] text-[18px] font-[400] placeholder:text-gray-400 flex-1 bg-transparent outline-none"
+                />
+                <div onClick={toggleShowPassword} className="cursor-pointer">
+                  {showPassword ? <BiShow size={24} /> : <BiHide size={24} />}
+                </div>
+              </div>
+              {error?.passwordErr !== null && (
+                <small className="mt-[2px] text-red-400 text-[16px]">
+                  {error?.passwordErr}
+                </small>
+              )}
+            </div>
+            <div
+              onClick={handleLogin}
+              className="mt-[25px] cursor-pointer p-[6px] w-full flex justify-center items-center bg-[#408A7E] rounded-[10px] text-[#fff] text-[20px] font-[700] hover:bg-[#777]"
+            >
+              ĐĂNG NHẬP
+            </div>
+            <div className="text-center text-[15px] pt-[12px] text-[#2e6b61] uppercase hover:underline cursor-pointer">
+              <Link to="/forgot">quên mật khẩu?</Link>
+            </div>
+
+            <div className="text-center pt-[136px]">
+              <a className="txt2" href="#">
+                <i
+                  className="fa fa-long-arrow-right m-l-5"
+                  aria-hidden="true"
+                ></i>
+              </a>
+            </div>
+          </form>
         </div>
-      </div>
-
-      <div className="w-[50%] bg-main">
-        <img src={rightSide} alt="" className="w-full h-full object-contain" />
       </div>
     </div>
   );

@@ -122,13 +122,7 @@ const Chart = () => {
   const options = {
     plugins: {
       legend: false,
-    },
-    scales: {
-      x: {
-        grid: {
-          display: false,
-        },
-      },
+      maintainAspectRatio: false,
     },
   };
   //console.log(userData);
@@ -156,8 +150,8 @@ const Chart = () => {
           </div>
         </div>
         <div className="basis-[55%] flex justify-center items-center mr-4 bg-[#fff]    shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-lg h-[300px] ">
-          <div className="w-full px-4">
-            <Bar className="" data={dataChart} options={options}></Bar>
+          <div className="w-full">
+            <Bar className="p-5" data={dataChart} options={options}></Bar>
           </div>
         </div>
       </div>
@@ -169,7 +163,7 @@ const Chart = () => {
             </h2>
           </div>
           <div className="flex justify-center items-center bg-[#fff] shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-lg p-4 ">
-            <div className="w-full h-full">
+            <div className="w-full h-full ">
               <Bar data={dataChart1} options={options}></Bar>
             </div>
           </div>
