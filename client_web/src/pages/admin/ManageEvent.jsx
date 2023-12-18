@@ -466,10 +466,7 @@ function ManageEvent({ navigate, location }) {
                 Ngày tạo
               </td>
               <td className="w-[10%] text-[14px] font-[700]  text-center">
-                Duyệt
-              </td>
-              <td className="w-[10%] text-[14px] font-[700]  text-center">
-                Không duyệt
+                Phê duyệt
               </td>
             </tr>
           </thead>
@@ -529,47 +526,66 @@ function ManageEvent({ navigate, location }) {
                   <td className="w-[10%] text-center">
                     {moment(event.createdAt).fromNow()}
                   </td>
-                  <td onClick={(e) => e.stopPropagation()} className="w-[10%]">
-                    {event.status === 1 || event.status === 5 ? (
-                      <span
-                        onClick={() =>
-                          handleAcceptEvent(event.id, event.status, event.title)
-                        }
-                        className="cursor-pointer flex items-center justify-center text-[#B3B3B3] hover:text-[#408A7E]"
-                      >
-                        <AiOutlineCheckSquare size={22} />
-                      </span>
-                    ) : (
-                      <span
-                        onClick={() =>
-                          handleAcceptEvent(event.id, event.status, event.title)
-                        }
-                        className="cursor-pointer flex items-center justify-center text-[#408A7E]"
-                      >
-                        <AiFillCheckSquare size={22} />
-                      </span>
-                    )}
-                  </td>
-                  <td onClick={(e) => e.stopPropagation()} className="w-[10%]">
-                    {event.status === 5 ? (
-                      <span
-                        onClick={() =>
-                          handleCloseEvent(event.id, event.status, event.title)
-                        }
-                        className="cursor-pointer flex items-center justify-center text-red-600"
-                      >
-                        <AiFillCloseSquare size={22} />
-                      </span>
-                    ) : (
-                      <span
-                        onClick={() =>
-                          handleCloseEvent(event.id, event.status, event.title)
-                        }
-                        className="cursor-pointer flex items-center justify-center text-[#B3B3B3] hover:text-red-600"
-                      >
-                        <AiOutlineCloseSquare size={22} />
-                      </span>
-                    )}
+                  <td
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-[10%]  "
+                  >
+                    <div className="flex gap-4 justify-center">
+                      {event.status === 1 || event.status === 5 ? (
+                        <span
+                          onClick={() =>
+                            handleAcceptEvent(
+                              event.id,
+                              event.status,
+                              event.title
+                            )
+                          }
+                          className="cursor-pointer flex items-center justify-center text-[#B3B3B3] hover:text-[#408A7E]"
+                        >
+                          <AiOutlineCheckSquare size={22} />
+                        </span>
+                      ) : (
+                        <span
+                          onClick={() =>
+                            handleAcceptEvent(
+                              event.id,
+                              event.status,
+                              event.title
+                            )
+                          }
+                          className="cursor-pointer flex items-center justify-center text-[#408A7E]"
+                        >
+                          <AiFillCheckSquare size={22} />
+                        </span>
+                      )}
+                      {event.status === 5 ? (
+                        <span
+                          onClick={() =>
+                            handleCloseEvent(
+                              event.id,
+                              event.status,
+                              event.title
+                            )
+                          }
+                          className="cursor-pointer flex items-center justify-center text-red-600"
+                        >
+                          <AiFillCloseSquare size={22} />
+                        </span>
+                      ) : (
+                        <span
+                          onClick={() =>
+                            handleCloseEvent(
+                              event.id,
+                              event.status,
+                              event.title
+                            )
+                          }
+                          className="cursor-pointer flex items-center justify-center text-[#B3B3B3] hover:text-red-600"
+                        >
+                          <AiOutlineCloseSquare size={22} />
+                        </span>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
