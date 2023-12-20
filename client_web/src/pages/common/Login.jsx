@@ -5,13 +5,13 @@ import { pathAdmin, pathCreator } from "../../utils/path";
 import { login } from "../../store/user/userSlice";
 import Swal from "sweetalert2";
 import { BiShow, BiHide } from "react-icons/bi";
-import rightSide from "../../assets/img/right_side.png";
+
 import clsx from "clsx";
 import img from "../../assets/img/img-01.png";
 import { Tilt } from "react-tilt";
-import { MdEmail } from "react-icons/md";
+
 import { FaLock, FaUser } from "react-icons/fa";
-import { motion } from "framer-motion";
+
 import { Link } from "react-router-dom";
 function Login({ navigate, dispatch }) {
   const [error, setError] = useState({
