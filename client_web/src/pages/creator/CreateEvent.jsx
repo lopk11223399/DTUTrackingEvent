@@ -79,21 +79,27 @@ function CreateEvent({ dispatch, location, navigate }) {
 				image: location.state?.data.image,
 			}))
 			if (location.state?.data.typeEvent) {
-				const newArr = location.state.data.onlineEvent?.map(el => ({
-					topic: el.roomId,
-					timeRoom: el.timeRoom,
-					finishRoom: el.finishRoom,
-					linkRoomUrl: el.linkRoomUrl,
-				}))
+				const newArr =
+					location.state.data.onlineEvent?.length > 0
+						? location.state.data.onlineEvent?.map(el => ({
+								topic: el.roomId,
+								timeRoom: el.timeRoom,
+								finishRoom: el.finishRoom,
+								linkRoomUrl: el.linkRoomUrl,
+						  }))
+						: []
 
 				setRoom(newArr)
 			} else {
-				const newArr = location.state.data.offlineEvent?.map(el => ({
-					topic: el.roomId,
-					timeRoom: el.timeRoom,
-					finishRoom: el.finishRoom,
-					numberRoom: el.numberRoom,
-				}))
+				const newArr =
+					location.state.data.offlineEvent?.length > 0
+						? location.state.data.offlineEvent?.map(el => ({
+								topic: el.roomId,
+								timeRoom: el.timeRoom,
+								finishRoom: el.finishRoom,
+								numberRoom: el.numberRoom,
+						  }))
+						: []
 
 				setRoom(newArr)
 			}
@@ -157,7 +163,7 @@ function CreateEvent({ dispatch, location, navigate }) {
 	const handleUpdate = eid => {
 		const formData = new FormData()
 
-		if (payload.title.length < 0 || payload.title === '')
+		if (payload.title?.length < 0 || payload.title === '')
 			return setError(prev => ({
 				...prev,
 				tittleErr: 'Tiêu đề không được để trống',
@@ -277,7 +283,7 @@ function CreateEvent({ dispatch, location, navigate }) {
 	const handleSubmit = async () => {
 		const formData = new FormData()
 
-		if (payload.title.length < 0 || payload.title === '')
+		if (payload.title?.length < 0 || payload?.title === '')
 			return setError(prev => ({
 				...prev,
 				tittleErr: 'Tiêu đề không được để trống',
@@ -486,7 +492,7 @@ function CreateEvent({ dispatch, location, navigate }) {
 								value={payload.title}
 								onChange={text => {
 									setPayload(prev => ({ ...prev, title: text.target.value }))
-									if (payload.title.length < 7)
+									if (payload.title?.length < 7)
 										setError(prev => ({
 											...prev,
 											tittleErr: 'Phải nhập ít nhất 8 ký tự',
@@ -896,7 +902,7 @@ function CreateEvent({ dispatch, location, navigate }) {
 								...prev,
 								description: text.target.value,
 							}))
-							if (payload.description.length < 7)
+							if (payload.description?.length < 7)
 								setError(prev => ({
 									...prev,
 									descriptionErr: 'Phải nhập ít nhất 8 ký tự',
@@ -931,7 +937,7 @@ function CreateEvent({ dispatch, location, navigate }) {
 							className='text-[#408A7E] text-[14px] font-[400] px-[25px] py-[7px] border border-[#408A7E] rounded-[8px] cursor-pointer hover:bg-[#408A7E] hover:text-white'>
 							Thêm room
 						</div>
-						{room.length > 0 && (
+						{room?.length > 0 && (
 							<div
 								onClick={() => setRoom([])}
 								className='text-[#408A7E] text-[14px] font-[400] px-[25px] py-[7px] border border-[#408A7E] rounded-[8px] cursor-pointer hover:bg-[#408A7E] hover:text-white'>
@@ -942,9 +948,9 @@ function CreateEvent({ dispatch, location, navigate }) {
 					<div
 						className={clsx(
 							'border border-[#408A7E] rounded-[8px] p-[12px] flex flex-wrap gap-4',
-							room.length === 0 && 'h-[164px]',
+							room?.length === 0 && 'h-[164px]',
 						)}>
-						{room.length > 0 &&
+						{room?.length > 0 &&
 							room?.map((el, id) => (
 								<div
 									key={id}
