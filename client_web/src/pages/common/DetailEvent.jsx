@@ -8,7 +8,7 @@ import { showModal } from "../../store/app/appSlice";
 import { CommentModal } from "../../components";
 import { useSelector } from "react-redux";
 import { CSVLink } from "react-csv";
-import ShowMoreText from "react-show-more-text";
+
 const { AiOutlineRollback, TfiImport, BsChatRightTextFill } = icons;
 
 function DetailEvent({ navigate, dispatch }) {
@@ -301,46 +301,6 @@ function DetailEvent({ navigate, dispatch }) {
               ))}
             </div>
           )}
-        </div>
-      </div>
-      <div>
-        <span className="font-bold text-2xl text-[#418A7E] ">Bình luận</span>
-        <div className="flex mt-4">
-          <div className="mr-4 w-12 h-12">
-            <img
-              className="w-12 h-12 rounded-full object-cover"
-              src="https://vnn-imgs-f.vgcloud.vn/2020/07/14/10/honda-dream-viet-12-nam-tuoi-bien-so-vip-2.jpg"
-              alt=""
-            />
-          </div>
-          <div className="max-w-[calc(100%-70px)]">
-            <div className="flex items-center">
-              <span className="block font-semibold text-[#418A7E]">
-                Nguyễn Đình lợi
-              </span>
-            </div>
-            <ShowMoreText
-              lines={3}
-              more={<span className=" font-medium">Xem thêm</span>}
-              less={<span className=" font-medium">Ẩn bớt</span>}
-              anchorClass=""
-              onClick={() => {}}
-            >
-              <h2 className=" ">
-                gian với chương trình Gemini 8. Liên Xô muốn chứng minh họ có
-                thể làm được điều đó với cấp độ khó hơn. Nhiệm vụ Liên Xô đề ra
-                năm 1967 là họ sẽ phóng tàu Soyuz-1 chở Komarov lên không gian.
-                Ngày hôm sau, tàu Soyuz-2 chở theo hai phi hành gia khác sẽ được
-                phóng. Khi hai phương tiện kết nối, Komarov thực hiện cuộc đi bộ
-                ngoài không gian để đổi chỗ với một đồng nghiệp và trở về Trái
-                Đất trên tàu Soyuz-2. Các nhà thiết kế tàu vũ trụ Liên Xô gấp
-                rút chuẩn bị cho việc phóng Soyuz-1 và Soyuz-2, dù nhà thiết kế
-                hàng đầu Sergei Korolev đã qua đời vào năm 1966. Theo trang
-                Russia Beyond, dự án do hãng thông tấn nhà nước Nga RIA Novosti
-                thành lập, sự vội vã đã dẫn đến bi kịch.
-              </h2>
-            </ShowMoreText>
-          </div>
         </div>
       </div>
     </div>
