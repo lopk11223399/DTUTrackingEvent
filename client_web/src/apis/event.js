@@ -29,7 +29,7 @@ export const apiUpdateStatus = (eid, data) =>
 
 export const apiGetChart = (params) =>
   axios({
-    url: "/statistic",
+    url: "/statistic/increment-event",
     method: "get",
     params,
   });
@@ -56,6 +56,12 @@ export const apiUpdateEvent = (eid, data) =>
 export const apiGetChartfaculty = (params) =>
   axios({
     url: "/statistic/by-faculty/:eventId",
+    method: "get",
+    params,
+  });
+export const apiGetUser = (params) =>
+  axios({
+    url: "/statistic/increment-user",
     method: "get",
     params,
   });
