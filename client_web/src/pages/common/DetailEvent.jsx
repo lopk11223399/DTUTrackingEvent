@@ -8,8 +8,7 @@ import { showModal } from "../../store/app/appSlice";
 import { CommentModal } from "../../components";
 import { useSelector } from "react-redux";
 import { CSVLink } from "react-csv";
-import ShowMoreText from "react-show-more-text";
-import { IoNotifications } from "react-icons/io5";
+
 const { AiOutlineRollback, TfiImport, BsChatRightTextFill } = icons;
 
 function DetailEvent({ navigate, dispatch }) {
@@ -79,50 +78,46 @@ function DetailEvent({ navigate, dispatch }) {
           </span>
           <span className="text-[18px] font-[600]">Quay lại</span>
         </div>
-        <div className="flex items-center gap-[6px]">
-          {/* <div className="flex items-center gap-[14px] py-[6px] px-[20px] cursor-pointer border border-[#408A7E] rounded-[4px] bg-[#408A7E] hover:bg-white hover:text-[#408A7E] text-white">
-            <span>
-              <IoNotifications size={16} />
-            </span>
-            <span className="text-[14px] font-[400]">Thông báo</span>
-          </div> */}
-          <div
-            onClick={() =>
-              dispatch(
-                showModal({
-                  isShowModal: true,
-                  modalChildren: (
-                    <CommentModal data={data} eid={eid} render={render} />
-                  ),
-                })
-              )
-            }
-            className="flex items-center gap-[14px] py-[6px] px-[24px] cursor-pointer border border-[#408A7E] rounded-[4px] bg-[#408A7E]  hover:bg-white hover:text-[#408A7E] text-white"
-          >
-            <span>
-              <BsChatRightTextFill size={14} />
-            </span>
-            <span className="text-[14px] font-[400]">Bình luận</span>
+        {current.roleId === 2 && (
+          <div className="flex items-center gap-[6px]">
+            <div
+              onClick={() =>
+                dispatch(
+                  showModal({
+                    isShowModal: true,
+                    modalChildren: (
+                      <CommentModal data={data} eid={eid} render={render} />
+                    ),
+                  })
+                )
+              }
+              className="flex items-center gap-[14px] py-[6px] px-[24px] cursor-pointer border border-[#408A7E] rounded-[4px] bg-[#408A7E] text-white"
+            >
+              <span>
+                <BsChatRightTextFill size={14} />
+              </span>
+              <span className="text-[14px] font-[400]">Bình luận</span>
+            </div>
+            <div
+              onClick={handleDownloadCSV}
+              className="flex items-center gap-[14px] py-[6px] px-[24px] text-[#408A7E] bg-white border border-[#408A7E] cursor-pointer rounded-[4px] hover:bg-[#408A7E] hover:text-white"
+            >
+              <span className="text-[14px] font-[400]">
+                Dach sách người tham gia
+              </span>
+              <span>
+                <TfiImport size={16} />
+              </span>
+              <span className="hidden">
+                <CSVLink
+                  id="csv"
+                  filename={"DanhSachNguoiThamGia.csv"}
+                  data={dataCSV}
+                />
+              </span>
+            </div>
           </div>
-          <div
-            onClick={handleDownloadCSV}
-            className="flex items-center gap-[14px] py-[6px] px-[24px] text-white bg-[#408A7E] border border-[#408A7E] cursor-pointer rounded-[4px]  hover:bg-white hover:text-[#408A7E]"
-          >
-            <span className="text-[14px] font-[400]">
-              Dach sách người tham gia
-            </span>
-            <span>
-              <TfiImport size={16} />
-            </span>
-            <span className="hidden">
-              <CSVLink
-                id="csv"
-                filename={"DanhSachNguoiThamGia.csv"}
-                data={dataCSV}
-              />
-            </span>
-          </div>
-        </div>
+        )}
       </div>
       <div className="w-full flex items-center">
         <div className="w-[50%] flex items-center gap-[32px]">
@@ -162,7 +157,7 @@ function DetailEvent({ navigate, dispatch }) {
               {data?.limitParticipant}
             </p>
             <p className="text-[#B3B3B3] text-[14px] font-[400]">
-              Giới hạn người tham gia
+              Tổng số người tham gia
             </p>
           </div>
         </div>
