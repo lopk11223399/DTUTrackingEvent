@@ -16,6 +16,7 @@ import {
   apiGetChart,
   apiGetEvents,
   apiGetFivePeopleHot,
+  apiGetUser,
   apiGettotalRateOfAuthor,
   apiUser,
   facultyChart,
@@ -71,6 +72,8 @@ const data1 = {
 const Chart = () => {
   const [data, setData] = useState([]);
   const [event, setEvent] = useState([]);
+  const [chartUser, setChartUser] = useState([]);
+  const [user, setUser] = useState([]);
   const [dataFaculty, setDataFaculty] = useState([]);
   const [typeEvent, setTypeEvent] = useState([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -91,11 +94,15 @@ const Chart = () => {
     const response = await typeEventChart();
     if (response.success) setTypeEvent(response.response);
   };
-
+  const fetchGetUser = async () => {
+    const response = await apiGetUser({ year: 2023, month: 1 });
+    if (response.success) setUser(response.response);
+  };
   const fetch5PeopleHot = async () => {
     const response = await apiGetFivePeopleHot();
     if (response.success) setDataUser(response.response);
   };
+  console.log(dataUser);
   const fetchTotalRating = async () => {
     const response = await apiGettotalRateOfAuthor();
     if (response.success) {
@@ -143,20 +150,45 @@ const Chart = () => {
       setEvent(response.response);
     }
   };
-
+  const fetchGetChartUser = async () => {
+    const response = await apiGetUser();
+    if (response.success) setChartUser(response.response);
+  };
   useEffect(() => {
     const fetchData = async () => {
-      const response = await apiGetChart({ year: selectedYear });
+      const response = await apiGetChart({ month: "selectedYear" });
       if (response.success) {
-        setData(response.response);
+        const month = [];
+        for (let i = 1; i <= 12; i++) {
+          if (response.response.some((item) => item?.month === i)) {
+            month.push(response.response.find((item) => item?.month === i));
+          } else month.push({ month: i, eventCount: 0 });
+        }
+        console.log(month);
+        setData(month);
       }
     };
+    const fetchGetChartUser = async () => {
+      const response = await apiGetUser({ month: "selectedYear" });
+      if (response.success) {
+        const month = [];
+        for (let i = 1; i <= 12; i++) {
+          if (response.response.some((item) => item?.month === i)) {
+            month.push(response.response.find((item) => item?.month === i));
+          } else month.push({ month: i, userCount: 0 });
+        }
+        console.log(month);
+        setChartUser(month);
+      }
+    };
+    fetchGetChartUser();
     fetchEvent();
     fetchData();
     fetch5PeopleHot();
     fetchTotalRating();
     fetchfacultyChart();
     fetchTypeEvent();
+    fetchGetUser();
   }, [selectedYear]);
 
   const typeEventData = {
@@ -176,26 +208,36 @@ const Chart = () => {
     labels: data.map((month) => `Tháng ${month.month}`),
     datasets: [
       {
-        fill: true,
         label: "Sự kiện theo tháng",
-        data: data.map((total) => total.totalEvent),
+        data: data.map((total) => total.eventCount),
         borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.8)",
       },
     ],
   };
-  const options1 = {
-    plugins: {
-      legend: {
-        position: "bottom",
+  const dataChart1 = {
+    labels: chartUser.map((month) => `Tháng ${month.month}`),
+    datasets: [
+      {
+        label: "Sự kiện theo tháng",
+        data: chartUser.map((total) => total.userCount),
+        borderColor: "#33CC66",
+        backgroundColor: "rgba(51, 204, 102, 0.8)",
       },
+    ],
+  };
+  const options1 = {
+    maintainAspectRatio: false,
+    plugins: {
+      maintainAspectRatio: false,
+      legend: false,
     },
   };
 
   const options = {
     plugins: {
-      legend: false,
       maintainAspectRatio: false,
+      legend: false,
     },
     scales: {
       y: {
@@ -207,7 +249,7 @@ const Chart = () => {
   return (
     <div className="pb-6 overflow-auto h-screen">
       <h1 className=" uppercase font-[500] text-[#408A7E] text-3xl mb-1 p-4">
-        dasnhboard
+        dashboard
       </h1>
       <div className="grid grid-cols-5 gap-[14px] px-4 mt-[25px] pb-[15px]">
         <div className=" h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#4E73DF] flex items-center justify-between px-[16px] cursor-pointer hover:shadow-lg transform hover:scale-[103%] transition duration-300 ease-out">
@@ -274,56 +316,72 @@ const Chart = () => {
         </div>
         <div className="basis-[50%]">
           <h1 className="pl-2 pt-4 font-bold text-[20px] text-[#408A7E] mb-2">
-            Tổng sự kiện theo tháng
+            Tổng sự kiện
           </h1>
         </div>
       </div>
-      <div className="flex ">
-        <div className="basis-[50%] ml-4 mr-4 bg-[#fff] p-2   shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-lg h-[300px]">
+      <div className="flex">
+        <div className="basis-[50%] ml-4 flex justify-center items-center mr-4 bg-[#fff] shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-lg h-auto">
           <div className="w-full h-full">
-            <Pie data={data1} options={{ maintainAspectRatio: false }}></Pie>
+            <Line className="p-2" data={dataChart1} options={options}></Line>
           </div>
         </div>
-        <div className="basis-[50%] flex-col justify-center items-center mr-4 bg-[#fff] shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-lg h-[300px] ">
-          <div className="flex justify-end pt-2 px-[26px]">
-            <div>
-              <label className="text-[#408A7E] font-semibold" htmlFor="">
-                Chọn năm:
-              </label>
-              <select
-                className=" outline-none border rounded ml-1 "
-                name=""
-                id=""
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value)}
-              >
-                <option value="2023">Năm 2023</option>
-                <option value="2022">Năm 2022</option>
-                <option value="2021">Năm 2021</option>
-                <option value="2020">Năm 2020</option>
-              </select>
-            </div>
-          </div>
-          <div className="w-full ">
-            <Line
-              className="px-4 pb-5"
-              data={dataChart}
-              options={options}
-            ></Line>
+        <div className="basis-[50%] flex justify-center items-center mr-4 bg-[#fff] shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-lg h-auto">
+          <div className="w-full h-full">
+            <Line className="p-2" data={dataChart} options={options}></Line>
           </div>
         </div>
       </div>
-
+      <div className="">
+        <div className="flex mt-8">
+          <div className="basis-[65%] flex">
+            <h1 className="pl-4  font-bold text-[20px] text-[#408A7E] mb-2">
+              Tổng người dùng theo khoa
+            </h1>
+          </div>
+          <div className="basis-[35%]">
+            <h1 className="  font-bold text-[20px] text-[#408A7E] mb-2">
+              Loại sự kiện
+            </h1>
+          </div>
+        </div>
+        <div className="flex ">
+          <div className="basis-[65%] ml-4 flex justify-center items-center mr-4 bg-[#fff] shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-lg h-[350px] ">
+            <div className="w-full h-full">
+              <Bar
+                className="px-5 pt-2 pb-4"
+                data={data1}
+                options={{ maintainAspectRatio: false }}
+              ></Bar>
+            </div>
+          </div>
+          <div className="basis-[35%] mr-4  bg-[#fff] p-2   shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-lg h-[350px]">
+            <div>
+              <span className="h-[10%]  font-medium pl-2">Tổng sự kiện:</span>
+              <span className="pl-1">{event.length}</span>
+            </div>
+            <div className="w-full h-[90%] flex justify-center items-center">
+              <Doughnut
+                data={typeEventData}
+                options={{ maintainAspectRatio: false }}
+              ></Doughnut>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="w-full flex gap-[30px] px-4 py-7">
-        <div className="w-[65%] flex flex-col gap-[10px] h-[400px]">
+        <div className="w-[100%] flex flex-col gap-[10px] h-[400px]">
           <h1 className="font-bold text-[20px] text-[#408A7E]">
             Danh sách thành viên tiêu biểu
           </h1>
           <table className="w-full bg-white rounded-[8px] shadow-table_1">
             <thead>
               <tr className="text-center bg-white shadow-table_1">
-                <td className="rounded-l-[8px] text-[14px] font-[600] text-[#B6B6B6] w-[60%] text-start pl-[24px]">
+                <td className="rounded-l-[8px] text-[14px] font-[600] text-[#B6B6B6] w-[40%] text-start pl-[24px]">
                   Tên
+                </td>
+                <td className="py-[12px] text-[14px] font-[600] text-[#B6B6B6] w-[20%]">
+                  Khoa
                 </td>
                 <td className="py-[12px] text-[14px] font-[600] text-[#B6B6B6] w-[20%]">
                   Đã tham gia
@@ -349,6 +407,9 @@ const Chart = () => {
                     </span>
                   </td>
                   <td className="text-[14px] text-center font-[400] text-[#969696]">
+                    {el.facultyData.nameFaculty}
+                  </td>
+                  <td className="text-[14px] text-center font-[400] text-[#969696]">
                     {el.eventCount}
                   </td>
                   <td className="text-[14px] text-center font-[400] text-[#969696]">
@@ -358,50 +419,6 @@ const Chart = () => {
               ))}
             </tbody>
           </table>
-        </div>
-        <div className="w-[35%] flex flex-col gap-[10px] h-[400px]">
-          <h1 className="font-bold text-[20px] text-[#408A7E]">Loại sự kiện</h1>
-          <div className="bg-white rounded-[8px] py-2 px-2 flex flex-col justify-center shadow-table_1 flex-1">
-            <div>
-              <span className="h-[10%]  font-medium pl-2">Tổng sự kiện:</span>
-              <span className="pl-1">{event.length}</span>
-            </div>
-            <div className="w-full h-[90%]">
-              <Doughnut
-                data={typeEventData}
-                options={{ maintainAspectRatio: false }}
-              ></Doughnut>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="">
-        <div className="flex">
-          <div className="basis-[50%] flex">
-            <h1 className="pl-4  font-bold text-[20px] text-[#408A7E] mb-2">
-              Phản hồi sự kiện
-            </h1>
-          </div>
-          <div className="basis-[50%]">
-            <h1 className="pl-2  font-bold text-[20px] text-[#408A7E] mb-2">
-              Tổng sự kiện theo tháng
-            </h1>
-          </div>
-        </div>
-        <div className="flex ">
-          <div className="basis-[50%] ml-4 mr-4 bg-[#fff] p-2   shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-lg h-[300px]">
-            <div className="w-full h-full">
-              <PolarArea
-                data={data1}
-                options={{ maintainAspectRatio: false }}
-              ></PolarArea>
-            </div>
-          </div>
-          <div className="basis-[50%] flex justify-center items-center mr-4 bg-[#fff] shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-lg h-[300px] ">
-            <div className="w-full ">
-              <Bar className="p-5" data={dataChart} options={options}></Bar>
-            </div>
-          </div>
         </div>
       </div>
     </div>

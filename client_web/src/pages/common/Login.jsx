@@ -128,9 +128,11 @@ function Login({ navigate, dispatch }) {
                   placeholder="Mật khẩu..."
                   className="text-[#2e6b61] text-[18px] font-[400] placeholder:text-gray-400 flex-1 bg-transparent outline-none"
                 />
-                <div onClick={toggleShowPassword} className="cursor-pointer">
-                  {showPassword ? <BiShow size={24} /> : <BiHide size={24} />}
-                </div>
+                {payload.password.length > 0 && (
+                  <div onClick={toggleShowPassword} className="cursor-pointer">
+                    {showPassword ? <BiShow size={23} /> : <BiHide size={23} />}
+                  </div>
+                )}
               </div>
               {error?.passwordErr !== null && (
                 <small className="mt-[2px] text-red-400 text-[16px]">
