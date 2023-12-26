@@ -7,6 +7,10 @@ import {
   apiGetFivePeopleHot,
   apiGettotalRateOfAuthor,
 } from "../../apis";
+import { MdCancelScheduleSend, MdPendingActions } from "react-icons/md";
+import { BsCheckAll } from "react-icons/bs";
+import { TbRun } from "react-icons/tb";
+import { BiBadgeCheck } from "react-icons/bi";
 
 function dashboard() {
   const [chartData, setChartData] = useState([0, 0, 0, 0, 0]);
@@ -79,34 +83,67 @@ function dashboard() {
   }, []);
 
   return (
-    <div className="px-[48px] py-[35px] flex flex-col gap-[35px]">
+    <div className="p-5 flex flex-col gap-[35px]">
       <div className="flex flex-col gap-[29px]">
-        <h2 className="text-[#000] font-[600] text-[16px]">Tổng quan</h2>
-        <div className="flex gap-[58px]">
-          {status.map((el) => (
-            <div
-              className="bg-white w-[calc(100%/5)] p-[12px] rounded-[8px] shadow-table flex flex-col gap-[19px]"
-              key={el.id}
-            >
-              <p className="text-[14px] font-[400] text-[#7A7A7A]">{el.text}</p>
-              <div className="flex items-center justify-between">
-                <span className="text-[#000] text-[18px] font-[600] pl-[19px]">
-                  {el.id === 1
-                    ? overView.pending
-                    : el.id === 2
-                    ? overView.apply
-                    : el.id === 3
-                    ? overView.process
-                    : el.id === 4
-                    ? overView.success
-                    : overView.close}
-                </span>
-                <span className="w-[36px] h-[36px] mr-[16px] flex items-center justify-center bg-[#408A7E] rounded-full text-white">
-                  {el.icon}
-                </span>
-              </div>
+        <h1 className=" uppercase font-[500] text-[#408A7E] text-3xl mb-1 ">
+          dashboard
+        </h1>
+        <div className="grid grid-cols-5 gap-[14px] px-4 mt-[25px] pb-[15px]">
+          <div className=" h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#4E73DF] flex items-center justify-between px-[16px] cursor-pointer hover:shadow-lg transform hover:scale-[103%] transition duration-300 ease-out">
+            <div>
+              <h2 className="text-[#B589DF] text-[11px] leading-[17px] font-bold">
+                SỰ KIỆN CHỜ DUYỆT
+              </h2>
+              <h1 className="text-[20px] leading-[24px] font-bold text-[#5a5c69] mt-[5px]">
+                {overView.pending}
+              </h1>
             </div>
-          ))}
+            <MdPendingActions fontSize={28} color="" />
+          </div>
+          <div className=" h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#1CC88A] flex items-center justify-between px-[16px] cursor-pointer hover:shadow-lg transform hover:scale-[103%] transition duration-300 ease-out">
+            <div>
+              <h2 className="text-[#1cc88a] text-[11px] leading-[17px] font-bold">
+                SỰ KIỆN ĐÃ DUYỆT
+              </h2>
+              <h1 className="text-[20px] leading-[24px] font-bold text-[#5a5c69] mt-[5px]">
+                {overView.apply}
+              </h1>
+            </div>
+            <BsCheckAll fontSize={28} />
+          </div>
+          <div className=" h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#36B9CC] flex items-center justify-between px-[16px] cursor-pointer hover:shadow-lg transform hover:scale-[103%] transition duration-300 ease-out">
+            <div>
+              <h2 className="text-[#1cc88a] text-[11px] leading-[17px] font-bold">
+                SỰ KIỆN ĐÃ HỦY
+              </h2>
+              <h1 className="text-[20px] leading-[24px] font-bold text-[#5a5c69] mt-[5px]">
+                {overView.close}
+              </h1>
+            </div>
+            <TbRun fontSize={28} />
+          </div>
+          <div className=" h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#F6C23E] flex items-center justify-between px-[16px] cursor-pointer hover:shadow-lg transform hover:scale-[103%] transition duration-300 ease-out">
+            <div>
+              <h2 className="text-[#1cc88a] text-[11px] leading-[17px] font-bold">
+                SỰ KIỆN ĐANG DIỄN RA
+              </h2>
+              <h1 className="text-[20px] leading-[24px] font-bold text-[#5a5c69] mt-[5px]">
+                {overView.process}
+              </h1>
+            </div>
+            <BiBadgeCheck fontSize={28} />
+          </div>
+          <div className=" h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#f63e47] flex items-center justify-between px-[16px] cursor-pointer hover:shadow-lg transform hover:scale-[103%] transition duration-300 ease-out">
+            <div>
+              <h2 className="text-[#413ef6] text-[11px] leading-[17px] font-bold">
+                SỰ KIỆN ĐÃ KẾT THÚC
+              </h2>
+              <h1 className="text-[20px] leading-[24px] font-bold text-[#5a5c69] mt-[5px]">
+                {overView.success}
+              </h1>
+            </div>
+            <MdCancelScheduleSend fontSize={28} />
+          </div>
         </div>
       </div>
       <div className="w-full flex gap-[30px]">
