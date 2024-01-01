@@ -157,7 +157,7 @@ function DetailEvent({ navigate, dispatch }) {
               {data?.limitParticipant}
             </p>
             <p className="text-[#B3B3B3] text-[14px] font-[400]">
-              Tổng số người tham gia
+              Giới hạn người tham gia
             </p>
           </div>
         </div>

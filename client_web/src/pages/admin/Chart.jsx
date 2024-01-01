@@ -23,6 +23,10 @@ import {
   typeEventChart,
 } from "../../apis";
 import { FaRegCalendarMinus } from "react-icons/fa";
+import { MdCancelScheduleSend, MdPendingActions } from "react-icons/md";
+import { BsCheckAll } from "react-icons/bs";
+import { TbRun } from "react-icons/tb";
+import { BiBadgeCheck } from "react-icons/bi";
 ChartJS.register(ArcElement, Tooltip, Legend);
 ChartJS.register(RadialLinearScale, ArcElement, Tooltip, Legend);
 ChartJS.register(
@@ -42,32 +46,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-const data1 = {
-  labels: ["Năm 1", "Năm 2", "Năm 3", "Năm 4"],
-  datasets: [
-    {
-      label: "# of Votes",
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: [
-        "rgba(255, 99, 132, 0.8)",
-        "rgba(54, 162, 235, 0.8)",
-        "rgba(255, 206, 86, 0.8)",
-        "rgba(75, 192, 192, 0.8)",
-        "rgba(153, 102, 255, 0.8)",
-        "rgba(255, 159, 64, 0.8)",
-      ],
-      borderColor: [
-        "rgba(255, 99, 132, 1)",
-        "rgba(54, 162, 235, 1)",
-        "rgba(255, 206, 86, 1)",
-        "rgba(75, 192, 192, 1)",
-        "rgba(153, 102, 255, 1)",
-        "rgba(255, 159, 64, 1)",
-      ],
-      borderWidth: 1,
-    },
-  ],
-};
 
 const Chart = () => {
   const [data, setData] = useState([]);
@@ -90,6 +68,7 @@ const Chart = () => {
     const response = await facultyChart();
     if (response.success) setDataFaculty(response.response);
   };
+  console.log(dataFaculty);
   const fetchTypeEvent = async () => {
     const response = await typeEventChart();
     if (response.success) setTypeEvent(response.response);
@@ -102,7 +81,7 @@ const Chart = () => {
     const response = await apiGetFivePeopleHot();
     if (response.success) setDataUser(response.response);
   };
-  console.log(dataUser);
+  //console.log(dataUser);
   const fetchTotalRating = async () => {
     const response = await apiGettotalRateOfAuthor();
     if (response.success) {
@@ -164,7 +143,7 @@ const Chart = () => {
             month.push(response.response.find((item) => item?.month === i));
           } else month.push({ month: i, eventCount: 0 });
         }
-        console.log(month);
+        //console.log(month);
         setData(month);
       }
     };
@@ -177,7 +156,7 @@ const Chart = () => {
             month.push(response.response.find((item) => item?.month === i));
           } else month.push({ month: i, userCount: 0 });
         }
-        console.log(month);
+        //console.log(month);
         setChartUser(month);
       }
     };
@@ -200,6 +179,31 @@ const Chart = () => {
         ),
         backgroundColor: ["rgba(255, 99, 132, 0.8)", "rgba(54, 162, 235, 0.8)"],
         borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
+        borderWidth: 1,
+      },
+    ],
+  };
+  const data1 = {
+    labels: dataFaculty.map((e) => `Khoa ${e.id}`),
+    datasets: [
+      {
+        data: dataFaculty.map((e) => e.totalFaculty),
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.8)",
+          "rgba(54, 162, 235, 0.8)",
+          "rgba(255, 206, 86, 0.8)",
+          "rgba(75, 192, 192, 0.8)",
+          "rgba(153, 102, 255, 0.8)",
+          "rgba(255, 159, 64, 0.8)",
+        ],
+        borderColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
+        ],
         borderWidth: 1,
       },
     ],
@@ -261,7 +265,7 @@ const Chart = () => {
               {overView.pending}
             </h1>
           </div>
-          <FaRegCalendarMinus fontSize={28} color="" />
+          <MdPendingActions fontSize={28} color="" />
         </div>
         <div className=" h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#1CC88A] flex items-center justify-between px-[16px] cursor-pointer hover:shadow-lg transform hover:scale-[103%] transition duration-300 ease-out">
           <div>
@@ -272,7 +276,7 @@ const Chart = () => {
               {overView.apply}
             </h1>
           </div>
-          <FaRegCalendarMinus fontSize={28} />
+          <BsCheckAll fontSize={28} />
         </div>
         <div className=" h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#36B9CC] flex items-center justify-between px-[16px] cursor-pointer hover:shadow-lg transform hover:scale-[103%] transition duration-300 ease-out">
           <div>
@@ -283,7 +287,7 @@ const Chart = () => {
               {overView.close}
             </h1>
           </div>
-          <FaRegCalendarMinus fontSize={28} />
+          <TbRun fontSize={28} />
         </div>
         <div className=" h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#F6C23E] flex items-center justify-between px-[16px] cursor-pointer hover:shadow-lg transform hover:scale-[103%] transition duration-300 ease-out">
           <div>
@@ -294,7 +298,7 @@ const Chart = () => {
               {overView.process}
             </h1>
           </div>
-          <FaRegCalendarMinus fontSize={28} />
+          <BiBadgeCheck fontSize={28} />
         </div>
         <div className=" h-[100px] rounded-[8px] bg-white border-l-[4px] border-[#f63e47] flex items-center justify-between px-[16px] cursor-pointer hover:shadow-lg transform hover:scale-[103%] transition duration-300 ease-out">
           <div>
@@ -305,7 +309,7 @@ const Chart = () => {
               {overView.success}
             </h1>
           </div>
-          <FaRegCalendarMinus fontSize={28} />
+          <MdCancelScheduleSend fontSize={28} />
         </div>
       </div>
       <div className="flex">
@@ -349,9 +353,9 @@ const Chart = () => {
           <div className="basis-[65%] ml-4 flex justify-center items-center mr-4 bg-[#fff] shadow-[0_7px_25px_rgba(0,0,0,0.08)] rounded-lg h-[350px] ">
             <div className="w-full h-full">
               <Bar
-                className="px-5 pt-2 pb-4"
+                className="px-5 pt-4 pb-2"
                 data={data1}
-                options={{ maintainAspectRatio: false }}
+                options={options1}
               ></Bar>
             </div>
           </div>
