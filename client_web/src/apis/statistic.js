@@ -2,7 +2,7 @@ import axios from "../axios";
 
 export const apiGetFivePeopleHot = () =>
   axios({
-    url: "/statistic/5-people-hot",
+    url: "/statistic/5-people-hot-system",
     method: "get",
   });
 

@@ -68,7 +68,7 @@ const Chart = () => {
     const response = await facultyChart();
     if (response.success) setDataFaculty(response.response);
   };
-  console.log(dataFaculty);
+  //console.log(dataFaculty);
   const fetchTypeEvent = async () => {
     const response = await typeEventChart();
     if (response.success) setTypeEvent(response.response);
@@ -81,7 +81,7 @@ const Chart = () => {
     const response = await apiGetFivePeopleHot();
     if (response.success) setDataUser(response.response);
   };
-  //console.log(dataUser);
+  console.log(dataUser);
   const fetchTotalRating = async () => {
     const response = await apiGettotalRateOfAuthor();
     if (response.success) {
@@ -102,6 +102,7 @@ const Chart = () => {
       setChartData([perpect, good, medium, least, bad]);
     }
   };
+
   const fetchEvent = async () => {
     const response = await apiGetEvents();
     if (response.success) {
@@ -381,10 +382,10 @@ const Chart = () => {
           <table className="w-full bg-white rounded-[8px] shadow-table_1">
             <thead>
               <tr className="text-center bg-white shadow-table_1">
-                <td className="rounded-l-[8px] text-[14px] font-[600] text-[#B6B6B6] w-[40%] text-start pl-[24px]">
+                <td className="rounded-l-[8px] text-[14px] font-[600] text-[#B6B6B6] w-[35%] text-start pl-[24px]">
                   Tên
                 </td>
-                <td className="py-[12px] text-[14px] font-[600] text-[#B6B6B6] w-[20%]">
+                <td className="py-[12px] text-[14px] font-[600] text-[#B6B6B6] w-[25%]">
                   Khoa
                 </td>
                 <td className="py-[12px] text-[14px] font-[600] text-[#B6B6B6] w-[20%]">
@@ -411,7 +412,7 @@ const Chart = () => {
                     </span>
                   </td>
                   <td className="text-[14px] text-center font-[400] text-[#969696]">
-                    {el.facultyData.nameFaculty}
+                    {el.userData.facultyData.nameFaculty}
                   </td>
                   <td className="text-[14px] text-center font-[400] text-[#969696]">
                     {el.eventCount}
