@@ -74,6 +74,7 @@ function CommentModal({ dispatch, eid }) {
 			const response = await apiCreateComment({
 				comment: checkResponse.value,
 				responseId,
+				eventId: eid,
 			})
 			if (response.success) {
 				toast.success(response.mess)

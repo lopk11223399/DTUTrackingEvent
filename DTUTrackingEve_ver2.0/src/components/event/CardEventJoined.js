@@ -80,6 +80,16 @@ const CardEventJoined = ({
 			],
 		)
 	}
+
+	const handleSubmit = async () => {
+		const response = await apiFeedbackEvent(item.id, {
+			rate: starFeedback,
+			feedback: comementText,
+		})
+
+		return Alert.alert('Thông báo', response.mess)
+	}
+
 	return (
 		<Pressable
 			onPress={() =>

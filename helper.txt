@@ -1,0 +1,5 @@
+INSERT INTO `statuses`(`statusName`) VALUES ('Chờ duyệt');
+INSERT INTO `statuses`(`statusName`) VALUES ('Đã duyệt');
+INSERT INTO `statuses`(`statusName`) VALUES ('Đang diễn ra');
+INSERT INTO `statuses`(`statusName`) VALUES ('Đã kết thúc');
+INSERT INTO `statuses`(`statusName`) VALUES ('Đã hủy');

@@ -47,6 +47,7 @@ const QRScreen = ({ navigation: { goBack, navigate }, Ionicons, dispatch }) => {
 	}
 
 	const handleBarCodeScanned = async ({ type, data }) => {
+		console.log(data)
 		setScanned(true)
 
 		if (!current) {
@@ -72,7 +73,7 @@ const QRScreen = ({ navigation: { goBack, navigate }, Ionicons, dispatch }) => {
 
 			if (response.success) {
 				if (response.response.userJoined.some(el => +el.id === +current.id)) {
-					const joinEvent = await scanQREvent({ eventId, roomId })
+					const joinEvent = await apiScanQREvent({ eventId, roomId })
 					if (joinEvent.success) {
 						dispatch(getCurrent())
 						return Alert.alert(

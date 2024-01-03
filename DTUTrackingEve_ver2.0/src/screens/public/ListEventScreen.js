@@ -159,7 +159,9 @@ const ListEventScreen = ({
 				{
 					text: 'Tham gia',
 					onPress: async () => {
-						const response = await apiJoinEvent(event.id, { roomId: item.id })
+						const response = await apiJoinEvent(event.id, {
+							roomId: item.roomId,
+						})
 
 						if (response.success) {
 							setModalVisible(false)

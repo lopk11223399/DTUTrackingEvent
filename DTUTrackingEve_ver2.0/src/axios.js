@@ -3,9 +3,9 @@ import axios from 'axios'
 
 const instance = axios.create({
 	// nhà
-	baseURL: 'http://192.168.1.124:3000/api/v1',
+	// baseURL: 'http://192.168.1.124:3000/api/v1',
 	// cf
-	// baseURL: 'http://192.168.1.72:3000/api/v1',
+	baseURL: 'http://192.168.23.240:3000/api/v1',
 	// truong
 	// baseURL: 'http://172.25.159.14:3000/api/v1',
 })

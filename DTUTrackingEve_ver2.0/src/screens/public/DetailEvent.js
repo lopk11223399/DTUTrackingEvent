@@ -247,7 +247,9 @@ const DetailEvent = ({
 				{
 					text: 'Tham gia',
 					onPress: async () => {
-						const response = await apiJoinEvent(data.id, { roomId: item.id })
+						const response = await apiJoinEvent(data.id, {
+							roomId: item.roomId,
+						})
 
 						if (response.success) {
 							setModalVisible(false)
